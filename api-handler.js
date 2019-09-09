@@ -4,7 +4,7 @@ const TEST_KEY = process.env.TEST_KEY
 
 //--------------- FUNCTIONS ---------------
 
-//Returns a success response obj
+//Returns a success response
 const sendOKResponse = (body) => {
   return {
     statusCode: 200,
@@ -16,7 +16,7 @@ const sendOKResponse = (body) => {
   }
 }
 
-//Returns an error response obj
+//Returns an error response
 const sendErrorResponse = (statusCode, errorMessage) => {
   console.error('sendErrorRepsonse: console logging error msg:\n', errorMessage)
   return { 
