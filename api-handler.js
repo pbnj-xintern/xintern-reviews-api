@@ -30,4 +30,5 @@ const sendErrorResponse = (statusCode, errorMessage) => {
 
 module.exports.hello = async (event) => {
   console.log("how tokens/secrets will be stored in serverless:", TEST_KEY)
+  return sendOKResponse(`how tokens/secrets will be stored in serverless: ${TEST_KEY}`)
 };
