@@ -1,1 +1,1 @@
-# xintern-api
+# xintern-reviews-api
