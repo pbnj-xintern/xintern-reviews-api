@@ -50,12 +50,12 @@ custom:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: api-handler.hello
+  createReview:
+    handler: api-handler.createReview
     events:
       - http:
-          path: hello
-          method: GET
+          path: review/create
+          method: POST
           cors: true
 
 
