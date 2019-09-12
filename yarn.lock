@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@pbnj-xintern/xintern-commons@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@pbnj-xintern/xintern-commons/-/xintern-commons-1.0.1.tgz#9ea88963bee95ac429cb83691324e7e31d3a2089"
+  integrity sha512-jtQPxYNv7TXb+XOSNzYlJ0R3L69JGu/DNuv2OjfZmNnrhTmvyWyXA01uNDUBasdu6gSVLZhuJHA5RJL4N+Uk6w==
+  dependencies:
+    mongoose "^5.7.0"
+
 async@2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.2.tgz#18330ea7e6e313887f5d2f2a904bac6fe4dd5381"
@@ -156,10 +163,3 @@ sliced@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sliced/-/sliced-1.0.1.tgz#0b3a662b5d04c3177b1926bea82b03f837a2ef41"
   integrity sha1-CzpmK10Ewxd7GSa+qCsD+Dei70E=
-
-xintern-commons@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/xintern-commons/-/xintern-commons-1.0.1.tgz#1b44ba86b159bcb28a4f3666f57c21e01b857a70"
-  integrity sha512-lZ6t78MvJtrkIGIpe5PnlULXAW8RJ/afKUEvh6yFKgopD4aj+R77SSZlBF7LIBJ4nzWBULLDJnCXNk3tq217Sw==
-  dependencies:
-    mongoose "^5.7.0"

@@ -38,8 +38,7 @@ module.exports.hello = async (event) => {
     sex: "M",
     school: "uOttawa",
     program: "SEG",
-    age: "22",
-    createdAt: new Date()
+    age: "22"
   })
   console.log('created new user:\n', newUser)
   return sendOKResponse(`how tokens/secrets will be stored in serverless: ${TEST_KEY}`)
