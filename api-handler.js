@@ -1,15 +1,15 @@
 'use strict';
 const axios = require('axios')
-const User = require('xintern-commons/models/User')
+const Review = require('xintern-commons/models/Review')
 
 const TEST_KEY = process.env.TEST_KEY
 
 //--------------- FUNCTIONS ---------------
 
 //Returns a success response
-const sendOKResponse = (body) => {
+const sendOKResponse = (statusCode, body) => {
   return {
-    statusCode: 200,
+    statusCode: statusCode,
     headers: { 
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*"
@@ -30,30 +30,36 @@ const sendErrorResponse = (statusCode, errorMessage) => {
 
 //--------------- LAMBDA FUNCTIONS ---------------
 
-module.exports.hello = async (event) => {
-  console.log("how tokens/secrets will be stored in serverless:", TEST_KEY)
-  let newUser = User({
-    username: "test-user",
-    name: "coop kid",
-    sex: "M",
-    school: "uOttawa",
-    program: "SEG",
-    age: "22"
+module.exports.createReview = async (event) => {
+  // let author = //grab User obj from event/context
+
+  //grab properties from event param
+  let newReview = Review({
+    salary: 100000,
+    content: "this is great movie",
+    position: "CRM Developer"
+    // user: //User
   })
-  console.log('created new user:\n', newUser)
-  return sendOKResponse(`how tokens/secrets will be stored in serverless: ${TEST_KEY}`)
+  try {
+    //send newReview obj to db
+    return sendOKResponse(201, 'Review successfully created!')
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return sendErrorResponse(400, err.message)
+  }
 };
 
+// Review model
 // {
 //   _id: mongoose.Schema.Types.ObjectId,
-//   createdAt: { type: mongoose.Schema.Types.Date, required: true },
+//   salary: { type: Number, required: true },
+//   createdAt: { type: mongoose.Schema.Types.Date, default: new Date(), required: true },
 //   deletedAt: { type: mongoose.Schema.Types.Date, default: null },
-//   username: { type: String },
-//   name: { type: String },
-//   sex: { type: String },
-//   photo: { type: String },
-//   school: { type: String },
-//   program: { type: String },
-//   age: { type: Number },
-//   isShowInfo: { type: mongoose.Schema.Types.Boolean, default: true }
+//   content: { type: String, required: true },
+//   position: { type: String, required: true },
+//   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+//   company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+//   flagged: { type: mongoose.Schema.Types.Boolean, default: false },
+//   upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+//   downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 // }
