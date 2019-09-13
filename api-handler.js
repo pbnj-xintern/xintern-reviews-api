@@ -32,13 +32,14 @@ const sendErrorResponse = (statusCode, errorMessage) => {
 //--------------- LAMBDA FUNCTIONS ---------------
 
 module.exports.createReview = async (event) => {
+  let data = event.body
   // let author = //grab User obj from event/context
 
   //grab properties from event param
   let newReview = Review({
-    salary: 100000,
-    content: "this is great movie",
-    position: "CRM Developer"
+    salary: data.salary,
+    content: data.content,
+    position: data.position
     // user: //User
   })
   try {
