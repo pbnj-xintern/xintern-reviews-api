@@ -1,5 +1,6 @@
 'use strict';
 const axios = require('axios')
+const mongoose = require('mongoose')
 const Review = require('xintern-commons/models/Review')
 
 const TEST_KEY = process.env.TEST_KEY
