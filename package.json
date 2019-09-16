@@ -1,7 +1,13 @@
 {
   "dependencies": {
-    "@pbnj-xintern/xintern-commons": "^1.0.1",
+    "@pbnj-xintern/xintern-commons": "^1.0.11",
     "axios": "^0.19.0",
     "mongoose": "^5.7.0"
-  }
+  },
+  "name": "xintern-reviews-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/pbnj-xintern/xintern-reviews-api.git",
+  "author": "John Cen <john.cen@carloanscanada.com>",
+  "license": "MIT"
 }

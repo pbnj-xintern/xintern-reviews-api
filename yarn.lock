@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@pbnj-xintern/xintern-commons@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@pbnj-xintern/xintern-commons/-/xintern-commons-1.0.1.tgz#9ea88963bee95ac429cb83691324e7e31d3a2089"
-  integrity sha512-jtQPxYNv7TXb+XOSNzYlJ0R3L69JGu/DNuv2OjfZmNnrhTmvyWyXA01uNDUBasdu6gSVLZhuJHA5RJL4N+Uk6w==
+"@pbnj-xintern/xintern-commons@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@pbnj-xintern/xintern-commons/-/xintern-commons-1.0.11.tgz#f24befd0bf2c57c9ffabbd8feae98d15e7dfbda9"
+  integrity sha512-v+k+yeL8qUdmKSklTXnY4fl/g51AA/8uPujGtY6UzViUO8yKdXRN9HwU0+Ce+SHxus91Ht6GPjJzwKH3PS9LxQ==
   dependencies:
     mongoose "^5.7.0"
 
