@@ -1,0 +1,13 @@
+{
+    "body": {
+        "user_id": "",
+        "culture": "{Number}",
+        "mentorship": "{Number}",
+        "impact": "{Number}",
+        "interview": "{Number}",
+        "company": "",
+        "salary": "{Number}",
+        "content": "",
+        "position": ""
+    }
+}
