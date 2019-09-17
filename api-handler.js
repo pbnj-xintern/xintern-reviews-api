@@ -54,6 +54,10 @@ module.exports.getFlaggedReviews = async event => {
   return ReviewHelper.getFlaggedReviews()
 }
 
+module.exports.getFlaggedComments = async event => {
+  return ReviewHelper.getFlaggedComments()
+}
+
 // Review model
 // {
 //   _id: mongoose.Schema.Types.ObjectId,

@@ -54,7 +54,7 @@ functions:
     handler: api-handler.createReview
     events:
       - http:
-          path: review/flagged
+          path: review/create
           method: POST
           cors: true
 
@@ -62,7 +62,14 @@ functions:
     handler: api-handler.getFlaggedReviews
     events:
       - http:
-          path: review/create
+          path: review/flagged
+          method: GET
+          cors: true
+  getFlaggedComments:
+    handler: api-handler.getFlaggedComments
+    events:
+      - http:
+          path: comment/flagged
           method: GET
           cors: true
 
