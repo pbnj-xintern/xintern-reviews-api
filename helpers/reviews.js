@@ -12,16 +12,16 @@ const MONGO_URL = process.env.MONGO_URL
 //--------------- FUNCTIONS ---------------
 
 const findUser = async (eventBody) => {
-    let foundUser
     try {
-        let result = await db(MONGO_URL, () => {
-            foundUser = await User.findById(eventBody.user_id)
-            foundUser = (foundUser.length > 0) ? foundUser[0] : console.error('user does not exist.')
+        let foundUser = await db(MONGO_URL, () => {
+            return User.find({
+                _id: eventBody.user_id
+            })
         })
-        console.log('User found:\n', result)
-        return foundUser._id
+        console.log('foundUser:\n', foundUser)
+        return foundUser[0]._id
     } catch (err) {
-        console.error('caught err while trying to find user in db:\n', err.message)
+        console.error('user does not exist:\n', err.message)
     }
 }
 
@@ -35,8 +35,8 @@ const createRatingAndSave = async (eventBody) => {
     })
     try {
         let result = await db(MONGO_URL, () => {
-            newRating.save().catch(err => {
-                console.log('caught err when trying to save Rating to db (inner):\n')
+            return newRating.save().catch(err => {
+                console.log('caught err when trying to save Rating to db:\n')
                 console.error(err.message)
             })
         })
@@ -53,14 +53,24 @@ const findCompany = async (eventBody) => {
         name: eventBody.company,
         logo: "company logo here"
     })
-    let foundCompany
     //if no existing Company found, create new Company and save 
     try { 
-        let result = await db(MONGO_URL, () => {
-            foundCompany = await Company.find({ name: eventBody.company.toLowerCase().trim() })
-            foundCompany = (foundCompany.length > 0) ? foundCompany[0] : newCompany
+        let foundCompany = await db(MONGO_URL, () => {
+            return Company.find({ name: eventBody.company.toLowerCase().trim() })
         })
-        console.log('Company Found:\n', result)
+        console.log('Company Found:\n', foundCompany)
+        if (foundCompany.length > 0) {
+            foundCompany = foundCompany[0]
+        } else {
+            foundCompany = newCompany
+            let result = await db(MONGO_URL, () => {
+                return foundCompany.save().catch(err => {
+                    console.log('caught err when trying to save new Company to db:\n')
+                    console.error(err.message)
+                })
+            })
+            console.log('New Company saved:\n', result)
+        }
         return foundCompany._id
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
@@ -96,14 +106,14 @@ module.exports.createReview = async (payload) => {
     })
     try {
         let result = await db(MONGO_URL, () => {
-            newReview.save().catch(err => {
-                console.log('caught err when trying to save Review to db (inner):\n')
+            return newReview.save().catch(err => {
+                console.log('caught err when trying to save Review to db:\n')
                 console.error(err.message)
             })
         })
         console.log('Review Created:\n', result)
         return Status.createSuccessResponse(201, "Review successfully created.")
     } catch (err) {
-        console.error('caught err while trying to save Review to db:\n', err.message)
+        console.error('caught err while trying to create Review to db:\n', err.message)
     }
 }
