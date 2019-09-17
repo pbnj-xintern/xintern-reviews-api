@@ -58,6 +58,22 @@ functions:
           method: POST
           cors: true
 
+  updateReview:
+    handler: api-handler.updateReview
+    events:
+      - http:
+          path: reviews/update
+          method: POST
+          cors: true
+
+  deleteReview:
+    handler: api-handler.deleteReview
+    events:
+      - http:
+          path: reviews/delete
+          method: POST
+          cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
