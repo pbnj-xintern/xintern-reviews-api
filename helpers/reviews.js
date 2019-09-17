@@ -64,12 +64,16 @@ const findCompany = async (eventBody) => {
 module.exports.createReview = async (event) => {
     console.log('---------- i am in the helper fn ----------')
     let payload = event.body
+    console.log('payload:\n', payload)
     //Find User
     let foundUserId = await findUser(payload)
+    console.log('foundUserId:\n', foundUserId)
     //Create Rating object and add to db
     let newRatingId = await createRatingAndSave(payload)
+    console.log('newRatingId:\n', newRatingId)
     //Check if Company obj exists, if not create Company obj
     let foundCompanyId = await findCompany(payload)
+    console.log('foundCompanyId:\n', foundCompanyId)
     //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
@@ -90,7 +94,7 @@ module.exports.createReview = async (event) => {
                 console.error(err.message)
             })
         })
-        console.log('review created:\n', result)
+        console.log('Review Created:\n', result)
         return Status.createSuccessResponse(201, "Review successfully created.")
     } catch (err) {
         console.error('caught err while trying to save Review to db:\n', err.message)
