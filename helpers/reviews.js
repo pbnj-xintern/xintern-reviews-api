@@ -13,6 +13,7 @@ const MONGO_URL = process.env.MONGO_URL
 
 const findUser = async (eventBody) => {
     try {
+        //connect to db 
         let foundUser = await User.findById(eventBody.user_id)
         foundUser = (foundUser.length > 0) ? foundUser[0] : console.error('user does not exist.')
         return foundUser._id
@@ -51,6 +52,7 @@ const findCompany = async (eventBody) => {
     })
     //if no existing Company found, create new Company and save 
     try { 
+        //connect to db 
         let foundCompany = await Company.find({ name: eventBody.company.toLowerCase().trim() })
         foundCompany = (foundCompany.length > 0) ? foundCompany[0] : newCompany
         return (foundCompany.length > 0) ? foundCompany[0]._id : newCompany._id
@@ -61,9 +63,8 @@ const findCompany = async (eventBody) => {
 
 //--------------- EXPORTED FUNCTIONS ---------------
 
-module.exports.createReview = async (event) => {
+module.exports.createReview = async (payload) => {
     console.log('---------- i am in the helper fn ----------')
-    let payload = event.body
     console.log('payload:\n', payload)
     //Find User
     let foundUserId = await findUser(payload)
