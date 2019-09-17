@@ -9,24 +9,25 @@ const mongoose = require('mongoose')
 
 const MONGO_URL = process.env.MONGO_URL
 
-module.exports.createReview = async (event) => {
-    console.log('---------- i am in the helper fn ----------')
-    let payload = event.body
-    //find User
+//--------------- FUNCTIONS ---------------
+
+const findUser = async (eventBody) => {
     try {
-        let foundUser = await User.findById(payload.user_id)
+        let foundUser = await User.findById(eventBody.user_id)
         foundUser = (foundUser.length > 0) ? foundUser[0] : console.error('user does not exist.')
-        let foundUserId = foundUser._id
+        return foundUser._id
     } catch (err) {
-        console.error('caught err while trying to find user:\n', err.message)
+        console.error('caught err while trying to find user in db:\n', err.message)
     }
-    //Create Rating object and add to db
+}
+
+const createRatingAndSave = async (eventBody) => {
     let newRating = Rating({
         _id: new mongoose.Types.ObjectId(),
-        culture: payload.culture,
-        mentorship: payload.mentorship,
-        impact: payload.impact,
-        interview: payload.interview
+        culture: eventBody.culture,
+        mentorship: eventBody.mentorship,
+        impact: eventBody.impact,
+        interview: eventBody.interview
     })
     try {
         let result = await db(MONGO_URL, () => {
@@ -35,17 +36,41 @@ module.exports.createReview = async (event) => {
                 console.error(err.message)
             })
         })
-        console.log('rating created:\n', result)
-        return Status.createSuccessResponse(201, "Rating successfully created.")
+        console.log('New Rating Created:\n', result)
+        return newRating._id
     } catch (err) {
         console.error('caught err while trying to save Rating to db:\n', err.message)
     }
-    let newRatingId = newRating._id
-    //Check if Company obj exists, if not create Company obj
-    let foundCompany = await Company.find({ company: payload.company.toLowerCase().trim() })
-    foundCompany = (foundCompany.length > 0) ? {} : {} 
+}
 
-    //grab properties from event param
+const findCompany = async (eventBody) => {
+    let newCompany = Company({
+        _id: new mongoose.Types.ObjectId(),
+        name: eventBody.company,
+        logo: "company logo here"
+    })
+    //if no existing Company found, create new Company and save 
+    try { 
+        let foundCompany = await Company.find({ name: eventBody.company.toLowerCase().trim() })
+        foundCompany = (foundCompany.length > 0) ? foundCompany[0] : newCompany
+        return (foundCompany.length > 0) ? foundCompany[0]._id : newCompany._id
+    } catch (err) {
+        console.error('caught err while trying to find Company:\n', err.message)
+    }
+}   
+
+//--------------- EXPORTED FUNCTIONS ---------------
+
+module.exports.createReview = async (event) => {
+    console.log('---------- i am in the helper fn ----------')
+    let payload = event.body
+    //Find User
+    let foundUserId = await findUser(payload)
+    //Create Rating object and add to db
+    let newRatingId = await createRatingAndSave(payload)
+    //Check if Company obj exists, if not create Company obj
+    let foundCompanyId = await findCompany(payload)
+    //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
         salary: payload.salary,
@@ -53,38 +78,21 @@ module.exports.createReview = async (event) => {
         rating: newRatingId,
         position: payload.position,
         user: foundUserId,
-        company: ,
+        company: foundCompanyId,
         upvotes: [],
         downvotes: [],
         comments: []
     })
-
-    let result = await db(MONGO_URL, () => {
-        newReview.save().catch(err => {
-            console.log('caught err when trying to save Review to db:s\n')
-            console.error(err.message)
+    try {
+        let result = await db(MONGO_URL, () => {
+            newReview.save().catch(err => {
+                console.log('caught err when trying to save Review to db (inner):\n')
+                console.error(err.message)
+            })
         })
-    })
-    console.log('review created:\n', result)
-    return Status.createSuccessResponse(201, "Review successfully created.")
+        console.log('review created:\n', result)
+        return Status.createSuccessResponse(201, "Review successfully created.")
+    } catch (err) {
+        console.error('caught err while trying to save Review to db:\n', err.message)
+    }
 }
-
-// Review model
-// {
-//   _id: mongoose.Schema.Types.ObjectId,
-
-//   createdAt: { type: mongoose.Schema.Types.Date, default: new Date(), required: true },
-
-//   salary: { type: mongoose.Schema.Types.Number, required: true },
-//   content: { type: mongoose.Schema.Types.String, required: true },
-//   rating: { type: mongoose.Schema.Types.ObjectId, ref: "Rating", required: true },
-//   position: { type: mongoose.Schema.Types.String, required: true },
-//   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-//   company: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
-  
-//   deleted: { type: mongoose.Schema.Types.Boolean, default: false }, 
-//   flagged: { type: mongoose.Schema.Types.Boolean, default: false },
-//   upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-//   downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-//   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], //all children
-// }
