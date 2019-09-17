@@ -112,7 +112,9 @@ module.exports.createReview = async (payload) => {
             })
         })
         console.log('Review Created:\n', result)
-        return Status.createSuccessResponse(201, "Review successfully created.")
+        return Status.createSuccessResponse(201, {
+            message: "Review successfully created."
+        })
     } catch (err) {
         console.error('caught err while trying to create Review to db:\n', err.message)
     }
