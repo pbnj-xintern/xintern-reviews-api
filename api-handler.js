@@ -6,7 +6,7 @@ const ReviewsHelper = require('./helpers/reviews')
 
 module.exports.createReview = async (event) => {
   try {
-    let response = ReviewsHelper.createReview(event)
+    let response = await ReviewsHelper.createReview(event)
     return response
   } catch (err) {
     console.error('caught error:', err.message)
