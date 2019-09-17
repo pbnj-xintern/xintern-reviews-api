@@ -54,7 +54,7 @@ functions:
     handler: api-handler.createReview
     events:
       - http:
-          path: review/create
+          path: reviews/create
           method: POST
           cors: true
 
