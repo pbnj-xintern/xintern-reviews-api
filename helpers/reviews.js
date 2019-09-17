@@ -12,10 +12,13 @@ const MONGO_URL = process.env.MONGO_URL
 //--------------- FUNCTIONS ---------------
 
 const findUser = async (eventBody) => {
+    let foundUser
     try {
-        //connect to db 
-        let foundUser = await User.findById(eventBody.user_id)
-        foundUser = (foundUser.length > 0) ? foundUser[0] : console.error('user does not exist.')
+        let result = await db(MONGO_URL, () => {
+            foundUser = await User.findById(eventBody.user_id)
+            foundUser = (foundUser.length > 0) ? foundUser[0] : console.error('user does not exist.')
+        })
+        console.log('User found:\n', result)
         return foundUser._id
     } catch (err) {
         console.error('caught err while trying to find user in db:\n', err.message)
@@ -50,12 +53,15 @@ const findCompany = async (eventBody) => {
         name: eventBody.company,
         logo: "company logo here"
     })
+    let foundCompany
     //if no existing Company found, create new Company and save 
     try { 
-        //connect to db 
-        let foundCompany = await Company.find({ name: eventBody.company.toLowerCase().trim() })
-        foundCompany = (foundCompany.length > 0) ? foundCompany[0] : newCompany
-        return (foundCompany.length > 0) ? foundCompany[0]._id : newCompany._id
+        let result = await db(MONGO_URL, () => {
+            foundCompany = await Company.find({ name: eventBody.company.toLowerCase().trim() })
+            foundCompany = (foundCompany.length > 0) ? foundCompany[0] : newCompany
+        })
+        console.log('Company Found:\n', result)
+        return foundCompany._id
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
     }
