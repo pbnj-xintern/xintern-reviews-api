@@ -14,7 +14,7 @@ provider:
   stage: dev
   region: us-east-2
   environment:
-    TEST_KEY: "${self:custom.tokens.TEST_KEY}"
+    MONGO_URL: "${self:custom.tokens.MONGO_URL}"
 
 package:
   exclude:
@@ -54,8 +54,16 @@ functions:
     handler: api-handler.createReview
     events:
       - http:
-          path: review/create
+          path: review/flagged
           method: POST
+          cors: true
+
+  getFlaggedReviews:
+    handler: api-handler.getFlaggedReviews
+    events:
+      - http:
+          path: review/create
+          method: GET
           cors: true
 
 

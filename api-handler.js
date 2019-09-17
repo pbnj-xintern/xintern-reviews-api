@@ -1,7 +1,6 @@
 'use strict';
-const axios = require('axios')
-const mongoose = require('mongoose')
-const Review = require('xintern-commons/models/Review')
+const Review = require('@pbnj-xintern/xintern-commons/models/Review')
+const ReviewHelper = require('./helpers/reviews')
 
 const TEST_KEY = process.env.TEST_KEY
 
@@ -11,7 +10,7 @@ const TEST_KEY = process.env.TEST_KEY
 const sendOKResponse = (statusCode, body) => {
   return {
     statusCode: statusCode,
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*"
     },
@@ -22,8 +21,8 @@ const sendOKResponse = (statusCode, body) => {
 //Returns an error response
 const sendErrorResponse = (statusCode, errorMessage) => {
   console.error('sendErrorRepsonse: console logging error msg:\n', errorMessage)
-  return { 
-    statusCode: statusCode, 
+  return {
+    statusCode: statusCode,
     headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
     body: JSON.stringify({ error: errorMessage })
   }
@@ -50,6 +49,10 @@ module.exports.createReview = async (event) => {
     return sendErrorResponse(400, err.message)
   }
 };
+
+module.exports.getFlaggedReviews = async event => {
+  return ReviewHelper.getFlaggedReviews()
+}
 
 // Review model
 // {
