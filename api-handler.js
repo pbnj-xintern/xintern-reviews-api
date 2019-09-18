@@ -34,3 +34,7 @@ module.exports.deleteReview = async (event) => {
     return Status.createErrorResponse(400, err.message)
   }
 }
+
+module.exports.addCompany = async (event) => {
+
+}
