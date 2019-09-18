@@ -11,6 +11,7 @@ const MONGO_URL = process.env.MONGO_URL
 
 //--------------- FUNCTIONS ---------------
 
+//Returns user ID
 const findUserId = async (eventBody) => {
     try {
         let foundUser = await db(MONGO_URL, () => {
@@ -25,6 +26,7 @@ const findUserId = async (eventBody) => {
     }
 }
 
+//Creates a new Rating obj and saves to db. Returns rating ID
 const createRatingAndSave = async (eventBody) => {
     let newRating = Rating({
         _id: new mongoose.Types.ObjectId(),
@@ -47,16 +49,47 @@ const createRatingAndSave = async (eventBody) => {
     }
 }
 
-const findCompanyId = async (eventBody) => {
-    let newCompany = Company({
-        _id: new mongoose.Types.ObjectId(),
-        name: eventBody.company,
-        logo: "company logo here"
-    })
-    //if no existing Company found, create new Company and save 
+//Checks if Company exists in db by name. Returns company ID 
+const findCompanyIdByName = async (eventBody) => {
+    // let newCompany = Company({
+    //     _id: new mongoose.Types.ObjectId(),
+    //     name: eventBody.company,
+    //     logo: "company logo here"
+    // })
     try { 
         let foundCompany = await db(MONGO_URL, () => {
-            return Company.find({ name: eventBody.company.toLowerCase().trim() })
+            return Company.find({ name: eventBody.company_name.toLowerCase().trim() })
+        })
+        console.log('Company Found:\n', foundCompany)
+        if (foundCompany.length > 0) {
+            foundCompany = foundCompany[0]
+        } else {
+            // foundCompany = newCompany
+            // let result = await db(MONGO_URL, () => {
+            //     return foundCompany.save().catch(err => {
+            //         console.log('caught err when trying to save new Company to db:\n')
+            //         console.error(err.message)
+            //     })
+            // })
+            // console.log('New Company saved:\n', result)
+            return Status.createErrorResponse(404, "Company does not exist.")
+        }
+        return foundCompany._id
+    } catch (err) {
+        console.error('caught err while trying to find Company:\n', err.message)
+    }
+}   
+
+//Finds company by Id. Returns Company obj
+const findCompanyById = async (companyId, eventBody) => {
+    let newCompany = Company({
+        _id: new mongoose.Types.ObjectId(),
+        name: eventBody.company_name,
+        logo: "company logo here"
+    })
+    try { 
+        let foundCompany = await db(MONGO_URL, () => {
+            return Company.find({ _id: companyId })
         })
         console.log('Company Found:\n', foundCompany)
         if (foundCompany.length > 0) {
@@ -69,9 +102,10 @@ const findCompanyId = async (eventBody) => {
                     console.error(err.message)
                 })
             })
-            console.log('New Company saved:\n', result)
+            console.log('New Company created and saved:\n', result)
+            // return Status.createErrorResponse(404, "Company does not exist.")
         }
-        return foundCompany._id
+        return foundCompany
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
     }
@@ -105,11 +139,11 @@ const findCompanyId = async (eventBody) => {
 //     }
 // }
 
-const getReviewById = async (eventBody) => {
+const getReviewById = async (reviewId) => {
     try {
         let foundReview = await db(MONGO_URL, () => {
             return Review.find({
-                _id: eventBody.review_id
+                _id: reviewId
             })
         })
         console.log('foundReview:\n', foundReview)
@@ -119,11 +153,11 @@ const getReviewById = async (eventBody) => {
     }
 }
 
-const getRatingById = async (eventBody) => {
+const getRatingById = async (ratingId) => {
     try {
         let foundRating = await db(MONGO_URL, () => {
             return Rating.find({
-                _id: eventBody.rating_id
+                _id: ratingId
             })
         })
         console.log('foundRating:\n', foundRating)
@@ -145,7 +179,7 @@ module.exports.createReview = async (payload) => {
     let newRatingId = await createRatingAndSave(payload)
     console.log('newRatingId:\n', newRatingId)
     //Check if Company obj exists, if not create Company obj
-    let foundCompanyId = await findCompanyId(payload)
+    let foundCompanyId = await findCompanyIdByName(payload)
     console.log('foundCompanyId:\n', foundCompanyId)
     //Create new Review and save
     let newReview = Review({
@@ -174,18 +208,32 @@ module.exports.createReview = async (payload) => {
     }
 }
 
-module.exports.updateReview = async (payload) => {
-    console.log('payload:\n', payload)
+module.exports.updateReview = async (reviewId, payload) => {
+    console.log('reviewId:\n', reviewId)
     //get Review to update
-    let foundReview = await getReviewById(payload)
-    //get Rating to update
-    let foundRating = await getRatingById(payload)
+    let foundReview = await getReviewById(reviewId)
+    console.log('foundReview:\n', foundReview)
+
+    //get Rating to update - find mongoose update method
+    let foundRating = await getRatingById(foundReview.rating)
+    console.log('foundRating:\n', foundRating)
+    foundRating.culture = payload.culture
+    foundRating.mentorship = payload.mentorship
+    foundRating.impact = payload.impact
+    foundRating.interview = payload.interview
+    //save updated rating into db 
+    let result = await db(MONGO_URL, () => {
+        return foundRating.save().catch(err => {
+            console.log('caught err when trying to save Review to db:\n')
+            console.error(err.message)
+        })
+    })
+    console.log('Rating updated:\n', result)
 
     //find Company
-    //if user enters new company name, check new company name against db. If not exist, add into db 
-    let foundCompanyId = await findCompanyId(payload)
-    console.log('foundReview:\n', foundReview)
-    console.log('foundRating:\n', foundRating)
+    let foundCompany = await findCompanyById(foundReview.company, payload)
+    console.log('foundCompany:\n', foundCompany)
+
 
     let { salary, content, position, ...otherFields } = foundReview
 

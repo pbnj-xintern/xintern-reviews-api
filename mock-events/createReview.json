@@ -5,7 +5,7 @@
         "mentorship": 4,
         "impact": 3,
         "interview": 4,
-        "company": "test-company",
+        "company_name": "test-company",
         "salary": 80000,
         "content": "hello this is content.",
         "position": "SW Developer"

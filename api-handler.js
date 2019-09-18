@@ -14,10 +14,11 @@ module.exports.createReview = async (event) => {
   }
 }
 
-module.exports.updateReview = async (event) => {
+module.exports.updateReview = async (event, payload) => {
   let payload = event.body
+  let reviewId = event.pathParameters.review_id
   try {
-    return await ReviewsHelper.updateReview(payload)
+    return await ReviewsHelper.updateReview(reviewId, payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)

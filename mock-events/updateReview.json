@@ -4,5 +4,12 @@
     },
     "headers": {
         "Authorization": ""
+    },
+    "body": {
+        "company_name": "",
+        "culture": "",
+        "mentorship": "",
+        "impact": "",
+        "interview": ""
     }
 }
