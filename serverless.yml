@@ -62,16 +62,24 @@ functions:
     handler: api-handler.updateReview
     events:
       - http:
-          path: reviews/update
-          method: POST
+          path: reviews/update/{review_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
           cors: true
 
   deleteReview:
     handler: api-handler.deleteReview
     events:
       - http:
-          path: reviews/delete
-          method: POST
+          path: reviews/delete/{review_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                review_id: true
           cors: true
 
 

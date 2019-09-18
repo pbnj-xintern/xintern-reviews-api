@@ -1,0 +1,8 @@
+{
+    "pathParameters": {
+        "review_id": ""
+    },
+    "headers": {
+        "Authorization": ""
+    }
+}
