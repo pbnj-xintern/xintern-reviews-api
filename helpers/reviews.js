@@ -50,7 +50,7 @@ const createRatingAndSave = async (eventBody) => {
 }
 
 //Checks if Company exists in db by name. Returns company ID 
-const findCompanyIdByName = async (eventBody) => {
+const findCompanyByName = async (eventBody) => {
     // let newCompany = Company({
     //     _id: new mongoose.Types.ObjectId(),
     //     name: eventBody.company,
@@ -74,7 +74,7 @@ const findCompanyIdByName = async (eventBody) => {
             // console.log('New Company saved:\n', result)
             return Status.createErrorResponse(404, "Company does not exist.")
         }
-        return foundCompany._id
+        return foundCompany
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
     }
@@ -142,9 +142,7 @@ const findCompanyById = async (companyId, eventBody) => {
 const getReviewById = async (reviewId) => {
     try {
         let foundReview = await db(MONGO_URL, () => {
-            return Review.find({
-                _id: reviewId
-            })
+            return Review.find({ _id: reviewId }).populate("rating user company")
         })
         console.log('foundReview:\n', foundReview)
         return foundReview[0]
@@ -153,20 +151,67 @@ const getReviewById = async (reviewId) => {
     }
 }
 
-const getRatingById = async (ratingId) => {
+// const getRatingById = async (ratingId) => {
+//     try {
+//         let foundRating = await db(MONGO_URL, () => {
+//             return Rating.find({
+//                 _id: ratingId
+//             })
+//         })
+//         console.log('foundRating:\n', foundRating)
+//         return foundRating[0]
+//     } catch (err) {
+//         console.error('rating does not exist:\n', err.message)
+//     }
+// }
+
+//----------- make into endpoints ----------- //
+const updateRating = (ratingId, payload) => {
     try {
-        let foundRating = await db(MONGO_URL, () => {
-            return Rating.find({
-                _id: ratingId
-            })
+        return Rating.findByIdAndUpdate(ratingId, {
+            culture: payload.culture,
+            mentorship: payload.mentorship,
+            impact: payload.impact,
+            interview: payload.interview
         })
-        console.log('foundRating:\n', foundRating)
-        return foundRating[0]
     } catch (err) {
         console.error('rating does not exist:\n', err.message)
     }
 }
+const updateCompany = async (companyId, payload) => {
+    try {
+        return await Company.findByIdAndUpdate(companyId, {
+            name: payload.company_name,
+            logo: payload.company_logo
+        })
+    } catch (err) {
+        console.error('company does not exist:\n', err.message)
+    }
+}
+const updateReview = async (reviewId, payload) => {
+    try {
+        return await Review.findByIdAndUpdate(reviewId, {
+            salary: payload.salary,
+            content: payload.content,
+            position: payload.position
+        })
+    } catch (err) {
+        console.error('review does not exist:\n', err.message)
+    }
+}
+//----------- make into endpoints ----------- //
 
+//Returns an updated review obj
+const updateReviewFields = async (foundReview, payload) => {
+    //update rating-related fields
+    let updateRatingResult = await updateRating(foundReview.rating._id, payload)
+    console.log('updateRatingResult:\n', updateRatingResult)
+    //update company-related fields
+    let updateCompanyResult = await updateCompany(foundReview.company._id, payload)
+    console.log('updateCompanyResult:\n', updateCompanyResult)
+    //update review-related fields
+    return await updateReview(foundReview._id, payload)
+}
 
 //--------------- EXPORTED FUNCTIONS ---------------
 
@@ -179,7 +224,7 @@ module.exports.createReview = async (payload) => {
     let newRatingId = await createRatingAndSave(payload)
     console.log('newRatingId:\n', newRatingId)
     //Check if Company obj exists, if not create Company obj
-    let foundCompanyId = await findCompanyIdByName(payload)
+    let foundCompany = await findCompanyByName(payload)
     console.log('foundCompanyId:\n', foundCompanyId)
     //Create new Review and save
     let newReview = Review({
@@ -189,7 +234,7 @@ module.exports.createReview = async (payload) => {
         rating: newRatingId,
         position: payload.position,
         user: foundUserId,
-        company: foundCompanyId,
+        company: foundCompany._id,
         upvotes: [],
         downvotes: [],
         comments: []
@@ -197,11 +242,10 @@ module.exports.createReview = async (payload) => {
     try {
         let result = await db(MONGO_URL, () => {
             return newReview.save().catch(err => {
-                console.log('caught err when trying to save Review to db:\n')
-                console.error(err.message)
+                console.error('caught err when trying to save to db:\n', err.message)
             })
         })
-        console.log('Review Created:\n', result)
+        console.log('createReview save status:\n', result)
         return Status.createSuccessResponse(201, { message: "Review successfully created." })
     } catch (err) {
         console.error('caught err while trying to create Review to db:\n', err.message)
@@ -213,28 +257,7 @@ module.exports.updateReview = async (reviewId, payload) => {
     //get Review to update
     let foundReview = await getReviewById(reviewId)
     console.log('foundReview:\n', foundReview)
-
-    //get Rating to update - find mongoose update method
-    let foundRating = await getRatingById(foundReview.rating)
-    console.log('foundRating:\n', foundRating)
-    foundRating.culture = payload.culture
-    foundRating.mentorship = payload.mentorship
-    foundRating.impact = payload.impact
-    foundRating.interview = payload.interview
-    //save updated rating into db 
-    let result = await db(MONGO_URL, () => {
-        return foundRating.save().catch(err => {
-            console.log('caught err when trying to save Review to db:\n')
-            console.error(err.message)
-        })
-    })
-    console.log('Rating updated:\n', result)
-
-    //find Company
-    let foundCompany = await findCompanyById(foundReview.company, payload)
-    console.log('foundCompany:\n', foundCompany)
-
-
-    let { salary, content, position, ...otherFields } = foundReview
-
+    //update
+    let updateReviewResult = await updateReviewFields(foundReview, payload)
+    if (updateReviewResult) return Status.createSuccessResponse(200, { message: "Reviewed updated." })
 }

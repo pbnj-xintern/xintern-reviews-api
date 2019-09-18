@@ -14,7 +14,7 @@ module.exports.createReview = async (event) => {
   }
 }
 
-module.exports.updateReview = async (event, payload) => {
+module.exports.updateReview = async (event) => {
   let payload = event.body
   let reviewId = event.pathParameters.review_id
   try {
