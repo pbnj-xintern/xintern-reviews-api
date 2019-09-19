@@ -81,63 +81,35 @@ const findCompanyByName = async (eventBody) => {
 }   
 
 //Finds company by Id. Returns Company obj
-const findCompanyById = async (companyId, eventBody) => {
-    let newCompany = Company({
-        _id: new mongoose.Types.ObjectId(),
-        name: eventBody.company_name,
-        logo: "company logo here"
-    })
-    try { 
-        let foundCompany = await db(MONGO_URL, () => {
-            return Company.find({ _id: companyId })
-        })
-        console.log('Company Found:\n', foundCompany)
-        if (foundCompany.length > 0) {
-            foundCompany = foundCompany[0]
-        } else {
-            foundCompany = newCompany
-            let result = await db(MONGO_URL, () => {
-                return foundCompany.save().catch(err => {
-                    console.log('caught err when trying to save new Company to db:\n')
-                    console.error(err.message)
-                })
-            })
-            console.log('New Company created and saved:\n', result)
-            // return Status.createErrorResponse(404, "Company does not exist.")
-        }
-        return foundCompany
-    } catch (err) {
-        console.error('caught err while trying to find Company:\n', err.message)
-    }
-}   
-
-// const findReviewId = async (eventBody) => {
-//     try {
-//         let foundReview = await db(MONGO_URL, () => {
-//             return Review.find({
-//                 _id: eventBody.review_id
-//             })
+// const findCompanyById = async (companyId, eventBody) => {
+//     let newCompany = Company({
+//         _id: new mongoose.Types.ObjectId(),
+//         name: eventBody.company_name,
+//         logo: "company logo here"
+//     })
+//     try { 
+//         let foundCompany = await db(MONGO_URL, () => {
+//             return Company.find({ _id: companyId })
 //         })
-//         console.log('foundReview:\n', foundReview)
-//         return foundReview[0]._id
-//     } catch (err) {
-//         console.error('review does not exist:\n', err.message)
-//     }
-// }
-
-// const findRatingId = async (eventBody) => {
-//     try {
-//         let foundRating = await db(MONGO_URL, () => {
-//             return Rating.find({
-//                 _id: eventBody.rating_id
+//         console.log('Company Found:\n', foundCompany)
+//         if (foundCompany.length > 0) {
+//             foundCompany = foundCompany[0]
+//         } else {
+//             foundCompany = newCompany
+//             let result = await db(MONGO_URL, () => {
+//                 return foundCompany.save().catch(err => {
+//                     console.log('caught err when trying to save new Company to db:\n')
+//                     console.error(err.message)
+//                 })
 //             })
-//         })
-//         console.log('foundRating:\n', foundRating)
-//         return foundRating[0]._id
+//             console.log('New Company created and saved:\n', result)
+//             // return Status.createErrorResponse(404, "Company does not exist.")
+//         }
+//         return foundCompany
 //     } catch (err) {
-//         console.error('rating does not exist:\n', err.message)
+//         console.error('caught err while trying to find Company:\n', err.message)
 //     }
-// }
+// }   
 
 const getReviewById = async (reviewId) => {
     try {
@@ -151,80 +123,15 @@ const getReviewById = async (reviewId) => {
     }
 }
 
-// const getRatingById = async (ratingId) => {
-//     try {
-//         let foundRating = await db(MONGO_URL, () => {
-//             return Rating.find({
-//                 _id: ratingId
-//             })
-//         })
-//         console.log('foundRating:\n', foundRating)
-//         return foundRating[0]
-//     } catch (err) {
-//         console.error('rating does not exist:\n', err.message)
-//     }
-// }
-
-//----------- make into endpoints ----------- //
-const updateRating = (ratingId, payload) => {
-    try {
-        return Rating.findByIdAndUpdate(ratingId, {
-            culture: payload.culture,
-            mentorship: payload.mentorship,
-            impact: payload.impact,
-            interview: payload.interview
-        })
-    } catch (err) {
-        console.error('rating does not exist:\n', err.message)
-    }
-}
-const updateCompany = async (companyId, payload) => {
-    try {
-        return await Company.findByIdAndUpdate(companyId, {
-            name: payload.company_name,
-            logo: payload.company_logo
-        })
-    } catch (err) {
-        console.error('company does not exist:\n', err.message)
-    }
-}
-const updateReview = async (reviewId, payload) => {
-    try {
-        return await Review.findByIdAndUpdate(reviewId, {
-            salary: payload.salary,
-            content: payload.content,
-            position: payload.position
-        })
-    } catch (err) {
-        console.error('review does not exist:\n', err.message)
-    }
-}
-//----------- make into endpoints ----------- //
-
-//Returns an updated review obj
-const updateReviewFields = async (foundReview, payload) => {
-    //update rating-related fields
-    let updateRatingResult = await updateRating(foundReview.rating._id, payload)
-    console.log('updateRatingResult:\n', updateRatingResult)
-    //update company-related fields
-    let updateCompanyResult = await updateCompany(foundReview.company._id, payload)
-    console.log('updateCompanyResult:\n', updateCompanyResult)
-    //update review-related fields
-    return await updateReview(foundReview._id, payload)
-}
-
 //--------------- EXPORTED FUNCTIONS ---------------
 
 module.exports.createReview = async (payload) => {
     console.log('payload:\n', payload)
-    //Find User
-    let foundUserId = await findUserId(payload)
+    let foundUserId = await findUserId(payload) //find user
     console.log('foundUserId:\n', foundUserId)
-    //Create Rating object and add to db
-    let newRatingId = await createRatingAndSave(payload)
+    let newRatingId = await createRatingAndSave(payload) //create Rating & add to db
     console.log('newRatingId:\n', newRatingId)
-    //Check if Company obj exists, if not create Company obj
-    let foundCompany = await findCompanyByName(payload)
+    let foundCompany = await findCompanyByName(payload) //create Company if not exist
     console.log('foundCompanyId:\n', foundCompanyId)
     //Create new Review and save
     let newReview = Review({
@@ -246,18 +153,74 @@ module.exports.createReview = async (payload) => {
             })
         })
         console.log('createReview save status:\n', result)
-        return Status.createSuccessResponse(201, { message: "Review successfully created." })
+        return Status.createSuccessResponse(201, { 
+            review_id: newReview._id,
+            message: "Review successfully CREATED." 
+        })
     } catch (err) {
         console.error('caught err while trying to create Review to db:\n', err.message)
     }
 }
 
-module.exports.updateReview = async (reviewId, payload) => {
+module.exports.updateReviewFields = async (reviewId, payload) => {
     console.log('reviewId:\n', reviewId)
-    //get Review to update
     let foundReview = await getReviewById(reviewId)
     console.log('foundReview:\n', foundReview)
-    //update
-    let updateReviewResult = await updateReviewFields(foundReview, payload)
-    if (updateReviewResult) return Status.createSuccessResponse(200, { message: "Reviewed updated." })
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Review.findByIdAndUpdate(foundReview._id, {
+                salary: payload.salary,
+                content: payload.content,
+                position: payload.position
+            })
+        })
+        console.log('review find and update result:\n', result)
+        if (result) 
+            return Status.createSuccessResponse(200, { 
+                review_id: foundReview._id,
+                company_id: foundReview.company._id,
+                rating_id: foundReview.rating._id,
+                message: "Review fields successfully UPDATED." 
+            })
+    } catch (err) {
+        console.error('review does not exist:\n', err.message)
+    }
 }
+
+module.exports.updateReviewCompany = async (companyId, payload) => {
+    try {
+      let result = await db(MONGO_URL, () => {
+          return Company.findByIdAndUpdate(companyId, { //company _id
+              name: payload.name,
+              logo: payload.logo
+          })
+      })
+      if (result)
+        return Status.createSuccessResponse(204, { 
+            company_id: companyId,
+            message: "Company successfully UPDATED." 
+        })
+    } catch (err) {
+        console.error('company does not exist:\n', err.message)
+    }
+  }
+
+  module.exports.updateReviewRating = async (ratingId, payload) => {
+    try {
+      let result = await db(MONGO_URL, () => {
+          return Rating.findByIdAndUpdate(ratingId, { //rating _id
+              culture: payload.culture,
+              mentorship: payload.mentorship,
+              impact: payload.impact,
+              interview: payload.interview
+          })
+      })
+      if (result)
+        return Status.createSuccessResponse(204, { 
+            rating_id: ratingId,
+            message: "Rating successfully UPDATED." 
+        })
+    } catch (err) {
+        console.error('rating does not exist:\n', err.message)
+    }
+  }

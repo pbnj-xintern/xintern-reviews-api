@@ -14,16 +14,48 @@ module.exports.createReview = async (event) => {
   }
 }
 
-module.exports.updateReview = async (event) => {
+module.exports.updateReviewFields = async (event) => {
   let payload = event.body
   let reviewId = event.pathParameters.review_id
   try {
-    return await ReviewsHelper.updateReview(reviewId, payload)
+    return await ReviewsHelper.updateReviewFields(reviewId, payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)
   }
 }
+
+module.exports.updateReviewCompany = async (event) => {
+  let payload = event.body
+  let companyId = event.pathParameters.company_id
+  try {
+    return await ReviewsHelper.updateReviewCompany(companyId, payload)
+  } catch (err) {
+      console.error('company does not exist:\n', err.message)
+      return Status.createErrorResponse(400, err.message)
+  }
+}
+
+module.exports.updateReviewRating = async (event) => {
+  let payload = event.body
+  let ratingId = event.pathParameters.rating_id
+  try {
+    return await ReviewsHelper.updateReviewRating(ratingId, payload)
+  } catch (err) {
+      console.error('rating does not exist:\n', err.message)
+      return Status.createErrorResponse(400, err.message)
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 module.exports.deleteReview = async (event) => {
   let payload = event.body
@@ -34,7 +66,6 @@ module.exports.deleteReview = async (event) => {
     return Status.createErrorResponse(400, err.message)
   }
 }
-
 module.exports.addCompany = async (event) => {
 
 }

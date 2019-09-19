@@ -10,5 +10,12 @@
   "main": "index.js",
   "repository": "https://github.com/pbnj-xintern/xintern-reviews-api.git",
   "author": "John Cen <john.cen@carloanscanada.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
+    "local-updateReviewFields": "sls invoke local -f updateReviewFields -p mock-events/updateReviewFields.json",
+    "local-updateReviewCompany": "sls invoke local -f updateReviewCompany -p mock-events/updateReviewCompany.json",
+    "local-updateReviewRating": "sls invoke local -f updateReviewRating -p mock-events/updateReviewRating.json",
+    "local-updateReview": "yarn local-updateReviewFields && yarn local-updateReviewRating && yarn local-updateReviewCompany"    
+  }
 }

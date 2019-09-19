@@ -54,20 +54,44 @@ functions:
     handler: api-handler.createReview
     events:
       - http:
-          path: reviews/create
+          path: review
           method: POST
           cors: true
 
-  updateReview:
-    handler: api-handler.updateReview
+  updateReviewFields:
+    handler: api-handler.updateReviewFields
     events:
       - http:
-          path: reviews/update/{review_id}
+          path: review/{review_id}
           method: PATCH
           request:
             parameters:
               paths:
                 review_id: true
+          cors: true
+
+  updateReviewCompany:
+    handler: api-handler.updateReviewCompany
+    events:
+      - http:
+          path: company/{company_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                company_id: true
+          cors: true
+
+  updateReviewRating:
+    handler: api-handler.updateReviewRating
+    events:
+      - http:
+          path: rating/{rating_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                rating_id: true
           cors: true
 
   deleteReview:
