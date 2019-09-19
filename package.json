@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@pbnj-xintern/xintern-commons": "^1.0.11",
+    "@pbnj-xintern/xintern-commons": "^1.0.13",
     "axios": "^0.19.0",
     "mongoose": "^5.7.0",
     "serverless": "^1.52.0"
@@ -14,8 +14,11 @@
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
     "local-updateReviewFields": "sls invoke local -f updateReviewFields -p mock-events/updateReviewFields.json",
-    "local-updateReviewCompany": "sls invoke local -f updateReviewCompany -p mock-events/updateReviewCompany.json",
-    "local-updateReviewRating": "sls invoke local -f updateReviewRating -p mock-events/updateReviewRating.json",
-    "local-updateReview": "yarn local-updateReviewFields && yarn local-updateReviewRating && yarn local-updateReviewCompany"    
+    "local-updateCompany": "sls invoke local -f updateCompany -p mock-events/updateCompany.json",
+    "local-updateRating": "sls invoke local -f updateRating -p mock-events/updateRating.json",
+    "local-updateReviewAll": "yarn local-updateReviewFields && yarn local-updateRating && yarn local-updateCompany",
+    "local-deleteRating": "sls invoke local -f deleteRating -p mock-events/deleteRating.json",
+    "local-deleteComments": "sls invoke local -f deleteComments -p mock-events/deleteComments.json",
+    "local-deleteReviewAll": "yarn local-deleteRating && yarn local-deleteComments && yarn local-deleteReview"
   }
 }

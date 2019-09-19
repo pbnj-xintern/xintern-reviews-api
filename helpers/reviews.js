@@ -49,7 +49,7 @@ const createRatingAndSave = async (eventBody) => {
     }
 }
 
-//Checks if Company exists in db by name. Returns company ID 
+//Returns Company obj 
 const findCompanyByName = async (eventBody) => {
     // let newCompany = Company({
     //     _id: new mongoose.Types.ObjectId(),
@@ -80,37 +80,7 @@ const findCompanyByName = async (eventBody) => {
     }
 }   
 
-//Finds company by Id. Returns Company obj
-// const findCompanyById = async (companyId, eventBody) => {
-//     let newCompany = Company({
-//         _id: new mongoose.Types.ObjectId(),
-//         name: eventBody.company_name,
-//         logo: "company logo here"
-//     })
-//     try { 
-//         let foundCompany = await db(MONGO_URL, () => {
-//             return Company.find({ _id: companyId })
-//         })
-//         console.log('Company Found:\n', foundCompany)
-//         if (foundCompany.length > 0) {
-//             foundCompany = foundCompany[0]
-//         } else {
-//             foundCompany = newCompany
-//             let result = await db(MONGO_URL, () => {
-//                 return foundCompany.save().catch(err => {
-//                     console.log('caught err when trying to save new Company to db:\n')
-//                     console.error(err.message)
-//                 })
-//             })
-//             console.log('New Company created and saved:\n', result)
-//             // return Status.createErrorResponse(404, "Company does not exist.")
-//         }
-//         return foundCompany
-//     } catch (err) {
-//         console.error('caught err while trying to find Company:\n', err.message)
-//     }
-// }   
-
+//Returns a Review obj
 const getReviewById = async (reviewId) => {
     try {
         let foundReview = await db(MONGO_URL, () => {
@@ -132,7 +102,7 @@ module.exports.createReview = async (payload) => {
     let newRatingId = await createRatingAndSave(payload) //create Rating & add to db
     console.log('newRatingId:\n', newRatingId)
     let foundCompany = await findCompanyByName(payload) //create Company if not exist
-    console.log('foundCompanyId:\n', foundCompanyId)
+    console.log('foundCompany:\n', foundCompany)
     //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
@@ -205,22 +175,49 @@ module.exports.updateReviewCompany = async (companyId, payload) => {
     }
   }
 
-  module.exports.updateReviewRating = async (ratingId, payload) => {
+module.exports.updateReviewRating = async (ratingId, payload) => {
     try {
-      let result = await db(MONGO_URL, () => {
-          return Rating.findByIdAndUpdate(ratingId, { //rating _id
-              culture: payload.culture,
-              mentorship: payload.mentorship,
-              impact: payload.impact,
-              interview: payload.interview
-          })
-      })
-      if (result)
-        return Status.createSuccessResponse(204, { 
-            rating_id: ratingId,
-            message: "Rating successfully UPDATED." 
+        let result = await db(MONGO_URL, () => {
+            return Rating.findByIdAndUpdate(ratingId, { //rating _id
+                culture: payload.culture,
+                mentorship: payload.mentorship,
+                impact: payload.impact,
+                interview: payload.interview
+            })
         })
+        if (result)
+            return Status.createSuccessResponse(204, { 
+                rating_id: ratingId,
+                message: "Rating successfully UPDATED." 
+            })
     } catch (err) {
         console.error('rating does not exist:\n', err.message)
     }
-  }
+}
+
+//delete rating and comments first, then review
+module.exports.deleteReview = async (reviewId) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Review.findOneAndDelete({
+                _id: reviewId
+            })
+        })
+        if (result) 
+            return Status.createSuccessResponse(200, { 
+                review_id: reviewId,
+                message: "Review successfully DELETED." 
+            })
+    } catch (err) {
+        console.error('delete review caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.deleteRating = async (ratingId) => {
+
+}
+
+module.exports.deleteComments = async (ratingId) => {
+
+}

@@ -25,7 +25,7 @@ module.exports.updateReviewFields = async (event) => {
   }
 }
 
-module.exports.updateReviewCompany = async (event) => {
+module.exports.updateCompany = async (event) => {
   let payload = event.body
   let companyId = event.pathParameters.company_id
   try {
@@ -36,7 +36,7 @@ module.exports.updateReviewCompany = async (event) => {
   }
 }
 
-module.exports.updateReviewRating = async (event) => {
+module.exports.updateRating = async (event) => {
   let payload = event.body
   let ratingId = event.pathParameters.rating_id
   try {
@@ -47,25 +47,30 @@ module.exports.updateReviewRating = async (event) => {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
 module.exports.deleteReview = async (event) => {
-  let payload = event.body
+  let reviewId = event.pathParameters.review_id
   try {
-    // return await ReviewsHelper.deleteReview(payload)
+    return await ReviewsHelper.deleteReview(reviewId)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)
   }
 }
+
+module.exports.deleteRating = async (event) => {
+  let ratingId = event.pathParameters.rating_id
+  try {
+    return await ReviewsHelper.deleteRating(ratingId)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
+module.exports.deleteComments = async (event) => {
+
+}
+
 module.exports.addCompany = async (event) => {
 
 }

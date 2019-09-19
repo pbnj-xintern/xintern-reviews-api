@@ -70,8 +70,8 @@ functions:
                 review_id: true
           cors: true
 
-  updateReviewCompany:
-    handler: api-handler.updateReviewCompany
+  updateCompany:
+    handler: api-handler.updateCompany
     events:
       - http:
           path: company/{company_id}
@@ -82,8 +82,8 @@ functions:
                 company_id: true
           cors: true
 
-  updateReviewRating:
-    handler: api-handler.updateReviewRating
+  updateRating:
+    handler: api-handler.updateRating
     events:
       - http:
           path: rating/{rating_id}
@@ -104,6 +104,26 @@ functions:
             parameters:
               paths:
                 review_id: true
+          cors: true
+
+  deleteRating:
+    handler: api-handler.deleteRating
+    events:
+      - http:
+          path: rating/{rating_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                rating_id: true
+          cors: true
+
+  deleteComments:
+    handler: api-handler.deleteComments
+    events:
+      - http:
+          path: comments
+          method: DELETE
           cors: true
 
   addCompany:
