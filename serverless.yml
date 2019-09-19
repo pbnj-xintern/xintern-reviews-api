@@ -98,7 +98,7 @@ functions:
     handler: api-handler.deleteReview
     events:
       - http:
-          path: reviews/delete/{review_id}
+          path: review/{review_id}
           method: DELETE
           request:
             parameters:
@@ -110,7 +110,7 @@ functions:
     handler: api-handler.addCompany
     events:
       - http:
-          path: company/create
+          path: company
           method: POST
           cors: true
 
