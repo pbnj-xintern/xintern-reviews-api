@@ -9,7 +9,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/pbnj-xintern/xintern-reviews-api.git",
-  "author": "John Cen <john.cen@carloanscanada.com>",
+  "author": "John Cen <john.cen397@gmail.com>",
   "license": "MIT",
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
