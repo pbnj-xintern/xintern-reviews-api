@@ -118,11 +118,23 @@ functions:
                 rating_id: true
           cors: true
 
-  deleteComments:
-    handler: api-handler.deleteComments
+  deleteComment:
+    handler: api-handler.deleteComment
     events:
       - http:
-          path: comments
+          path: comment/{comment_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                comment_id: true
+          cors: true
+
+  deleteAllComments:
+    handler: api-handler.deleteAllComments
+    events:
+      - http:
+          path: comment/all
           method: DELETE
           cors: true
 
