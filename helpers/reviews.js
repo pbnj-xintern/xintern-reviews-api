@@ -293,10 +293,3 @@ module.exports.createComment = async (payload) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
-
-//_id: mongoose.Schema.Types.ObjectId,
-//createdAt: { type: mongoose.Schema.Types.Date, default: new Date(), required: true },
-//upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-//downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-//parentComment: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
-//flagged: { type: mongoose.Schema.Types.Boolean, default: false }
