@@ -87,6 +87,16 @@ module.exports.deleteAllComments = async (event) => {
   }
 }
 
+module.exports.createComment = async (event) => {
+  let payload = event.body
+  try {
+    return await ReviewsHelper.createComment(payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
 
 module.exports.addCompany = async (event) => {
 

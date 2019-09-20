@@ -269,3 +269,34 @@ module.exports.deleteComment = async (commentId) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
+
+module.exports.createComment = async (payload) => {
+    let newComment = Comment({
+        _id: new mongoose.Types.ObjectId(),
+        upvotes: [],
+        downvotes: [],
+        parentComment: null
+    })
+    try {
+        let result = await db(MONGO_URL, () => {
+            return newComment.save().catch(err => {
+                console.error('caught err when trying to save to db:\n', err.message)
+            })
+        })
+        if (result)
+            return Status.createSuccessResponse(201, { 
+                comment_id: newComment._id,
+                message: "Comment successfully CREATED." 
+            })
+    } catch (err) {
+        console.error('create comment caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+//_id: mongoose.Schema.Types.ObjectId,
+//createdAt: { type: mongoose.Schema.Types.Date, default: new Date(), required: true },
+//upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+//downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+//parentComment: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
+//flagged: { type: mongoose.Schema.Types.Boolean, default: false }

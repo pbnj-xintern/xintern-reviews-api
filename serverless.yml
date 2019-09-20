@@ -138,6 +138,14 @@ functions:
           method: DELETE
           cors: true
 
+  createComment:
+    handler: api-handler.createComment
+    events:
+      - http:
+          path: comment
+          method: POST
+          cors: true
+
   addCompany:
     handler: api-handler.addCompany
     events:
