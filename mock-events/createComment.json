@@ -1,7 +1,6 @@
 {
     "body": {
         "upvotes": [],
-        "downvotes": [],
-        "parentComment": {}
+        "downvotes": []
     }
 }
