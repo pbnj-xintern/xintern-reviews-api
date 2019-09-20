@@ -1,6 +1,9 @@
 'use strict';
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
+const Status = require('@pbnj-xintern/xintern-commons/util/status')
+const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const ReviewHelper = require('./helpers/reviews')
+const CompanyHelper = require('./helpers/company')
 
 const TEST_KEY = process.env.TEST_KEY
 
@@ -52,4 +55,22 @@ module.exports.createReview = async (event) => {
 
 module.exports.getFlaggedReviews = async event => {
   return ReviewHelper.getFlaggedReviews()
+}
+
+module.exports.updateCompanyLogo = async event => {
+
+  if (!event.body)
+    return Status.sendErrorResponse(400, 'No image supplied')
+
+  let pathParameters = typeof (event.pathParameters) === 'string' ?
+    JSON.parse(event.pathParameters) :
+    event.pathParameters
+
+  if (!pathParameters)
+    return Status.sendErrorResponse(400, 'Company ID not specified')
+
+  let company = await CompanyHelper.getCompanyById(pathParameters.id)
+
+  return CompanyHelper.updateCompanyPicture(company, event.body)
+
 }

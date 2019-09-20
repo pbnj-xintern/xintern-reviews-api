@@ -1,18 +1,47 @@
 const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const AwsUtil = require('@pbnj-xintern/xintern-commons/util/aws')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
+const dbUrl = process.env.MONGO_URL
 
-module.exports.updateCompanyPicture = async (companyObj, base64, extension) => {
+const getExtension = base64 => {
+    if (base64.includes('image/jpg') || base64.includes('image/jpeg'))
+        return '.jpg'
+    if (base64.includes('image/png'))
+        return '.png'
+    if (base64.includes('image/bmp'))
+        return '.bmp'
+    return null
+}
+
+module.exports.updateCompanyPicture = async (companyObj, base64) => {
+
+    let extension = getExtension(base64)
+
+    if (!extension)
+        return status.createErrorResponse(400, 'Incorrect image format supplied')
+
     let fileName = companyObj.name + '_logo' + extension
-    fileName.replace(' ', '-')
+    fileName = fileName.split(' ').join('-')
+
     let url = await AwsUtil.uploadMultipartToS3(fileName, base64, 'company/')
+
     return db(
-        process.env.MONGO_URL,
+        dbUrl,
         () => Company.findOneAndUpdate({ _id: companyObj._id }, { logo: url }).then(company => {
             return status.createSuccessResponse(200, company)
         }).catch(err => {
             console.log(err)
-            return status.createErrorResponse(500, 'Could not find flagged reviews')
+            return status.createErrorResponse(500, 'Error while finding company')
+        })
+    )
+}
+
+module.exports.getCompanyById = async id => {
+    return db(
+        dbUrl,
+        () => Company.findById(id).catch(err => {
+            console.log(err)
+            return status.createErrorResponse(500, 'Error while finding company')
         })
     )
 }

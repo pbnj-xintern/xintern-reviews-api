@@ -70,9 +70,13 @@ functions:
     handler: api-handler.updateCompanyLogo
     events:
       - http:
-          path: company/logo
+          path: company/{id}/logo/
           method: PATCH
           cors: true
+          request:
+            parameters:
+              paths:
+                id: true
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
