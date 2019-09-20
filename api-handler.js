@@ -67,9 +67,26 @@ module.exports.deleteRating = async (event) => {
   }
 }
 
-module.exports.deleteComments = async (event) => {
-
+module.exports.deleteComment = async (event) => {
+  let commentId = event.pathParameters.comment_id
+  try {
+    return await ReviewsHelper.deleteComment(commentId)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
 }
+
+module.exports.deleteAllComments = async (event) => {
+  let commentsList = event.body.comments //pass in comments array
+  try {
+    return await ReviewsHelper.deleteAllComment(commentsList)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
 
 module.exports.addCompany = async (event) => {
 

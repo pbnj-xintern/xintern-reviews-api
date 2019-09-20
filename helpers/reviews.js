@@ -2,6 +2,7 @@ const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const User = require('@pbnj-xintern/xintern-commons/models/User')
 const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
+const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
 const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 
@@ -215,9 +216,56 @@ module.exports.deleteReview = async (reviewId) => {
 }
 
 module.exports.deleteRating = async (ratingId) => {
-
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Rating.findOneAndDelete({
+                _id: ratingId
+            })
+        })
+        if (result) 
+            return Status.createSuccessResponse(200, { 
+                rating_id: ratingId,
+                message: "Rating successfully DELETED." 
+            })
+    } catch (err) {
+        console.error('delete rating caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
 }
 
-module.exports.deleteComments = async (ratingId) => {
+module.exports.deleteAllComments = async (commentsList) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Comment.deleteMany({
+                _id: {
+                    $in: commentsList //array of comments
+                }
+            })
+        })
+        if (result) 
+            return Status.createSuccessResponse(200, { 
+                message: "All comments successfully DELETED." 
+            })
+    } catch (err) {
+        console.error('delete all comments caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
 
+module.exports.deleteComment = async (commentId) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Comment.findOneAndDelete({
+                _id: commentId
+            })
+        })
+        if (result) 
+            return Status.createSuccessResponse(200, { 
+                comment_id: commentId,
+                message: "Comment successfully DELETED." 
+            })
+    } catch (err) {
+        console.error('delete comment caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
 }
