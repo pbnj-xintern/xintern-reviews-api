@@ -78,9 +78,9 @@ module.exports.deleteComment = async (event) => {
 }
 
 module.exports.deleteAllComments = async (event) => {
-  let commentsList = event.body.comments //pass in comments array
+  let payload = event.body //pass in comments array
   try {
-    return await ReviewsHelper.deleteAllComment(commentsList)
+    return await ReviewsHelper.deleteAllComment(payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)

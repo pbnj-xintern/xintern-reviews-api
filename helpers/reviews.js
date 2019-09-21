@@ -143,9 +143,9 @@ module.exports.updateReviewFields = async (reviewId, payload) => {
                 salary: payload.salary,
                 content: payload.content,
                 position: payload.position
-            })
+            }, { new: true })
         })
-        console.log('review find and update result:\n', result)
+        console.log('Updated review obj:\n', result)
         if (result) 
             return Status.createSuccessResponse(200, { 
                 review_id: foundReview._id,
@@ -164,8 +164,9 @@ module.exports.updateReviewCompany = async (companyId, payload) => {
           return Company.findByIdAndUpdate(companyId, { //company _id
               name: payload.name,
               logo: payload.logo
-          })
+          }, { new: true })
       })
+      console.log('Updated Company obj:\n', result)
       if (result)
         return Status.createSuccessResponse(204, { 
             company_id: companyId,
@@ -184,8 +185,9 @@ module.exports.updateReviewRating = async (ratingId, payload) => {
                 mentorship: payload.mentorship,
                 impact: payload.impact,
                 interview: payload.interview
-            })
+            }, { new: true })
         })
+        console.log('Updated Rating obj:\n', result)
         if (result)
             return Status.createSuccessResponse(204, { 
                 rating_id: ratingId,
@@ -204,6 +206,7 @@ module.exports.deleteReview = async (reviewId) => {
                 _id: reviewId
             })
         })
+        console.log('Deleted Review obj:\n', result)
         if (result) 
             return Status.createSuccessResponse(200, { 
                 review_id: reviewId,
@@ -233,12 +236,12 @@ module.exports.deleteRating = async (ratingId) => {
     }
 }
 
-module.exports.deleteAllComments = async (commentsList) => {
+module.exports.deleteAllComments = async (payload) => {
     try {
         let result = await db(MONGO_URL, () => {
             return Comment.deleteMany({
                 _id: {
-                    $in: commentsList //array of comments
+                    $in: payload.comments //array of comments
                 }
             })
         })
@@ -274,6 +277,7 @@ module.exports.deleteComment = async (commentId) => {
 module.exports.createComment = async (payload) => {
     let newComment = Comment({
         _id: new mongoose.Types.ObjectId(),
+        content: payload.content,
         upvotes: [],
         downvotes: [],
         parentComment: null
