@@ -146,6 +146,14 @@ functions:
           method: POST
           cors: true
 
+  addCommentToReview:
+      handler: api-handler.addCommentToReview
+      events:
+        - http:
+            path: link-comment
+            method: POST
+            cors: true
+
   addCompany:
     handler: api-handler.addCompany
     events:

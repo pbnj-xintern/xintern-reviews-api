@@ -134,12 +134,12 @@ module.exports.createReview = async (payload) => {
 }
 
 module.exports.updateReviewFields = async (reviewId, payload) => {
-    console.log('reviewId:\n', reviewId)
-    let foundReview = await getReviewById(reviewId)
-    console.log('foundReview:\n', foundReview)
+    // console.log('reviewId:\n', reviewId)
+    // let foundReview = await getReviewById(reviewId)
+    // console.log('foundReview:\n', foundReview)
     try {
         let result = await db(MONGO_URL, () => {
-            return Review.findByIdAndUpdate(foundReview._id, {
+            return Review.findByIdAndUpdate(reviewId, {
                 salary: payload.salary,
                 content: payload.content,
                 position: payload.position
@@ -148,9 +148,9 @@ module.exports.updateReviewFields = async (reviewId, payload) => {
         console.log('Updated review obj:\n', result)
         if (result) 
             return Status.createSuccessResponse(200, { 
-                review_id: foundReview._id,
-                company_id: foundReview.company._id,
-                rating_id: foundReview.rating._id,
+                review_id: reviewId,
+                company_id: result.company._id,
+                rating_id: result.rating._id,
                 message: "Review fields successfully UPDATED." 
             })
     } catch (err) {
@@ -288,6 +288,7 @@ module.exports.createComment = async (payload) => {
                 console.error('caught err when trying to save to db:\n', err.message)
             })
         })
+        console.log('new comment:\n', result)
         if (result)
             return Status.createSuccessResponse(201, { 
                 comment_id: newComment._id,
@@ -295,6 +296,33 @@ module.exports.createComment = async (payload) => {
             })
     } catch (err) {
         console.error('create comment caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.addCommentToReview = async (payload) => {
+    let reviewId = payload.review_id
+    let commentId = payload.comment_id
+    try {
+        //grab existing comments from review obj
+        let review = await getReviewById(reviewId)
+        let existingComments = review.comments
+        console.log("commentsList count:", existingComments.count)
+        //add new comment to list
+        existingComments.push(commentId)
+        console.log("added comment, commentsList count:", existingComments.count)
+        //update review obj
+        let result = await db(MONGO_URL, () => {
+            return Review.findByIdAndUpdate(reviewId, {
+                comments: existingComments
+            }, { new: true })
+        })
+        if (result)
+            return Status.createSuccessResponse(200, {
+                message: "Comment successfully added to Review."
+            })
+    } catch (err) {
+        console.error('add comment to review caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
     }
 }
