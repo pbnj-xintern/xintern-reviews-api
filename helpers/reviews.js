@@ -270,6 +270,7 @@ module.exports.deleteComment = async (commentId) => {
     }
 }
 
+//update review (add comment to list)
 module.exports.createComment = async (payload) => {
     let newComment = Comment({
         _id: new mongoose.Types.ObjectId(),
