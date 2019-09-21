@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@pbnj-xintern/xintern-commons@^1.0.13":
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/@pbnj-xintern/xintern-commons/-/xintern-commons-1.0.13.tgz#cdc6b653c07768baa1a4d20ae3384d554409911c"
-  integrity sha512-2vevsv9qYuif8LYX0RYNdCn1jNCCYBAg+4/K3NJMdhngW/pG/rSAIbqJwECnQdeywATKPtphmrPj4QmU6BC9Ig==
+"@pbnj-xintern/xintern-commons@^1.0.14":
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/@pbnj-xintern/xintern-commons/-/xintern-commons-1.0.14.tgz#df4913444c4760e4d467d9bc8ba31476ecaa1b19"
+  integrity sha512-MYkqHbAI9CRm1PtYbNEHaivB13FduX/9QYTr/893Ql7gWnCdvXi31HyGwSzoQ9uR6nVcIeKi+ve4Tv1z5plYWg==
   dependencies:
     aws-sdk "^2.531.0"
     mongoose "^5.7.0"
