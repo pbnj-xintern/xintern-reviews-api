@@ -1,16 +1,16 @@
 {
-  "dependencies": {
-    "@pbnj-xintern/xintern-commons": "^1.0.14",
-    "axios": "^0.19.0",
-    "mongoose": "^5.7.0",
-    "serverless": "^1.52.0"
-  },
   "name": "xintern-reviews-api",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/pbnj-xintern/xintern-reviews-api.git",
   "author": "John Cen <john.cen397@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "@pbnj-xintern/xintern-commons": "^1.0.14",
+    "axios": "^0.19.0",
+    "mongoose": "^5.7.0",
+    "serverless": "^1.52.0"
+  },
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
     "local-updateReviewFields": "sls invoke local -f updateReviewFields -p mock-events/updateReviewFields.json",
