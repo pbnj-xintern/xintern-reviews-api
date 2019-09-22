@@ -1,10 +1,28 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
+const dbExec = require('@pbnj-xintern/xintern-commons/util/db')
+const status = require('@pbnj-xintern/xintern-commons/util/status')
+const dbUrl = process.env.MONGO_URL;
+const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const User = require('@pbnj-xintern/xintern-commons/models/User')
 const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
 const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
 const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
+
+module.exports.getFlaggedReviews = () => {
+    return dbExec(
+        dbUrl,
+        () => {
+            return Review.find({ flagged: true }).then(reviews => {
+                return status.createSuccessResponse(200, reviews)
+            }).catch(err => {
+                console.log(err)
+                return status.createErrorResponse(500, 'Could not find flagged reviews')
+            })
+        }
+    )
+}
 
 const mongoose = require('mongoose')
 

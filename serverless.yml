@@ -69,6 +69,14 @@ functions:
               paths:
                 review_id: true
           cors: true
+  
+  getFlaggedReviews:
+    handler: api-handler.getFlaggedReviews
+    events:
+      - http:
+          path: review/create
+          method: GET
+          cors: true
 
   updateCompany:
     handler: api-handler.updateCompany

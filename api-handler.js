@@ -114,4 +114,7 @@ module.exports.updateComment = async (event) => {
 
 // module.exports.addCompany = async (event) => {
 
+module.exports.getFlaggedReviews = async event => {
+  return ReviewHelper.getFlaggedReviews()
+}
 // }
