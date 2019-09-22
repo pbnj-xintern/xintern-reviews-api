@@ -1,0 +1,8 @@
+{
+    "pathParameters": {
+        "comment_id": "5d86c292bb95dd184682757c"
+    },
+    "body": {
+        "content": "comment updated."
+    }
+}

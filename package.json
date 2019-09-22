@@ -22,6 +22,7 @@
     "local-deleteReview": "sls invoke local -f deleteReview -p mock-events/deleteReview.json",
     "local-deleteReviewAll": "yarn local-deleteRating && yarn local-deleteAllComments && yarn local-deleteReview",
     "local-createComment": "sls invoke local -f createComment -p mock-events/createComment.json",
-    "local-deleteComment": "sls invoke local -f deleteComment -p mock-events/deleteComment.json"
+    "local-deleteComment": "sls invoke local -f deleteComment -p mock-events/deleteComment.json",
+    "local-updateComment": "sls invoke local -f updateComment -p mock-events/updateComment.json"
   }
 }

@@ -97,6 +97,17 @@ module.exports.createComment = async (event) => {
   }
 }
 
+module.exports.updateComment = async (event) => {
+  let commentId = event.pathParameters.comment_id
+  let payload = event.body
+  try {
+    return await ReviewsHelper.updateComment(commentId, payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
 // module.exports.addCommentToReview = async (event) => {
 //   let payload = event.body
 //   try {
@@ -107,6 +118,6 @@ module.exports.createComment = async (event) => {
 //   }
 // }
 
-module.exports.addCompany = async (event) => {
+// module.exports.addCompany = async (event) => {
 
-}
+// }

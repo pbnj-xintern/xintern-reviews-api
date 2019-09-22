@@ -145,6 +145,18 @@ functions:
           path: comment
           method: POST
           cors: true
+    
+  updateComment:
+    handler: api-handler.updateComment
+    events:
+      - http:
+          path: comment/{comment_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                comment_id: true
+          cors: true
 
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
@@ -154,13 +166,13 @@ functions:
   #           method: POST
   #           cors: true
 
-  addCompany:
-    handler: api-handler.addCompany
-    events:
-      - http:
-          path: company
-          method: POST
-          cors: true
+  # addCompany:
+  #   handler: api-handler.addCompany
+  #   events:
+  #     - http:
+  #         path: company
+  #         method: POST
+  #         cors: true
 
 
 #    The following are a few example events you can configure

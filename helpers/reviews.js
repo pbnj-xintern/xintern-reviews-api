@@ -339,6 +339,23 @@ module.exports.createComment = async (payload) => {
     }
 }
 
+module.exports.updateComment = async (commentId, payload) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Comment.findByIdAndUpdate(commentId, {
+                content: payload.content
+            }, { new: true })
+        })
+        if (result)
+            return Status.createSuccessResponse(204, {
+                message: "Comment successfully UPDATED."
+            })
+    } catch (err) {
+        console.error('update comment caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
 // module.exports.addCommentToReview = async (payload) => {
 //     let reviewId = payload.review_id
 //     let commentId = payload.comment_id
