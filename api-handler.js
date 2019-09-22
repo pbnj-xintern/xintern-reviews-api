@@ -112,7 +112,7 @@ module.exports.updateComment = async (event) => {
   }
 }
 
-module.exports.getFlaggedReviews = async event => {
+module.exports.getFlaggedReviews = event => {
   return ReviewsHelper.getFlaggedReviews()
 }
 
