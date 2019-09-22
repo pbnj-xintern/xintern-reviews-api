@@ -52,11 +52,6 @@ const createRatingAndSave = async (eventBody) => {
 
 //Returns Company obj 
 const findCompanyByName = async (eventBody) => {
-    // let newCompany = Company({
-    //     _id: new mongoose.Types.ObjectId(),
-    //     name: eventBody.company,
-    //     logo: "company logo here"
-    // })
     try { 
         let foundCompany = await db(MONGO_URL, () => {
             return Company.find({ name: eventBody.company_name.toLowerCase().trim() })
@@ -65,14 +60,6 @@ const findCompanyByName = async (eventBody) => {
         if (foundCompany.length > 0) {
             foundCompany = foundCompany[0]
         } else {
-            // foundCompany = newCompany
-            // let result = await db(MONGO_URL, () => {
-            //     return foundCompany.save().catch(err => {
-            //         console.log('caught err when trying to save new Company to db:\n')
-            //         console.error(err.message)
-            //     })
-            // })
-            // console.log('New Company saved:\n', result)
             return Status.createErrorResponse(404, "Company does not exist.")
         }
         return foundCompany
@@ -135,11 +122,9 @@ const getAllComments = async (reviewId) => {
     //createReview 1.0
 module.exports.createReview = async (payload) => {
     console.log('payload:\n', payload)
-    let foundUserId = await findUserId(payload) //find user
-    console.log('foundUserId:\n', foundUserId)
-    let newRatingId = await createRatingAndSave(payload) //create Rating & add to db
-    console.log('newRatingId:\n', newRatingId)
-    let foundCompany = await findCompanyByName(payload) //create Company if not exist
+    let foundUserId = await findUserId(payload)
+    let newRatingId = await createRatingAndSave(payload) 
+    let foundCompany = await findCompanyByName(payload)
     console.log('foundCompany:\n', foundCompany)
     //Create new Review and save
     let newReview = Review({
@@ -156,9 +141,7 @@ module.exports.createReview = async (payload) => {
     })
     try {
         let result = await db(MONGO_URL, () => {
-            return newReview.save().catch(err => {
-                console.error('caught err when trying to save to db:\n', err.message)
-            })
+            return newReview.save()
         })
         console.log('createReview save status:\n', result)
         return Status.createSuccessResponse(201, { 
@@ -279,8 +262,8 @@ module.exports.deleteReview = async (reviewId) => {
                 _id: reviewId
             })
         })
-        console.log('Deleted Review obj:\n', result)
         if (result) 
+            console.log('Deleted Review obj:\n', result)
             return Status.createSuccessResponse(200, { 
                 review_id: reviewId,
                 message: "Review successfully DELETED." 
@@ -356,30 +339,3 @@ module.exports.updateComment = async (commentId, payload) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
-
-// module.exports.addCommentToReview = async (payload) => {
-//     let reviewId = payload.review_id
-//     let commentId = payload.comment_id
-//     try {
-//         //grab existing comments from review obj
-//         let review = await getReviewById(reviewId)
-//         let existingComments = review.comments
-//         console.log("commentsList count:", existingComments.count)
-//         //add new comment to list
-//         existingComments.push(commentId)
-//         console.log("added comment, commentsList count:", existingComments.count)
-//         //update review obj
-//         let result = await db(MONGO_URL, () => {
-//             return Review.findByIdAndUpdate(reviewId, {
-//                 comments: existingComments
-//             }, { new: true })
-//         })
-//         if (result)
-//             return Status.createSuccessResponse(200, {
-//                 message: "Comment successfully added to Review."
-//             })
-//     } catch (err) {
-//         console.error('add comment to review caught error:', err.message)
-//         return Status.createErrorResponse(400, err.message)
-//     }
-// }
