@@ -80,7 +80,7 @@ module.exports.deleteComment = async (event) => {
 module.exports.deleteAllComments = async (event) => {
   let payload = event.body //pass in comments array
   try {
-    return await ReviewsHelper.deleteAllComment(payload)
+    return await ReviewsHelper.deleteAllComments(payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)
@@ -97,15 +97,15 @@ module.exports.createComment = async (event) => {
   }
 }
 
-module.exports.addCommentToReview = async (event) => {
-  let payload = event.body
-  try {
-    return await ReviewsHelper.addCommentToReview(payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
-}
+// module.exports.addCommentToReview = async (event) => {
+//   let payload = event.body
+//   try {
+//     return await ReviewsHelper.addCommentToReview(payload)
+//   } catch (err) {
+//     console.error('caught error:', err.message)
+//     return Status.createErrorResponse(400, err.message)
+//   }
+// }
 
 module.exports.addCompany = async (event) => {
 

@@ -94,6 +94,41 @@ const getReviewById = async (reviewId) => {
     }
 }
 
+const addCommentToReview = async (reviewId, commentId) => {
+    try {
+        //grab existing comments from review obj
+        let review = await getReviewById(reviewId)
+        let existingComments = review.comments
+        console.log("commentsList count:", existingComments.length)
+        //add new comment to list
+        existingComments.push(commentId)
+        console.log("added comment, commentsList count:", existingComments.length)
+        //update review obj
+        let result = await db(MONGO_URL, () => {
+            return Review.findByIdAndUpdate(reviewId, {
+                comments: existingComments
+            }, { new: true })
+        })
+        if (result)
+            return Status.createSuccessResponse(200, {
+                message: "Comment successfully added to Review."
+            })
+    } catch (err) {
+        console.error('add comment to review caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+const getAllComments = async (reviewId) => {
+    try {
+        let review = await getReviewById(reviewId)
+        return review.comments
+    } catch (err) {
+        console.error('get all comments caught error:', err.message)
+        return Status.createErrorResponse(400, err.message) 
+    }
+}
+
 //--------------- EXPORTED FUNCTIONS ---------------
 
 module.exports.createReview = async (payload) => {
@@ -238,10 +273,11 @@ module.exports.deleteRating = async (ratingId) => {
 
 module.exports.deleteAllComments = async (payload) => {
     try {
+        let commentsList = await getAllComments(payload.review_id)
         let result = await db(MONGO_URL, () => {
             return Comment.deleteMany({
                 _id: {
-                    $in: payload.comments //array of comments
+                    $in: commentsList //array of comments
                 }
             })
         })
@@ -275,12 +311,13 @@ module.exports.deleteComment = async (commentId) => {
 
 //update review (add comment to list)
 module.exports.createComment = async (payload) => {
+    let reviewId = payload.review_id
     let newComment = Comment({
         _id: new mongoose.Types.ObjectId(),
         content: payload.content,
         upvotes: [],
         downvotes: [],
-        parentComment: null
+        parentComment: (Boolean(payload.parent_comment_id)) ? payload.parent_comment_id : null
     })
     try {
         let result = await db(MONGO_URL, () => {
@@ -289,7 +326,9 @@ module.exports.createComment = async (payload) => {
             })
         })
         console.log('new comment:\n', result)
-        if (result)
+        let newCommentId = result._id
+        let response = await addCommentToReview(reviewId, newCommentId) 
+        if (response.statusCode === 200)
             return Status.createSuccessResponse(201, { 
                 comment_id: newComment._id,
                 message: "Comment successfully CREATED." 
@@ -300,29 +339,29 @@ module.exports.createComment = async (payload) => {
     }
 }
 
-module.exports.addCommentToReview = async (payload) => {
-    let reviewId = payload.review_id
-    let commentId = payload.comment_id
-    try {
-        //grab existing comments from review obj
-        let review = await getReviewById(reviewId)
-        let existingComments = review.comments
-        console.log("commentsList count:", existingComments.count)
-        //add new comment to list
-        existingComments.push(commentId)
-        console.log("added comment, commentsList count:", existingComments.count)
-        //update review obj
-        let result = await db(MONGO_URL, () => {
-            return Review.findByIdAndUpdate(reviewId, {
-                comments: existingComments
-            }, { new: true })
-        })
-        if (result)
-            return Status.createSuccessResponse(200, {
-                message: "Comment successfully added to Review."
-            })
-    } catch (err) {
-        console.error('add comment to review caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
+// module.exports.addCommentToReview = async (payload) => {
+//     let reviewId = payload.review_id
+//     let commentId = payload.comment_id
+//     try {
+//         //grab existing comments from review obj
+//         let review = await getReviewById(reviewId)
+//         let existingComments = review.comments
+//         console.log("commentsList count:", existingComments.count)
+//         //add new comment to list
+//         existingComments.push(commentId)
+//         console.log("added comment, commentsList count:", existingComments.count)
+//         //update review obj
+//         let result = await db(MONGO_URL, () => {
+//             return Review.findByIdAndUpdate(reviewId, {
+//                 comments: existingComments
+//             }, { new: true })
+//         })
+//         if (result)
+//             return Status.createSuccessResponse(200, {
+//                 message: "Comment successfully added to Review."
+//             })
+//     } catch (err) {
+//         console.error('add comment to review caught error:', err.message)
+//         return Status.createErrorResponse(400, err.message)
+//     }
+// }

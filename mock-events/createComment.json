@@ -1,5 +1,7 @@
 {
     "body": {
-        "content": "this is test comment"
+        "review_id": "5d8515ee76c07062d95cb2a6",
+        "parent_comment_id": "",
+        "content": "this is comment to test deleting."
     }
 }
