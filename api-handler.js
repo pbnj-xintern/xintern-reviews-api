@@ -7,7 +7,7 @@ const ReviewsHelper = require('./helpers/reviews')
 //013_FEAT_CRUD-REVIEW
   //createReview 1.0
 module.exports.createReview = async (event) => {
-  let payload = event.body
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   try {
     return await ReviewsHelper.createReview(payload)
   } catch (err) {
@@ -16,11 +16,11 @@ module.exports.createReview = async (event) => {
   }
 }
   //updateReview 2.1
-module.exports.updateReviewFields = async (event) => {
-  let payload = event.body
+module.exports.updateReview = async (event) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let reviewId = event.pathParameters.review_id
   try {
-    return await ReviewsHelper.updateReviewFields(reviewId, payload)
+    return await ReviewsHelper.updateReview(reviewId, payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)
@@ -28,7 +28,7 @@ module.exports.updateReviewFields = async (event) => {
 }
   //updateReview 2.2
   module.exports.updateRating = async (event) => {
-    let payload = event.body
+    let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
     let ratingId = event.pathParameters.rating_id
     try {
       return await ReviewsHelper.updateReviewRating(ratingId, payload)
@@ -39,7 +39,7 @@ module.exports.updateReviewFields = async (event) => {
   }
   //updateReview 2.3
 module.exports.updateCompany = async (event) => {
-  let payload = event.body
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let companyId = event.pathParameters.company_id
   try {
     return await ReviewsHelper.updateReviewCompany(companyId, payload)
@@ -48,26 +48,26 @@ module.exports.updateCompany = async (event) => {
       return Status.createErrorResponse(400, err.message)
   }
 }
-  //deleteReview 3.1
-module.exports.deleteRating = async (event) => {
-  let ratingId = event.pathParameters.rating_id
-  try {
-    return await ReviewsHelper.deleteRating(ratingId)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
-}
-  //deleteReview 3.2
-module.exports.deleteAllComments = async (event) => {
-  let payload = event.body //pass in comments array
-  try {
-    return await ReviewsHelper.deleteAllComments(payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
-}
+//   //deleteReview 3.1
+// module.exports.deleteRating = async (event) => {
+//   let ratingId = event.pathParameters.rating_id
+//   try {
+//     return await ReviewsHelper.deleteRating(ratingId)
+//   } catch (err) {
+//     console.error('caught error:', err.message)
+//     return Status.createErrorResponse(400, err.message)
+//   }
+// }
+//   //deleteReview 3.2
+// module.exports.deleteAllComments = async (event) => {
+//   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+//   try {
+//     return await ReviewsHelper.deleteAllComments(payload)
+//   } catch (err) {
+//     console.error('caught error:', err.message)
+//     return Status.createErrorResponse(400, err.message)
+//   }
+// }
   //deleteReview 3.3
 module.exports.deleteReview = async (event) => {
   let reviewId = event.pathParameters.review_id
@@ -82,7 +82,7 @@ module.exports.deleteReview = async (event) => {
 //014_FEAT_CRUD_COMMENT
   //createComment
 module.exports.createComment = async (event) => {
-  let payload = event.body
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   try {
     return await ReviewsHelper.createComment(payload)
   } catch (err) {
@@ -103,7 +103,7 @@ module.exports.deleteComment = async (event) => {
   //updateComment
 module.exports.updateComment = async (event) => {
   let commentId = event.pathParameters.comment_id
-  let payload = event.body
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   try {
     return await ReviewsHelper.updateComment(commentId, payload)
   } catch (err) {

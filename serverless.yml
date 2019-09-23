@@ -58,8 +58,8 @@ functions:
           method: POST
           cors: true
 
-  updateReviewFields:
-    handler: api-handler.updateReviewFields
+  updateReview:
+    handler: api-handler.updateReview
     events:
       - http:
           path: review/{review_id}
@@ -114,18 +114,6 @@ functions:
                 review_id: true
           cors: true
 
-  deleteRating:
-    handler: api-handler.deleteRating
-    events:
-      - http:
-          path: rating/{rating_id}
-          method: DELETE
-          request:
-            parameters:
-              paths:
-                rating_id: true
-          cors: true
-
   deleteComment:
     handler: api-handler.deleteComment
     events:
@@ -136,14 +124,6 @@ functions:
             parameters:
               paths:
                 comment_id: true
-          cors: true
-
-  deleteAllComments:
-    handler: api-handler.deleteAllComments
-    events:
-      - http:
-          path: comment/all
-          method: DELETE
           cors: true
 
   createComment:

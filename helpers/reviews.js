@@ -153,7 +153,7 @@ module.exports.createReview = async (payload) => {
 }
 
     //updateReview 2.1
-module.exports.updateReviewFields = async (reviewId, payload) => {
+module.exports.updateReview = async (reviewId, payload) => {
     try {
         let result = await db(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
@@ -216,7 +216,7 @@ module.exports.updateReviewCompany = async (companyId, payload) => {
     }
   }
     //deleteReview 3.1
-module.exports.deleteRating = async (ratingId) => {
+const deleteRating = async (ratingId) => {
     try {
         let result = await db(MONGO_URL, () => {
             return Rating.findOneAndDelete({
@@ -234,7 +234,7 @@ module.exports.deleteRating = async (ratingId) => {
     }
 }
     //deleteReview 3.2
-module.exports.deleteAllComments = async (payload) => {
+const deleteAllComments = async (payload) => {
     try {
         let commentsList = await getAllComments(payload.review_id)
         let result = await db(MONGO_URL, () => {
