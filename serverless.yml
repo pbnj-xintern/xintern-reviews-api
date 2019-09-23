@@ -119,7 +119,7 @@ functions:
     events:
       - http:
           path: comment/{comment_id}
-          method: DELETE
+          method: PATCH
           request:
             parameters:
               paths:

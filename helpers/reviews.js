@@ -305,12 +305,13 @@ module.exports.createComment = async (payload) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
-    //deleteComment
+    //deleteComment - patch request to remove content and user, but keep the object
 module.exports.deleteComment = async (commentId) => {
     try {
         let result = await db(MONGO_URL, () => {
-            return Comment.findOneAndDelete({
-                _id: commentId
+            return Comment.findOneAndUpdate(commentId, {
+                author: null,
+                content: "[this comment has been removed.]"
             })
         })
         if (result) 
