@@ -277,7 +277,7 @@ module.exports.createComment = async (reviewId, payload) => {
         content: payload.content,
         upvotes: [],
         downvotes: [],
-        parentComment: (Boolean(payload.parent_comment_id)) ? payload.parent_comment_id : null
+        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null
     })
     try {
         let result = await db(MONGO_URL, () => {
