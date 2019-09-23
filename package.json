@@ -13,14 +13,12 @@
   },
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
-    "local-updateReviewFields": "sls invoke local -f updateReviewFields -p mock-events/updateReviewFields.json",
+    "local-updateReview": "sls invoke local -f updateReview -p mock-events/updateReview.json",
     "local-updateCompany": "sls invoke local -f updateCompany -p mock-events/updateCompany.json",
     "local-updateRating": "sls invoke local -f updateRating -p mock-events/updateRating.json",
-    "local-updateReviewAll": "yarn local-updateReviewFields && yarn local-updateRating && yarn local-updateCompany",
+    "local-updateReviewAll": "yarn local-updateReview && yarn local-updateRating && yarn local-updateCompany",
     "local-deleteRating": "sls invoke local -f deleteRating -p mock-events/deleteRating.json",
-    "local-deleteAllComments": "sls invoke local -f deleteAllComments -p mock-events/deleteAllComments.json",
     "local-deleteReview": "sls invoke local -f deleteReview -p mock-events/deleteReview.json",
-    "local-deleteReviewAll": "yarn local-deleteRating && yarn local-deleteAllComments && yarn local-deleteReview",
     "local-createComment": "sls invoke local -f createComment -p mock-events/createComment.json",
     "local-deleteComment": "sls invoke local -f deleteComment -p mock-events/deleteComment.json",
     "local-updateComment": "sls invoke local -f updateComment -p mock-events/updateComment.json"
