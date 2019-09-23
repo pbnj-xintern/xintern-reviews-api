@@ -115,6 +115,39 @@ const getAllComments = async (reviewId) => {
     }
 }
 
+    const deleteRating = async (ratingId) => {
+        try {
+            let result = await db(MONGO_URL, () => {
+                return Rating.findOneAndDelete({
+                    _id: ratingId
+                })
+            })
+            if (result) 
+                console.log(`Rating successfully DELETED: ${ratingId}`)
+                return { OKmessage: `Rating successfully DELETED: ${ratingId}` }
+        } catch (err) {
+            console.error('delete rating caught error:', err.message)
+            return Status.createErrorResponse(400, err.message)
+        }
+    }
+    const deleteAllComments = async (payload) => {
+        try {
+            let commentsList = await getAllComments(payload.review_id)
+            let result = await db(MONGO_URL, () => {
+                return Comment.deleteMany({
+                    _id: {
+                        $in: commentsList //array of comments
+                    }
+                })
+            })
+            if (result) 
+                return { OKmessage: "All comments successfully DELETED." }
+        } catch (err) {
+            console.error('delete all comments caught error:', err.message)
+            return Status.createErrorResponse(400, err.message)
+        }
+    }
+
 //--------------- EXPORTED FUNCTIONS ---------------
 
 //013_FEAT_CRUD-REVIEW
@@ -215,47 +248,16 @@ module.exports.updateReviewCompany = async (companyId, payload) => {
         console.error('company does not exist:\n', err.message)
     }
   }
-    //deleteReview 3.1
-const deleteRating = async (ratingId) => {
-    try {
-        let result = await db(MONGO_URL, () => {
-            return Rating.findOneAndDelete({
-                _id: ratingId
-            })
-        })
-        if (result) 
-            return Status.createSuccessResponse(200, { 
-                rating_id: ratingId,
-                message: "Rating successfully DELETED." 
-            })
-    } catch (err) {
-        console.error('delete rating caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-    //deleteReview 3.2
-const deleteAllComments = async (payload) => {
-    try {
-        let commentsList = await getAllComments(payload.review_id)
-        let result = await db(MONGO_URL, () => {
-            return Comment.deleteMany({
-                _id: {
-                    $in: commentsList //array of comments
-                }
-            })
-        })
-        if (result) 
-            return Status.createSuccessResponse(200, { 
-                message: "All comments successfully DELETED." 
-            })
-    } catch (err) {
-        console.error('delete all comments caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-    //deleteReview 3.3
+
+    //deleteReview
 module.exports.deleteReview = async (reviewId) => {
     try {
+        let reviewRatingId = await db(MONGO_URL, () => Review.find({ _id: reviewId }).select('rating'))
+        let deleteRatingResults = await deleteRating(reviewRatingId)
+        if (deleteRatingResults.OKmessage) console.log(deleteRatingResults)
+        let deleteCommentResults = await deleteAllComments(reviewId)
+        if (deleteCommentResults.OKmessage) console.log(deleteCommentResults)
+       
         let result = await db(MONGO_URL, () => {
             return Review.findOneAndDelete({
                 _id: reviewId

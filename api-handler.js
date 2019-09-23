@@ -48,26 +48,7 @@ module.exports.updateCompany = async (event) => {
       return Status.createErrorResponse(400, err.message)
   }
 }
-//   //deleteReview 3.1
-// module.exports.deleteRating = async (event) => {
-//   let ratingId = event.pathParameters.rating_id
-//   try {
-//     return await ReviewsHelper.deleteRating(ratingId)
-//   } catch (err) {
-//     console.error('caught error:', err.message)
-//     return Status.createErrorResponse(400, err.message)
-//   }
-// }
-//   //deleteReview 3.2
-// module.exports.deleteAllComments = async (event) => {
-//   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-//   try {
-//     return await ReviewsHelper.deleteAllComments(payload)
-//   } catch (err) {
-//     console.error('caught error:', err.message)
-//     return Status.createErrorResponse(400, err.message)
-//   }
-// }
+
   //deleteReview 3.3
 module.exports.deleteReview = async (event) => {
   let reviewId = event.pathParameters.review_id
