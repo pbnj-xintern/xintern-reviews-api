@@ -7,6 +7,6 @@ jspm_packages
 
 tokens.yml
 
-yarn-lock.json
+yarn.lock
 
 package-lock.json
