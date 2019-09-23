@@ -82,11 +82,12 @@ functions:
     handler: api-handler.updateCompany
     events:
       - http:
-          path: company/{company_id}
+          path: review/{review_id}/company/{company_id}
           method: PATCH
           request:
             parameters:
               paths:
+                review_id: true
                 company_id: true
           cors: true
 
@@ -94,11 +95,12 @@ functions:
     handler: api-handler.updateRating
     events:
       - http:
-          path: rating/{rating_id}
+          path: /review/{review_id}/rating/{rating_id}
           method: PATCH
           request:
             parameters:
               paths:
+                review_id: true
                 rating_id: true
           cors: true
 
@@ -130,19 +132,24 @@ functions:
     handler: api-handler.createComment
     events:
       - http:
-          path: comment
+          path: review/{review_id}/comment
           method: POST
+          request:
+            parameters:
+              paths:
+                review_id: true
           cors: true
     
   updateComment:
     handler: api-handler.updateComment
     events:
       - http:
-          path: comment/{comment_id}
+          path: review/{review_id}/comment/{comment_id}
           method: PATCH
           request:
             parameters:
               paths:
+                review_id: true
                 comment_id: true
           cors: true
 

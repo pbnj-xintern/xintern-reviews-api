@@ -31,7 +31,7 @@ module.exports.updateReview = async (event) => {
     let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
     let ratingId = event.pathParameters.rating_id
     try {
-      return await ReviewsHelper.updateReviewRating(ratingId, payload)
+      return await ReviewsHelper.updateRating(ratingId, payload)
     } catch (err) {
         console.error('rating does not exist:\n', err.message)
         return Status.createErrorResponse(400, err.message)
@@ -42,7 +42,7 @@ module.exports.updateCompany = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let companyId = event.pathParameters.company_id
   try {
-    return await ReviewsHelper.updateReviewCompany(companyId, payload)
+    return await ReviewsHelper.updateCompany(companyId, payload)
   } catch (err) {
       console.error('company does not exist:\n', err.message)
       return Status.createErrorResponse(400, err.message)
@@ -63,9 +63,10 @@ module.exports.deleteReview = async (event) => {
 //014_FEAT_CRUD_COMMENT
   //createComment
 module.exports.createComment = async (event) => {
+  let reviewId = event.pathParameters.review_id
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   try {
-    return await ReviewsHelper.createComment(payload)
+    return await ReviewsHelper.createComment(reviewId, payload)
   } catch (err) {
     console.error('caught error:', err.message)
     return Status.createErrorResponse(400, err.message)
