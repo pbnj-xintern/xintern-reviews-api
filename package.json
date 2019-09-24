@@ -9,7 +9,7 @@
     "@pbnj-xintern/xintern-commons": "^1.0.14",
     "axios": "^0.19.0",
     "mongoose": "^5.7.0",
-    "serverless": "^1.52.0"
+    "serverless": "^1.52.2"
   },
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
