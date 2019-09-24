@@ -127,7 +127,7 @@ const deleteAllComments = async (payload) => {
 
 //Creates a new Rating obj and saves to db. Returns rating ID
 const createRating = async (eventBody) => {
-    let payloadIsValid = await RequestChecker(eventBody)
+    let payloadIsValid = await RequestChecker(eventBody, Rating)
     if (!payloadIsValid) return "payload does not match model."
     let newRating = Rating({
         _id: new mongoose.Types.ObjectId(),
@@ -184,7 +184,7 @@ module.exports.createReview = async (payload) => {
 
     //updateReview 2.1
 module.exports.updateReview = async (reviewId, payload) => {
-    let payloadIsValid = await RequestChecker(payload)
+    let payloadIsValid = await RequestChecker(payload, Review)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
@@ -209,7 +209,7 @@ module.exports.updateReview = async (reviewId, payload) => {
 
     //updateReview 2.2
 module.exports.updateRating = async (ratingId, payload) => {
-    let payloadIsValid = await RequestChecker(payload)
+    let payloadIsValid = await RequestChecker(payload, Rating)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
@@ -232,7 +232,7 @@ module.exports.updateRating = async (ratingId, payload) => {
 }
     //updateReview 2.3
 module.exports.updateCompany = async (companyId, payload) => {
-    let payloadIsValid = await RequestChecker(payload)
+    let payloadIsValid = await RequestChecker(payload, Company)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
       let result = await db(MONGO_URL, () => {
@@ -328,7 +328,7 @@ module.exports.deleteComment = async (commentId) => {
 }
     //updateComment
 module.exports.updateComment = async (commentId, payload) => {
-    let payloadIsValid = await RequestChecker(payload)
+    let payloadIsValid = await RequestChecker(payload, Comment)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
