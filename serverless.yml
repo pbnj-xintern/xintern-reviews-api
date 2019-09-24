@@ -95,7 +95,7 @@ functions:
     handler: api-handler.updateRating
     events:
       - http:
-          path: /review/{review_id}/rating/{rating_id}
+          path: review/{review_id}/rating/{rating_id}
           method: PATCH
           request:
             parameters:
