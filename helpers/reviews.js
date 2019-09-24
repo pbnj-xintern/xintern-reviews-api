@@ -4,6 +4,7 @@ const User = require('@pbnj-xintern/xintern-commons/models/User')
 const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
 const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
 const Company = require('@pbnj-xintern/xintern-commons/models/Company')
+const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 const mongoose = require('mongoose')
 
@@ -126,6 +127,8 @@ const deleteAllComments = async (payload) => {
 
 //Creates a new Rating obj and saves to db. Returns rating ID
 const createRating = async (eventBody) => {
+    let payloadIsValid = await RequestChecker(eventBody)
+    if (!payloadIsValid) return "payload does not match model."
     let newRating = Rating({
         _id: new mongoose.Types.ObjectId(),
         culture: eventBody.culture,
@@ -181,6 +184,8 @@ module.exports.createReview = async (payload) => {
 
     //updateReview 2.1
 module.exports.updateReview = async (reviewId, payload) => {
+    let payloadIsValid = await RequestChecker(payload)
+    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
@@ -204,6 +209,8 @@ module.exports.updateReview = async (reviewId, payload) => {
 
     //updateReview 2.2
 module.exports.updateRating = async (ratingId, payload) => {
+    let payloadIsValid = await RequestChecker(payload)
+    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
             return Rating.findByIdAndUpdate(ratingId, { //rating _id
@@ -225,6 +232,8 @@ module.exports.updateRating = async (ratingId, payload) => {
 }
     //updateReview 2.3
 module.exports.updateCompany = async (companyId, payload) => {
+    let payloadIsValid = await RequestChecker(payload)
+    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
       let result = await db(MONGO_URL, () => {
           return Company.findByIdAndUpdate(companyId, { //company _id
@@ -319,6 +328,8 @@ module.exports.deleteComment = async (commentId) => {
 }
     //updateComment
 module.exports.updateComment = async (commentId, payload) => {
+    let payloadIsValid = await RequestChecker(payload)
+    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
         let result = await db(MONGO_URL, () => {
             return Comment.findByIdAndUpdate(commentId, {
