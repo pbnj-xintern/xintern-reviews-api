@@ -21,9 +21,10 @@ const findUserId = async (eventBody) => {
             })
         })
         console.log('foundUser:\n', foundUser)
-        return foundUser[0]._id
+        return (foundUser[0]._id) ? foundUser[0]._id : null
     } catch (err) {
         console.error('user does not exist:\n', err.message)
+        return null
     }
 }
 
@@ -42,6 +43,7 @@ const findCompanyByName = async (eventBody) => {
         return foundCompany
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
+        return null
     }
 }   
 
@@ -139,9 +141,10 @@ const createRating = async (eventBody) => {
     try {
         let result = await db(MONGO_URL, () => newRating.save())
         console.log('New Rating Created:\n', result)
-        return newRating._id
+        return (result._id) ? newRating._id : null
     } catch (err) {
         console.error('caught err while trying to save Rating to db:\n', err.message)
+        return null
     }
 }
 
@@ -152,9 +155,11 @@ const createRating = async (eventBody) => {
 module.exports.createReview = async (payload) => {
     console.log('payload:\n', payload)
     let foundUserId = await findUserId(payload)
+    if (foundUserId === null) return Status.createErrorResponse(404, "User not found.") 
     let ratingId = await createRating(payload)
+    if (ratingId === null) return Status.createErrorResponse(400, "Rating could not be created.")
     let foundCompany = await findCompanyByName(payload)
-    console.log('foundCompany:\n', foundCompany)
+    if (foundCompany.statusCode || foundCompany === null) return Status.createErrorResponse(404, "Could not find Company.")
     //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
@@ -290,10 +295,9 @@ module.exports.createComment = async (reviewId, payload) => {
     })
     try {
         let result = await db(MONGO_URL, () => {
-            return newComment.save().catch(err => {
-                console.error('caught err when trying to save to db:\n', err.message)
-            })
+            return newComment.save()
         })
+        if (!result._id || result === null) return Status.createErrorResponse(400, "Comment could not be created.")
         console.log('new comment:\n', result)
         let newCommentId = result._id
         let response = await addCommentToReview(reviewId, newCommentId) 
@@ -315,12 +319,8 @@ module.exports.deleteComment = async (commentId) => {
                 author: null, //handle err msg client side
                 content: "[this comment has been removed.]"
             })
-        })
-        if (result) 
-            return Status.createSuccessResponse(200, { 
-                comment_id: commentId,
-                message: "Comment successfully DELETED." 
-            })
+        }) 
+        return (result.author === null) ? Status.createSuccessResponse(200, { comment_id: commentId, message: "Comment successfully DELETED." }) : Status.createErrorResponse(400, "Comment did not delete.")
     } catch (err) {
         console.error('delete comment caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
