@@ -346,6 +346,7 @@ module.exports.updateComment = async (commentId, payload) => {
     }
 }
 
+
 module.exports.getFlaggedReviews = () => {
     return db(
         MONGO_URL,
@@ -358,4 +359,44 @@ module.exports.getFlaggedReviews = () => {
             })
         }
     )
+
 }
+
+
+module.exports.getPopulatedReviews = async (event) => {
+    let map = {};
+
+    let result = await db(MONGO_URL, () => {
+        return Review.findById(event).populate('comments');
+    })
+    let resultObject = result.toObject();
+    let comments = resultObject.comments;
+    let rootComments = comments.filter(x => {
+        return !x.parentComment;
+    });
+
+    for (var comment of comments){
+        if(!comment.parentComment){
+            map[comment._id] = []
+        }else if(!map[comment.parentComment]){
+            map[comment.parentComment] = [comment]
+        }else if (map[comment.parentComment]){
+            map[comment.parentComment].push(comment)
+        }
+    }
+    rootComments.forEach(root => bfs(root, map));
+    
+    return Status.createSuccessResponse(200, rootComments);
+}
+
+function bfs(root, map){
+    let queue = [root];
+    while (queue.length > 0){
+        let node = queue.shift();
+        node.replies = map[node._id];
+        if (node.replies != null){
+            queue = queue.concat(node.replies)
+        }
+    }
+}
+
