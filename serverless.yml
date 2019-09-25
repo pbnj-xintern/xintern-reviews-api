@@ -78,14 +78,43 @@ functions:
           method: GET
           cors: true
 
-
   updateCompany:
     handler: api-handler.updateCompany
     events:
       - http:
           path: review/{review_id}/company/{company_id}
           method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                company_id: true
+          cors: true
 
+  updateRating:
+    handler: api-handler.updateRating
+    events:
+      - http:
+          path: review/{review_id}/rating/{rating_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                rating_id: true
+          cors: true
+
+  deleteReview:
+    handler: api-handler.deleteReview
+    events:
+      - http:
+          path: review/{review_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
   getPopulatedReviews:
     handler: api-handler.getPopulatedReviews
     events:
@@ -97,17 +126,60 @@ functions:
               paths:
                 review_id: true
           cors: true
+
+  deleteComment:
+    handler: api-handler.deleteComment
+    events:
+      - http:
+          path: comment/{comment_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                comment_id: true
+          cors: true
+
   createComment:
-      handler: api-handler.createComment
-      events:
-        - http:
-            path: review/{review_id}/comment
-            method: POST
-            request:
-              parameters:
-                paths:
-                  review_id: true
-            cors: true
+    handler: api-handler.createComment
+    events:
+      - http:
+          path: review/{review_id}/comment
+          method: POST
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
+    
+  updateComment:
+    handler: api-handler.updateComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
+
+  # addCommentToReview:
+  #     handler: api-handler.addCommentToReview
+  #     events:
+  #       - http:
+  #           path: link-comment
+  #           method: POST
+  #           cors: true
+
+  # addCompany:
+  #   handler: api-handler.addCompany
+  #   events:
+  #     - http:
+  #         path: company
+  #         method: POST
+  #         cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
