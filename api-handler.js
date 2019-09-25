@@ -98,6 +98,8 @@ module.exports.getFlaggedReviews = event => {
   return ReviewsHelper.getFlaggedReviews()
 }
 
-// module.exports.addCompany = async (event) => {
+module.exports.getPopulatedReviews = async (event, context, callback) => {
+	return await ReviewsHelper.getPopulatedReviews(event.pathParameters.review_id);
+}
 
-// }
+
