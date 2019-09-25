@@ -1,0 +1,13 @@
+{
+    "body": {
+        "user_id": "5d7fefa074ab1b5636a3ad7b",
+        "culture": 1,
+        "mentorship": 0,
+        "impact": 3,
+        "interview": 0,
+        "company_name": "test-company",
+        "salary": 55555,
+        "content": "testing delete",
+        "position": "Developer"
+    }
+}

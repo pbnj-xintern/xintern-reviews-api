@@ -1,70 +1,103 @@
 'use strict';
-const Review = require('@pbnj-xintern/xintern-commons/models/Review')
-const ReviewHelper = require('./helpers/reviews')
-
-const TEST_KEY = process.env.TEST_KEY
-
-//--------------- FUNCTIONS ---------------
-
-//Returns a success response
-const sendOKResponse = (statusCode, body) => {
-  return {
-    statusCode: statusCode,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    },
-    body: JSON.stringify(body)
-  }
-}
-
-//Returns an error response
-const sendErrorResponse = (statusCode, errorMessage) => {
-  console.error('sendErrorRepsonse: console logging error msg:\n', errorMessage)
-  return {
-    statusCode: statusCode,
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-    body: JSON.stringify({ error: errorMessage })
-  }
-}
+const Status = require('@pbnj-xintern/xintern-commons/util/status')
+const ReviewsHelper = require('./helpers/reviews')
 
 //--------------- LAMBDA FUNCTIONS ---------------
 
+//013_FEAT_CRUD-REVIEW
+  //createReview 1.0
 module.exports.createReview = async (event) => {
-  let data = event.body
-  // let author = //grab User obj from event/context
-
-  //grab properties from event param
-  let newReview = Review({
-    salary: data.salary,
-    content: data.content,
-    position: data.position
-    // user: //User
-  })
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   try {
-    //send newReview obj to db
-    return sendOKResponse(201, 'Review successfully created!')
+    return await ReviewsHelper.createReview(payload)
   } catch (err) {
     console.error('caught error:', err.message)
-    return sendErrorResponse(400, err.message)
+    return Status.createErrorResponse(400, err.message)
   }
-};
-
-module.exports.getFlaggedReviews = async event => {
-  return ReviewHelper.getFlaggedReviews()
+}
+  //updateReview 2.1
+module.exports.updateReview = async (event) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  let reviewId = event.pathParameters.review_id
+  try {
+    return await ReviewsHelper.updateReview(reviewId, payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+  //updateReview 2.2
+  module.exports.updateRating = async (event) => {
+    let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+    let ratingId = event.pathParameters.rating_id
+    try {
+      return await ReviewsHelper.updateRating(ratingId, payload)
+    } catch (err) {
+        console.error('rating does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+  }
+  //updateReview 2.3
+module.exports.updateCompany = async (event) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  let companyId = event.pathParameters.company_id
+  try {
+    return await ReviewsHelper.updateCompany(companyId, payload)
+  } catch (err) {
+      console.error('company does not exist:\n', err.message)
+      return Status.createErrorResponse(400, err.message)
+  }
 }
 
-// Review model
-// {
-//   _id: mongoose.Schema.Types.ObjectId,
-//   salary: { type: Number, required: true },
-//   createdAt: { type: mongoose.Schema.Types.Date, default: new Date(), required: true },
-//   deletedAt: { type: mongoose.Schema.Types.Date, default: null },
-//   content: { type: String, required: true },
-//   position: { type: String, required: true },
-//   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-//   company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
-//   flagged: { type: mongoose.Schema.Types.Boolean, default: false },
-//   upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-//   downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+  //deleteReview 3.3
+module.exports.deleteReview = async (event) => {
+  let reviewId = event.pathParameters.review_id
+  try {
+    return await ReviewsHelper.deleteReview(reviewId)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
+//014_FEAT_CRUD_COMMENT
+  //createComment
+module.exports.createComment = async (event) => {
+  let reviewId = event.pathParameters.review_id
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  try {
+    return await ReviewsHelper.createComment(reviewId, payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+  //deleteComment
+module.exports.deleteComment = async (event) => {
+  let commentId = event.pathParameters.comment_id
+  try {
+    return await ReviewsHelper.deleteComment(commentId)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+  //updateComment
+module.exports.updateComment = async (event) => {
+  let commentId = event.pathParameters.comment_id
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  try {
+    return await ReviewsHelper.updateComment(commentId, payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
+
+module.exports.getFlaggedReviews = event => {
+  return ReviewsHelper.getFlaggedReviews()
+}
+
+// module.exports.addCompany = async (event) => {
+
 // }
