@@ -1,0 +1,9 @@
+{
+    "pathParameters": {
+        "company_id": "5d812de9c80c24360bfaa534"
+    },
+    "body": {
+        "name": "test-company",
+        "logo": "company logo here"
+    }
+}
