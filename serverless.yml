@@ -15,8 +15,8 @@ provider:
   region: us-east-2
   environment:
     MONGO_URL: "${self:custom.tokens.MONGO_URL}"
-    TOKEN_SECRET: ${self:custom.tokens.TOKEN_SECRET}"
-    BUCKET_NAME: ${self:custom.tokens.BUCKET_NAME}"
+    TOKEN_SECRET: ${self:custom.tokens.TOKEN_SECRET}
+    BUCKET_NAME: ${self:custom.tokens.BUCKET_NAME}
 
 package:
   exclude:

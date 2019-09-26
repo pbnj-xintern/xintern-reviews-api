@@ -6,7 +6,7 @@
   "author": "John Cen <john.cen397@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@pbnj-xintern/xintern-commons": "^1.0.13",
+    "@pbnj-xintern/xintern-commons": "^1.0.16",
     "mongoose": "^5.7.1",
     "serverless": "^1.52.2"
   },

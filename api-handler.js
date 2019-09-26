@@ -1,14 +1,7 @@
 'use strict';
-<<<<<<< HEAD
-const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
-const ReviewHelper = require('./helpers/reviews')
 const CompanyHelper = require('./helpers/company')
-=======
-const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const ReviewsHelper = require('./helpers/reviews')
->>>>>>> dev
 
 //--------------- LAMBDA FUNCTIONS ---------------
 
@@ -110,7 +103,6 @@ module.exports.getPopulatedReviews = async (event, context, callback) => {
 	return await ReviewsHelper.getPopulatedReviews(event.pathParameters.review_id);
 }
 
-<<<<<<< HEAD
 module.exports.updateCompanyLogo = async event => {
 
   console.log('BUCKET', process.env.BUCKET_NAME)
@@ -130,6 +122,3 @@ module.exports.updateCompanyLogo = async event => {
   return CompanyHelper.updateCompanyPicture(company, event.body)
 
 }
-=======
-
->>>>>>> dev
