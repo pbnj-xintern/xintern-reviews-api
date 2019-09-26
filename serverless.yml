@@ -15,6 +15,8 @@ provider:
   region: us-east-2
   environment:
     MONGO_URL: "${self:custom.tokens.MONGO_URL}"
+    TOKEN_SECRET: ${self:custom.tokens.TOKEN_SECRET}"
+    BUCKET_NAME: ${self:custom.tokens.BUCKET_NAME}"
 
 package:
   exclude:
@@ -70,13 +72,13 @@ functions:
     handler: api-handler.updateCompanyLogo
     events:
       - http:
-          path: company/{id}/logo/
+          path: company/{company_id}/logo/
           method: PATCH
           cors: true
           request:
             parameters:
               paths:
-                id: true
+                company_id: true
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

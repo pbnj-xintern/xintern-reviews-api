@@ -59,6 +59,8 @@ module.exports.getFlaggedReviews = async event => {
 
 module.exports.updateCompanyLogo = async event => {
 
+  console.log('BUCKET', process.env.BUCKET_NAME)
+
   if (!event.body)
     return Status.sendErrorResponse(400, 'No image supplied')
 
@@ -69,7 +71,7 @@ module.exports.updateCompanyLogo = async event => {
   if (!pathParameters)
     return Status.sendErrorResponse(400, 'Company ID not specified')
 
-  let company = await CompanyHelper.getCompanyById(pathParameters.id)
+  let company = await CompanyHelper.getCompanyById(pathParameters.company_id)
 
   return CompanyHelper.updateCompanyPicture(company, event.body)
 
