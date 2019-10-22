@@ -400,3 +400,23 @@ function bfs(root, map){
     }
 }
 
+module.exports.addCompany = async (payload) => {
+    let newCompany = new Company({
+        name: payload.name,
+        logo: payload.logo,
+        location: payload.location
+    })
+    try {
+        let result = await db(MONGO_URL, () => {
+            return newCompany.save()
+        })
+        if (!result._id || result === null) return Status.createErrorResponse(400, "Company could not be created.")
+        return Status.createSuccessResponse(201, {
+            company_id: newCompany._id,
+            message: "Company successfully CREATED."
+        })
+    } catch (err) {
+        console.error('create company caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}

@@ -164,6 +164,14 @@ functions:
                 comment_id: true
           cors: true
 
+  addCompany:
+    handler:
+    events:
+      - http:
+          path: company
+          method: POST
+          cors: true
+
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
   #     events:
