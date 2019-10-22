@@ -402,6 +402,7 @@ function bfs(root, map){
 
 module.exports.addCompany = async (payload) => {
     let newCompany = new Company({
+        _id: new mongoose.Types.ObjectId(),
         name: payload.name,
         logo: payload.logo,
         location: payload.location

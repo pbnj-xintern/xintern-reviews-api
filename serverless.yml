@@ -165,7 +165,7 @@ functions:
           cors: true
 
   addCompany:
-    handler:
+    handler: api-handler.addCompany
     events:
       - http:
           path: company
