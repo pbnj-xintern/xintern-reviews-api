@@ -172,6 +172,18 @@ functions:
           method: POST
           cors: true
 
+  deleteCompany:
+    handler: api-handler.deleteCompany
+    events:
+      - http:
+          path: company/{company_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                company_id: true
+          cors: true
+
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
   #     events:

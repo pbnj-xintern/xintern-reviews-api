@@ -75,23 +75,13 @@ module.exports.createComment = async (event) => {
   //deleteComment
 module.exports.deleteComment = async (event) => {
   let commentId = event.pathParameters.comment_id
-  try {
-    return await ReviewsHelper.deleteComment(commentId)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.deleteComment(commentId)
 }
   //updateComment
 module.exports.updateComment = async (event) => {
   let commentId = event.pathParameters.comment_id
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.updateComment(commentId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateComment(commentId, payload)
 }
 
 module.exports.getFlaggedReviews = event => {
@@ -104,11 +94,10 @@ module.exports.getPopulatedReviews = async (event, context, callback) => {
 
 module.exports.addCompany = async (event, context) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.addCompany(payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.addCompany(payload)
+}
+
+module.exports.deleteCompany = async (event) => {
+  return await ReviewsHelper.deleteCompany(event.pathParameters.company_id)
 }
 
