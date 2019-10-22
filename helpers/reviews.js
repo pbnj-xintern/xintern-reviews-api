@@ -161,7 +161,6 @@ const userListsInReview = async id => {
                 return {
                     upvotes: reviews[0].upvotes || [],
                     downvotes: reviews[0].downvotes || []
-                    // flagged: reviews[0].flagged || []
                 }
             })
             .catch(err => {
@@ -171,6 +170,51 @@ const userListsInReview = async id => {
     )
 }
 
+const userListsInComemnts = async id => {
+    return db(
+        MONGO_URL,
+        () => Review.find({ _id: id })
+            .select('upvotes downvotes flagged')
+            .then(reviews => {
+                if (!reviews || reviews.length === 0) {
+                    console.error('Could not find comments with id', id)
+                    return null
+                }
+                return {
+                    upvotes: reviews[0].upvotes || [],
+                    downvotes: reviews[0].downvotes || []
+                }
+            })
+            .catch(err => {
+                err.message ? console.error(err.message) : console.error(err)
+                return null;
+            })
+    )
+}
+
+const getVotingLists = async (id, schema) => {
+    return db(
+        MONGO_URL,
+        () => schema.find({ _id: id })
+            .select('upvotes downvotes')
+            .then(docs => {
+                if (!docs || docs.length === 0) {
+                    console.error('Could not find documents with id', id)
+                    return null
+                }
+                return {
+                    upvotes: docs[0].upvotes || [],
+                    downvotes: docs[0].downvotes || []
+                }
+            })
+            .catch(err => {
+                err.message ? console.error(err.message) : console.error(err)
+                return null;
+            })
+    )
+}
+
+// be cautious when using this !
 const udpateObjectSimple = async (mongooseObj, where, set) => {
     return mongooseObj.findOneAndUpdate(where, set, { new: true })
         .then(updatedObj => {
@@ -460,33 +504,41 @@ function bfs(root, map) {
     }
 }
 
-module.exports.upvoteOrDownvoteReview = async (review_id, user_id, type) => {
+module.exports.genericUpvoteOrDownvote = async (schema_id, user_id, type, schema) => {
 
     if (type !== 'upvotes' && type !== 'downvotes')
         return Status.createErrorResponse(400, 'Missing a field')
 
     let oppositeType = type === 'upvotes' ? 'downvotes' : 'upvotes'
-    let listsFromReview = await userListsInReview(review_id)
+    let votingLists = await getVotingLists(schema_id, schema)
     let foundUserId = await findUserId({ user_id: user_id })
 
-    if (!listsFromReview)
+    if (!votingLists)
         return Status.createErrorResponse(404, 'Could not find review')
     if (!foundUserId)
         return Status.createErrorResponse(404, 'Could not find user')
 
-    let targetList = listsFromReview[type]
-    let oppositeList = listsFromReview[oppositeType]
+    let targetList = votingLists[type]
+    let oppositeList = votingLists[oppositeType]
 
     let updated = appendToVoteList(foundUserId, targetList, oppositeList)
 
-    let where = { _id: review_id }
+    let where = { _id: schema_id }
     let set = {}
     set[type] = updated.targetList
     set[oppositeType] = updated.oppositeList
 
     return db(
         MONGO_URL,
-        () => udpateObjectSimple(Review, where, set)
+        () => udpateObjectSimple(schema, where, set)
     )
 
+}
+
+module.exports.upvoteOrDownvoteReview = async (review_id, user_id, type) => {
+    return this.genericUpvoteOrDownvote(review_id, user_id, type, Review)
+}
+
+module.exports.upvoteOrDownvoteComment = async (comment_id, user_id, type) => {
+    return this.genericUpvoteOrDownvote(comment_id, user_id, type, Comment)
 }

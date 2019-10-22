@@ -1,6 +1,8 @@
 'use strict';
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const ReviewsHelper = require('./helpers/reviews')
+const UPVOTE_TYPE = 'upvotes'
+const DOWNVOTE_TYPE = 'downvotes'
 
 //--------------- LAMBDA FUNCTIONS ---------------
 
@@ -111,7 +113,7 @@ module, exports.upvoteReview = async (event, context, callback) => {
   if (!userId)
     return Status.createErrorResponse(400, "Unclear which user is upvoting")
 
-  return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, 'upvotes')
+  return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, UPVOTE_TYPE)
 }
 
 module, exports.downvoteReview = async (event, context, callback) => {
@@ -123,5 +125,29 @@ module, exports.downvoteReview = async (event, context, callback) => {
   if (!userId)
     return Status.createErrorResponse(400, "Unclear which user is downvoting")
 
-  return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, 'downvotes')
+  return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, DOWNVOTE_TYPE)
+}
+
+module, exports.upvoteComment = async (event, context, callback) => {
+  let commentId = event.pathParameters.comment_id
+  let userId = event.body.user_id
+
+  if (!commentId)
+    return Status.createErrorResponse(400, "Unclear which comment will be downvoted")
+  if (!userId)
+    return Status.createErrorResponse(400, "Unclear which user is attempting to downvote")
+
+  return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, UPVOTE_TYPE)
+}
+
+module, exports.downvoteComment = async (event, context, callback) => {
+  let commentId = event.pathParameters.comment_id
+  let userId = event.body.user_id
+
+  if (!commentId)
+    return Status.createErrorResponse(400, "Unclear which comment will be downvoted")
+  if (!userId)
+    return Status.createErrorResponse(400, "Unclear which user is attempting to downvote")
+
+  return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, DOWNVOTE_TYPE)
 }
