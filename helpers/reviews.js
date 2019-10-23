@@ -423,3 +423,25 @@ module.exports.addCompany = async (payload) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
+
+module.exports.deleteCompany = async (companyId) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Company.findOneAndDelete({
+                _id: companyId
+            })
+        })
+        if (result._id) {
+            console.log('Deleted Company obj:\n', result)
+            return Status.createSuccessResponse(200, { 
+                company_id: companyId,
+                message: "Company successfully DELETED." 
+            })
+        } else {
+            return Status.createErrorResponse(404, "Could not delete company.")
+        }
+    } catch (err) {
+        console.error('delete company caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
