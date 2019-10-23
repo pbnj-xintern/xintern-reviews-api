@@ -447,23 +447,23 @@ module.exports.getFlaggedReviews = () => {
 module.exports.getTopCompanies = async () => {
     let allReviews = null
     try{
-        allReviews = await db(MONGO_URL, () => {
+        allReviews = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
             return Review.find({}).populate('company');
         });
         let companyMap = {}; 
         allReviews.forEach(review => {
             if(review.company){
-                companyMap[review.company._id] = review.company;
+                companyMap[review.company.name] = review.company;
             }
         })
         let counter = {};
         allReviews.forEach(review => {
             if(review.company){
-                company_id = review.company._id;
-                counter[company_id] = counter[company_id] ? ++counter[company_id] : 1;
+                let company_name = review.company.name;
+                counter[company_name] = counter[company_name] ? ++counter[company_name] : 1;
             }
         })
-        companyList = []
+        let companyList = []
         Object.keys(counter).forEach(key => {
             companyList.push({
                 name: companyMap[key].name,
@@ -472,7 +472,7 @@ module.exports.getTopCompanies = async () => {
         })
 
         companyList.sort((a,b) => {
-            return a.count - b.count;
+            return b.count - a.count;
         })
 
         return Status.createSuccessResponse(200,companyList);
