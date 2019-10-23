@@ -399,7 +399,6 @@ module.exports.getTopCompanies = async () => {
         console.log(err.msg);
         return Status.createErrorResponse(400, 'Could not fetch top companies');
     }
-    
 }
 
 
