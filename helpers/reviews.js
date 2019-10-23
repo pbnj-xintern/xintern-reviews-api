@@ -471,9 +471,7 @@ module.exports.getReviewsByCompany = async (companyId) => {
         let validCompany = await findCompanyById(companyId)
         if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
         let result = await db(MONGO_URL, () => {
-            return Review.find({
-                company: companyId
-            })
+            return Review.find({ company: companyId }).populate('company rating user')
         })
         console.log('get reviews by company result:', result)
         if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
