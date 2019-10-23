@@ -102,4 +102,13 @@ module.exports.getPopulatedReviews = async (event, context, callback) => {
 	return await ReviewsHelper.getPopulatedReviews(event.pathParameters.review_id);
 }
 
+module.exports.addCompany = async (event, context) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  try {
+    return await ReviewsHelper.addCompany(payload)
+  } catch (err) {
+    console.error('caught error:', err.message)
+    return Status.createErrorResponse(400, err.message)
+  }
+}
 
