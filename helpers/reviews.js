@@ -47,6 +47,24 @@ const findCompanyByName = async (eventBody) => {
     }
 }
 
+//Returns Company obj 
+const findCompanyById = async (companyId) => {
+    try { 
+        let foundCompany = await db(MONGO_URL, () => {
+            return Company.find({ _id: companyId })
+        })
+        console.log('Company Found:\n', foundCompany)
+        if (foundCompany.length > 0) {
+            foundCompany = foundCompany[0]
+        } else {
+            return null
+        }
+        return foundCompany
+    } catch (err) {
+        console.error('caught err while trying to find Company:\n', err.message)
+    }
+}   
+
 //Returns a Review obj
 const getReviewById = async (reviewId) => {
     try {
@@ -244,6 +262,7 @@ module.exports.createReview = async (payload) => {
         })
     } catch (err) {
         console.error('caught err while trying to create Review to db:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -269,6 +288,7 @@ module.exports.updateReview = async (reviewId, payload) => {
             })
     } catch (err) {
         console.error('review does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -293,6 +313,7 @@ module.exports.updateRating = async (ratingId, payload) => {
             })
     } catch (err) {
         console.error('rating does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 //updateReview 2.3
@@ -314,6 +335,7 @@ module.exports.updateCompany = async (companyId, payload) => {
             })
     } catch (err) {
         console.error('company does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -487,5 +509,83 @@ module.exports.upvoteOrDownvoteReview = async (review_id, user_id, type) => {
         MONGO_URL,
         () => udpateObjectSimple(Review, where, set)
     )
+}
 
+module.exports.addCompany = async (payload) => {
+    let newCompany = new Company({
+        _id: new mongoose.Types.ObjectId(),
+        name: payload.name,
+        logo: payload.logo,
+        location: payload.location
+    })
+    try {
+        let result = await db(MONGO_URL, () => {
+            return newCompany.save()
+        })
+        if (!result._id || result === null) return Status.createErrorResponse(400, "Company could not be created.")
+        return Status.createSuccessResponse(201, {
+            company_id: newCompany._id,
+            message: "Company successfully CREATED."
+        })
+    } catch (err) {
+        console.error('create company caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.deleteCompany = async (companyId) => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Company.findOneAndDelete({
+                _id: companyId
+            })
+        })
+        if (result._id) {
+            console.log('Deleted Company obj:\n', result)
+            return Status.createSuccessResponse(200, { 
+                company_id: companyId,
+                message: "Company successfully DELETED." 
+            })
+        } else {
+            return Status.createErrorResponse(404, "Could not delete company.")
+        }
+    } catch (err) {
+        console.error('delete company caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.getReviewsByCompany = async (companyId) => {
+    try {
+        let validCompany = await findCompanyById(companyId)
+        if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
+        let result = await db(MONGO_URL, () => {
+            return Review.find({ company: companyId }).populate('company rating user')
+        })
+        if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
+        result = result.reverse() //sorts by most recent
+        return Status.createSuccessResponse(200, result)
+    } catch (err) {
+        console.error('get company reviews caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.getRecentReviews = async () => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Review.find().populate("company rating user")
+        })
+        if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
+        result = result.filter((review, i, arr) => {
+            return review.company !== null
+        })
+        let sortedResult = result.sort((a, b) => {
+            return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
+        })
+        return Status.createSuccessResponse(200, sortedResult)
+    } catch (err) {
+        console.error('get recent reviews caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
 }
