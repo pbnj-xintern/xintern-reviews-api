@@ -473,12 +473,27 @@ module.exports.getReviewsByCompany = async (companyId) => {
         let result = await db(MONGO_URL, () => {
             return Review.find({ company: companyId }).populate('company rating user')
         })
-        console.log('get reviews by company result:', result)
         if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
         result = result.reverse() //sorts by most recent
         return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get company reviews caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.getRecentReviews = async () => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Review.find().populate("company rating user")
+        })
+        if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
+        let sortedResult = result.sort((a, b) => {
+            return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
+        })
+        return Status.createSuccessResponse(200, sortedResult)
+    } catch (err) {
+        console.error('get recent reviews caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
     }
 }

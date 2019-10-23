@@ -1,5 +1,4 @@
 'use strict';
-const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const ReviewsHelper = require('./helpers/reviews')
 
 //--------------- LAMBDA FUNCTIONS ---------------
@@ -73,4 +72,8 @@ module.exports.deleteCompany = async (event) => {
 
 module.exports.getReviewsByCompany = async (event) => {
   return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_id)
+}
+
+module.exports.getRecentReviews = async (event) => {
+  return await ReviewsHelper.getRecentReviews()
 }
