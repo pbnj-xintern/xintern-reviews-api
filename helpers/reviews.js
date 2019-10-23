@@ -441,7 +441,46 @@ module.exports.getFlaggedReviews = () => {
             })
         }
     )
+}
 
+
+module.exports.getTopCompanies = async () => {
+    let allReviews = null
+    try{
+        allReviews = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
+            return Review.find({}).populate('company');
+        });
+        let companyMap = {}; 
+        allReviews.forEach(review => {
+            if(review.company){
+                companyMap[review.company.name] = review.company;
+            }
+        })
+        let counter = {};
+        allReviews.forEach(review => {
+            if(review.company){
+                let company_name = review.company.name;
+                counter[company_name] = counter[company_name] ? ++counter[company_name] : 1;
+            }
+        })
+        let companyList = []
+        Object.keys(counter).forEach(key => {
+            companyList.push({
+                name: companyMap[key].name,
+                count: counter[key]
+            })
+        })
+
+        companyList.sort((a,b) => {
+            return b.count - a.count;
+        })
+
+        return Status.createSuccessResponse(200,companyList);
+
+    }catch(err){
+        console.log(err.msg);
+        return Status.createErrorResponse(400, 'Could not fetch top companies');
+    }
 }
 
 

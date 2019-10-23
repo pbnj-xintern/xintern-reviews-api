@@ -98,6 +98,11 @@ module.exports.getReviewsByCompany = async (event) => {
   return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_id)
 }
 
+module.exports.getTopCompanies = async event => {
+  return await ReviewsHelper.getTopCompanies();
+}
+
+
 module.exports.getRecentReviews = async (event) => {
   return await ReviewsHelper.getRecentReviews()
 }

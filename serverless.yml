@@ -229,6 +229,14 @@ functions:
           cors: true
 
 
+  getTopCompanies:
+    handler: api-handler.getTopCompanies
+    events:
+      - http:
+          path: topCompanies
+          method: GET
+          cors: true
+
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
   #     events:
