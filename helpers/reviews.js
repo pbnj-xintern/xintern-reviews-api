@@ -488,6 +488,9 @@ module.exports.getRecentReviews = async () => {
             return Review.find().populate("company rating user")
         })
         if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
+        result = result.filter((review, i, arr) => {
+            return review.company !== null
+        })
         let sortedResult = result.sort((a, b) => {
             return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
         })
