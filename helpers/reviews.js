@@ -359,7 +359,47 @@ module.exports.getFlaggedReviews = () => {
             })
         }
     )
+}
 
+
+module.exports.getTopCompanies = async () => {
+    let allReviews = null
+    try{
+        allReviews = await db(MONGO_URL, () => {
+            return Review.find({}).populate('company');
+        });
+        let companyMap = {}; 
+        allReviews.forEach(review => {
+            if(review.company){
+                companyMap[review.company._id] = review.company;
+            }
+        })
+        let counter = {};
+        allReviews.forEach(review => {
+            if(review.company){
+                company_id = review.company._id;
+                counter[company_id] = counter[company_id] ? ++counter[company_id] : 1;
+            }
+        })
+        companyList = []
+        Object.keys(counter).forEach(key => {
+            companyList.push({
+                name: companyMap[key].name,
+                count: counter[key]
+            })
+        })
+
+        companyList.sort((a,b) => {
+            return a.count - b.count;
+        })
+
+        return Status.createSuccessResponse(200,companyList);
+
+    }catch(err){
+        console.log(err.msg);
+        return Status.createErrorResponse(400, 'Could not fetch top companies');
+    }
+    
 }
 
 

@@ -103,3 +103,9 @@ module.exports.getPopulatedReviews = async (event, context, callback) => {
 }
 
 
+module.exports.getTopCompanies = async event => {
+  return await ReviewsHelper.getTopCompanies();
+	// return await ReviewsHelper.getTopCompanies();
+}
+
+
