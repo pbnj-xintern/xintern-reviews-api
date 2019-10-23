@@ -447,7 +447,7 @@ module.exports.getFlaggedReviews = () => {
 module.exports.getTopCompanies = async () => {
     let allReviews = null
     try{
-        allReviews = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
+        allReviews = await db(MONGO_URL, () => {
             return Review.find({}).populate('company');
         });
         let companyMap = {}; 
