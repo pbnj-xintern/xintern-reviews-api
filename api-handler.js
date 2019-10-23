@@ -8,56 +8,31 @@ const ReviewsHelper = require('./helpers/reviews')
   //createReview 1.0
 module.exports.createReview = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.createReview(payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.createReview(payload)
 }
   //updateReview 2.1
 module.exports.updateReview = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let reviewId = event.pathParameters.review_id
-  try {
-    return await ReviewsHelper.updateReview(reviewId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateReview(reviewId, payload)
 }
-  //updateReview 2.2
-  module.exports.updateRating = async (event) => {
-    let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-    let ratingId = event.pathParameters.rating_id
-    try {
-      return await ReviewsHelper.updateRating(ratingId, payload)
-    } catch (err) {
-        console.error('rating does not exist:\n', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-  }
+//updateReview 2.2
+module.exports.updateRating = async (event) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  let ratingId = event.pathParameters.rating_id
+  return await ReviewsHelper.updateRating(ratingId, payload)
+}
   //updateReview 2.3
 module.exports.updateCompany = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let companyId = event.pathParameters.company_id
-  try {
-    return await ReviewsHelper.updateCompany(companyId, payload)
-  } catch (err) {
-      console.error('company does not exist:\n', err.message)
-      return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateCompany(companyId, payload)
 }
 
   //deleteReview 3.3
 module.exports.deleteReview = async (event) => {
   let reviewId = event.pathParameters.review_id
-  try {
-    return await ReviewsHelper.deleteReview(reviewId)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.deleteReview(reviewId)
 }
 
 //014_FEAT_CRUD_COMMENT

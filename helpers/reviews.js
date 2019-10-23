@@ -202,6 +202,7 @@ module.exports.createReview = async (payload) => {
         })
     } catch (err) {
         console.error('caught err while trying to create Review to db:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -227,6 +228,7 @@ module.exports.updateReview = async (reviewId, payload) => {
             })
     } catch (err) {
         console.error('review does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -251,6 +253,7 @@ module.exports.updateRating = async (ratingId, payload) => {
             })
     } catch (err) {
         console.error('rating does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
 }
     //updateReview 2.3
@@ -272,6 +275,7 @@ module.exports.updateCompany = async (companyId, payload) => {
         })
     } catch (err) {
         console.error('company does not exist:\n', err.message)
+        return Status.createErrorResponse(400, err.message)
     }
   }
 
