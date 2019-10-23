@@ -65,12 +65,7 @@ module.exports.deleteReview = async (event) => {
 module.exports.createComment = async (event) => {
   let reviewId = event.pathParameters.review_id
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.createComment(reviewId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.createComment(reviewId, payload)
 }
   //deleteComment
 module.exports.deleteComment = async (event) => {
@@ -101,3 +96,6 @@ module.exports.deleteCompany = async (event) => {
   return await ReviewsHelper.deleteCompany(event.pathParameters.company_id)
 }
 
+module.exports.getReviewsByCompany = async (event) => {
+  return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_id)
+}

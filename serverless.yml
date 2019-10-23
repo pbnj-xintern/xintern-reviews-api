@@ -184,6 +184,18 @@ functions:
                 company_id: true
           cors: true
 
+  getReviewsByCompany:
+    handler: api-handler.getReviewsByCompany
+    events:
+      - http:
+          path: company/{company_id}/reviews
+          method: GET
+          request:
+            parameters:
+              paths:
+                company_id: true
+          cors: true
+
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
   #     events:

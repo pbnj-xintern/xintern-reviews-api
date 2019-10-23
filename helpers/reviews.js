@@ -47,6 +47,24 @@ const findCompanyByName = async (eventBody) => {
     }
 }   
 
+//Returns Company obj 
+const findCompanyById = async (companyId) => {
+    try { 
+        let foundCompany = await db(MONGO_URL, () => {
+            return Company.find({ _id: companyId })
+        })
+        console.log('Company Found:\n', foundCompany)
+        if (foundCompany.length > 0) {
+            foundCompany = foundCompany[0]
+        } else {
+            return null
+        }
+        return foundCompany
+    } catch (err) {
+        console.error('caught err while trying to find Company:\n', err.message)
+    }
+}   
+
 //Returns a Review obj
 const getReviewById = async (reviewId) => {
     try {
@@ -440,6 +458,25 @@ module.exports.deleteCompany = async (companyId) => {
         }
     } catch (err) {
         console.error('delete company caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.getReviewsByCompany = async (companyId) => {
+    try {
+        let validCompany = await findCompanyById(companyId)
+        if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
+        let result = await db(MONGO_URL, () => {
+            return Review.find({
+                company: companyId
+            })
+        })
+        console.log('get reviews by company result:', result)
+        if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
+        result = result.reverse() //sorts by most recent
+        return Status.createSuccessResponse(200, result)
+    } catch (err) {
+        console.error('get company reviews caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
     }
 }
