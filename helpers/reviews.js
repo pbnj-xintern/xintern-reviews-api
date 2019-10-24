@@ -477,8 +477,11 @@ module.exports.getTopCompanies = async () => {
         companyList.sort((a,b) => {
             return b.count - a.count;
         })
-
-        return Status.createSuccessResponse(200,companyList);
+        if (companyList.length >= 11){
+            return Status.createSuccessResponse(200,companyList.slice(0,11));
+        }
+        return Status.createSuccessResponse(200, companyList);
+        
 
     }catch(err){
         console.log(err.msg);
