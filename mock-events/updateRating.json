@@ -1,0 +1,11 @@
+{
+    "pathParameters": {
+        "rating_id": "5d812de9c80c24360bfaa533"
+    },
+    "body": {
+        "culture": 1,
+        "mentorship": 1,
+        "impact": 1,
+        "interview": 1
+    }
+}

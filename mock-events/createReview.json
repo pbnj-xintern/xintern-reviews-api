@@ -1,0 +1,13 @@
+{
+    "body": {
+        "user_id": "5d7fefa074ab1b5636a3ad7b",
+        "culture": 1,
+        "mentorship": 1,
+        "impact": 1,
+        "interview": 1,
+        "company_name": "toronto-company",
+        "salary": 100000,
+        "content": "testing getReviewsByCompany",
+        "position": "Data Scientist"
+    }
+}
