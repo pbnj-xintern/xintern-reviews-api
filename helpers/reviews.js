@@ -449,7 +449,7 @@ module.exports.getFlaggedReviews = () => {
 module.exports.getTopCompanies = async () => {
     let allReviews = null
     try{
-        allReviews = await db(MONGO_URL, () => {
+        allReviews = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
             return Review.find({}).populate('company');
         });
         let companyMap = {}; 
@@ -469,7 +469,8 @@ module.exports.getTopCompanies = async () => {
         Object.keys(counter).forEach(key => {
             companyList.push({
                 name: companyMap[key].name,
-                count: counter[key]
+                count: counter[key],
+                logo: companyMap[key].logo
             })
         })
 
@@ -614,7 +615,7 @@ module.exports.getReviewsByCompany = async (companyId) => {
 
 module.exports.getRecentReviews = async () => {
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
             return Review.find().populate("company rating user")
         })
         if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
@@ -624,7 +625,7 @@ module.exports.getRecentReviews = async () => {
         let sortedResult = result.sort((a, b) => {
             return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
         })
-        return Status.createSuccessResponse(200, sortedResult)
+        return Status.createSuccessResponse(200, sortedResult.splice(0, 10))
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
