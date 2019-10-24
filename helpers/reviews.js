@@ -10,6 +10,8 @@ const mongoose = require('mongoose')
 
 const MONGO_URL = process.env.MONGO_URL
 
+
+
 //--------------- FUNCTIONS ---------------
 
 //Returns user ID
@@ -488,7 +490,7 @@ module.exports.getPopulatedReviews = async (event) => {
     let map = {};
 
     let result = await db(MONGO_URL, () => {
-        return Review.findById(event).populate('comments');
+        return Review.findById(event).populate('comments rating company');
     })
     let resultObject = result.toObject();
     let comments = resultObject.comments;
