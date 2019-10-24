@@ -11,7 +11,7 @@ service: xintern-reviews-api # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs10.x
-  stage: dev
+  stage: master
   region: us-east-2
   environment:
     MONGO_URL: "${self:custom.tokens.MONGO_URL}"
