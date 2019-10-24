@@ -490,7 +490,7 @@ module.exports.getPopulatedReviews = async (event) => {
     let map = {};
 
     let result = await db(MONGO_URL, () => {
-        return Review.findById(event).populate('comments rating company');
+        return Review.findById(event).populate('comments rating company user');
     })
     let resultObject = result.toObject();
     let comments = resultObject.comments;
