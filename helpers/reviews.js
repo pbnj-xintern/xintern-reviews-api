@@ -621,7 +621,7 @@ module.exports.getRecentReviews = async () => {
         let result = await db(MONGO_URL, () => {
             return Review.find().populate("company rating user")
         })
-        if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
+        if (result.length === 0) return Status.createErrorResponse(404, "No recent Reviews.")
         result = result.filter((review, i, arr) => {
             return review.company !== null
         })
@@ -629,6 +629,30 @@ module.exports.getRecentReviews = async () => {
             return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
         })
         return Status.createSuccessResponse(200, sortedResult.splice(0, 10))
+    } catch (err) {
+        console.error('get recent reviews caught error:', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
+
+module.exports.getAllCompanies = async () => {
+    try {
+        let result = await db(MONGO_URL, () => {
+            return Company.find()
+        })
+        if (result.length === 0) return Status.createErrorResponse(404, "No Companies found.")
+        // result = result.map(company => {
+        //     return {
+        //         name: company.name, 
+        //         logo: company.logo
+        //     }
+        // })
+        result = result.filter((company, i, arr) => {
+            return i === arr.findIndex((c => {
+                return c.name === company.name
+            }))
+        })
+        return result
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
         return Status.createErrorResponse(400, err.message)

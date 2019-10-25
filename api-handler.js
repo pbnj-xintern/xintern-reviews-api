@@ -106,3 +106,7 @@ module.exports.getTopCompanies = async event => {
 module.exports.getRecentReviews = async (event) => {
   return await ReviewsHelper.getRecentReviews()
 }
+
+module.exports.getAllCompanies = async (event) => {
+  return await ReviewsHelper.getAllCompanies()
+}
