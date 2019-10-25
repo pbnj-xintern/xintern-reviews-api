@@ -641,18 +641,12 @@ module.exports.getAllCompanies = async () => {
             return Company.find()
         })
         if (result.length === 0) return Status.createErrorResponse(404, "No Companies found.")
-        // result = result.map(company => {
-        //     return {
-        //         name: company.name, 
-        //         logo: company.logo
-        //     }
-        // })
         result = result.filter((company, i, arr) => {
             return i === arr.findIndex((c => {
                 return c.name === company.name
             }))
         })
-        return result
+        return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
