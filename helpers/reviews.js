@@ -511,6 +511,7 @@ module.exports.getPopulatedReviews = async (event) => {
             map[comment.parentComment].push(comment)
         }
     }
+    rootComments.forEach(root => bfs(root, map));
     resultObject.comments = rootComments;
     return Status.createSuccessResponse(200, resultObject);
 }
