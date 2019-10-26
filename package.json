@@ -8,8 +8,11 @@
   "dependencies": {
     "@pbnj-xintern/xintern-commons": "^1.0.19",
     "axios": "^0.19.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
     "mongoose": "^5.7.0",
-    "serverless": "^1.52.2"
+    "serverless": "^1.52.2",
+    "sinon": "^7.5.0"
   },
   "scripts": {
     "local-createReview": "sls invoke local -f createReview -p mock-events/createReview.json",
@@ -21,7 +24,8 @@
     "local-deleteReview": "sls invoke local -f deleteReview -p mock-events/deleteReview.json",
     "local-createComment": "sls invoke local -f createComment -p mock-events/createComment.json",
     "local-deleteComment": "sls invoke local -f deleteComment -p mock-events/deleteComment.json",
-    "local-updateComment": "sls invoke local -f updateComment -p mock-events/updateComment.json"
+    "local-updateComment": "sls invoke local -f updateComment -p mock-events/updateComment.json",
+    "test": "mocha || true"
   },
   "devDependencies": {
     "mockgoose": "^8.0.3"

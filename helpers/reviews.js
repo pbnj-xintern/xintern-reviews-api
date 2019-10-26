@@ -449,7 +449,7 @@ module.exports.getFlaggedReviews = () => {
 module.exports.getTopCompanies = async () => {
     let allReviews = null
     try{
-        allReviews = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
+        allReviews = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
             return Review.find({}).populate('company');
         });
         let companyMap = {}; 
@@ -547,7 +547,7 @@ module.exports.upvoteOrDownvoteReview = async (review_id, user_id, type) => {
     set[type] = updated.targetList
     set[oppositeType] = updated.oppositeList
 
-    return db(
+    return db.exec(
         MONGO_URL,
         () => udpateObjectSimple(Review, where, set)
     )
@@ -615,7 +615,8 @@ module.exports.getReviewsByCompany = async (companyId) => {
 
 module.exports.getRecentReviews = async () => {
     try {
-        let result = await db('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
+        let result = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
+
             return Review.find().populate("company rating user")
         })
         if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")

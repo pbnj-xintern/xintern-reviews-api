@@ -1,0 +1,382 @@
+[
+    {
+        "createdAt": "2019-06-29T20:48:47.611Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4aa",
+        "salary": 450000,
+        "content": "Just an absolutely great place to work.\n\nThe culture was fantastic and I learned so much about full stack development.",
+        "rating": {
+            "_id": "5db253730085b221e8e9a1bd",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Full Stack Developer",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253730085b221e8e9a1be",
+            "name": "Smile.io",
+            "location": "Kitchener, ON, Canada",
+            "logo": "https://dummyimage.com/300x300/FFC/fff.png&text=S"
+        }
+    },
+    {
+        "createdAt": "2019-06-24T19:56:36.913Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a9",
+        "salary": 592000,
+        "content": "Had an amazing experience. Top notch pay for a Toronto company, amazing people, cool office.\n\nPerks:\n\n- Everything the other poster mentioned\n- Fully stocked kitchen",
+        "rating": {
+            "_id": "5db253730085b221e8e9a1bb",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Full Stack Developer",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253730085b221e8e9a1bc",
+            "name": "Universe",
+            "location": "Toronto, ON, Canada",
+            "logo": "https://dummyimage.com/300x300/9CC/fff.png&text=U"
+        }
+    },
+    {
+        "createdAt": "2019-06-23T22:53:34.099Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a8",
+        "salary": 710000,
+        "content": "The 7100 does not include the housing stipend of around another 2500CAD per month before tax.\n\nWork life balance is mediocre and the company is very frugal.",
+        "rating": {
+            "_id": "5db253720085b221e8e9a1b9",
+            "culture": 3,
+            "mentorship": 3,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Software Development Engineer Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253730085b221e8e9a1ba",
+            "name": "Amazon",
+            "location": "Vancouver, BC, Canada",
+            "logo": "http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png"
+        }
+    },
+    {
+        "createdAt": "2019-06-18T03:59:21.945Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a7",
+        "salary": 340000,
+        "content": "A good place to work. Extremely friendly coworkers who are always ready to help you even if they aren't in your team. It is like any other typical corporation. Supervisors are great mentors. You get to work on significant projects. \nDepending on what project you are working on, it might get a bit repetitive and boring. Overall a pretty good company and experience.\n\nPROS:\nWork life balance is good. 1-2 work from home days per week. Very understanding superiors if you need holidays/ time off work/ want to leave early etc.\n\nCONS:\nNo perks as such. No free food/gym etc. The only free thing you get is free coffee.",
+        "rating": {
+            "_id": "5db253720085b221e8e9a1b7",
+            "culture": 4,
+            "mentorship": 4,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Software Developer",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253720085b221e8e9a1b8",
+            "name": "ADP Canada",
+            "location": "Mississauga, ON, Canada",
+            "logo": "https://dummyimage.com/300x300/FCC/fff.png&text=A"
+        }
+    },
+    {
+        "createdAt": "2019-06-13T12:51:13.154Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a6",
+        "salary": 900000,
+        "content": "I had an absolute blast at Coursera. They let me pick meaningful projects that I wanted to work on, and really cared about my personal interests and growth. Would recommend 100%. ",
+        "rating": {
+            "_id": "5db253700085b221e8e9a1b5",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Software Engineering Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253720085b221e8e9a1b6",
+            "name": "Coursera",
+            "location": "Mountain View, CA, USA",
+            "logo": "https://d3njjcbhbojbot.cloudfront.net/web/images/favicons/mstile-144x144.png"
+        }
+    },
+    {
+        "createdAt": "2019-06-12T19:35:56.065Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a5",
+        "salary": 790000,
+        "content": "- great people, learned a lot\n- no independent intern project, just take tasks from the JIRA board\n",
+        "rating": {
+            "_id": "5db253700085b221e8e9a1b3",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Software Engineering Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253700085b221e8e9a1b4",
+            "name": "Yext",
+            "location": "New York, NY, USA",
+            "logo": "https://dummyimage.com/300x300/CFF/fff.png&text=Y"
+        }
+    },
+    {
+        "createdAt": "2019-06-12T13:03:24.749Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a4",
+        "salary": 790000,
+        "content": "Fantastic experience. They give a 10k signing bonus (meant to be used for relocation/housing). Awesome culture, lots of events (with free food and drinks) going on all the time. Monthly engineering events, bi-yearly offsites, at least monthly intern events, etc.\n\nThey take care of their interns and engineers in general. The free lunch and dinner is $17 per meal and you order it through Seamless (basically Uber Eats but in New York).\n\nHighly, highly recommend this internship to anyone.",
+        "rating": {
+            "_id": "5db2536f0085b221e8e9a1b1",
+            "culture": 4,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Software Engineering Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db253700085b221e8e9a1b4",
+            "name": "Yext",
+            "location": "New York, NY, USA",
+            "logo": "https://dummyimage.com/300x300/CFF/fff.png&text=Y"
+        }
+    },
+    {
+        "createdAt": "2019-06-10T23:29:15.568Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a3",
+        "salary": 460000,
+        "content": "The culture at BMO is excellent, very welcoming and very professional. \n\nThey assigned me a mentor and helped me with everything I was assigned. There was little pressure on completing a task, there would be frequent meetings to keep everyone up to date.\n\nI find that the people working at BMO were very open-minded and friendly. I would recommend this job to anyone who would like to learn and grow professionally.\n",
+        "rating": {
+            "_id": "5db2536c0085b221e8e9a1af",
+            "culture": 5,
+            "mentorship": 4,
+            "impact": 4,
+            "interview": null
+        },
+        "position": "Software Engineer",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db2536f0085b221e8e9a1b0",
+            "name": "Bank of Montreal",
+            "location": "Toronto, ON, Canada",
+            "logo": "https://10.7.34.89/media/filer_public/06/fe/06fe44b8-16bc-45fb-a43d-d1f0a22b3880/19-1324_canadian_wealth_banner_ev2_96_0_1440_390.jpg"
+        }
+    },
+    {
+        "createdAt": "2019-06-08T04:36:26.966Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a2",
+        "salary": 910000,
+        "content": "Fabulous Work-Life Balance! Probably the best in the SF Bay Area. Stocks are also doing fabulous. I got paid $40 USD/hr with $8000 USD lump sum for 12 weeks. Aside from that you also get $360 USD wellness dollars to spendon anything you like.",
+        "rating": {
+            "_id": "5db2536c0085b221e8e9a1ad",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Research Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db2536c0085b221e8e9a1ae",
+            "name": "Adobe Inc.",
+            "location": "San Jose, CA, USA",
+            "logo": "https://dummyimage.com/300x300/undefined/fff.png&text=A"
+        }
+    },
+    {
+        "createdAt": "2019-06-08T03:06:18.675Z",
+        "flagged": false,
+        "upvotes": [],
+        "downvotes": [],
+        "comments": [],
+        "_id": "5db253750085b221e8e9a4a1",
+        "salary": 470000,
+        "content": "If mentorship = handholding, then this isn't the place for you. Mentorship to me means being able to push me in the right direction when I am stuck, and at the same time encouraging me to figure out something on my own. This internship taught me how to be independent. I learned how to actually navigate source code in a large repository and understand code that I did not write. By far one of the best companies that I have interned at, in terms of becoming a better software engineer. Mozilla also flew everyone in the company to San Francisco for a work week, and we were exposed to different Mozilla products (e.g. Firefox, Rust, WebAssembly, AR/VR, etc.). Interns were also given a MacBook Pro 15\" (latest model) to take home after the internship. This is one of the best places to intern at if you are really into the web and open source (+ a lot of swags and stickers). They have a ton of people on the W3C team, if that excites you. Salary is based on your location and education (Degree, Masters/PhD). It is the same for everyone in the same category.",
+        "rating": {
+            "_id": "5db2536b0085b221e8e9a1ab",
+            "culture": 5,
+            "mentorship": 5,
+            "impact": 5,
+            "interview": null
+        },
+        "position": "Engineering Intern",
+        "user": {
+            "createdAt": "2019-10-25T01:39:16.902Z",
+            "isDeleted": false,
+            "isShowInfo": true,
+            "_id": "5db252440085b221e8e99be6",
+            "username": "InternCompass",
+            "password": "raondom password delete later",
+            "email": "InternCompass@test.com",
+            "institution": "University of Waterloo",
+            "firstName": "Intern",
+            "lastName": "Compass",
+            "role": "XINT",
+            "__v": 0
+        },
+        "company": {
+            "_id": "5db2536c0085b221e8e9a1ac",
+            "name": "Mozilla",
+            "location": "Toronto, ON, Canada",
+            "logo": "https://www.mozilla.org/media/img/mozorg/mozilla-256.4720741d4108.jpg"
+        }
+    }
+]
