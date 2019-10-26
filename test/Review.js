@@ -16,7 +16,7 @@ it("get recent reviews 200", async () => {
 it("get recent reviews 404", async () => {
   db.returns([])
   let result = await reviewHelper.getRecentReviews()
-  assert.match(result.statusCode, 400)
+  assert.match(result.statusCode, 404)
 });
 
 it("get top companies 200", async () => {
