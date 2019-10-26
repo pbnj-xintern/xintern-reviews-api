@@ -9,6 +9,7 @@ jobs:
           name: run tests
           command: |
               set -e
+              npm i
               npm test
 workflows:
   version: 2
