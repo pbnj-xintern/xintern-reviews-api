@@ -6,12 +6,9 @@ jobs:
       - image: circleci/node:8.11
     steps:
       - checkout
-      - run: 
-          name: run tests
-          command: |
-              set -e
-              npm i
-              npm test
+      - run: npm i
+      - run: npm test
+          
 workflows:
   version: 2
   build_and_test:
