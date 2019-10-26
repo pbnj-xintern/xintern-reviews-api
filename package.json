@@ -25,9 +25,10 @@
     "local-createComment": "sls invoke local -f createComment -p mock-events/createComment.json",
     "local-deleteComment": "sls invoke local -f deleteComment -p mock-events/deleteComment.json",
     "local-updateComment": "sls invoke local -f updateComment -p mock-events/updateComment.json",
-    "test": "mocha || true"
+    "test": "mocha"
   },
   "devDependencies": {
+    "jest": "^24.9.0",
     "mockgoose": "^8.0.3"
   }
 }
