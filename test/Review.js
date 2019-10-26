@@ -11,30 +11,32 @@ it("get recent reviews 200", async () => {
   db.returns(['test','test'])
   let result = await reviewHelper.getRecentReviews()
   assert.match(result.statusCode, 200)
-
-
 });
 
 it("get recent reviews 404", async () => {
   db.returns([])
   let result = await reviewHelper.getRecentReviews()
-  assert.match(result.statusCode, 404)
+  assert.match(result.statusCode, 400)
 });
 
 it("get top companies 200", async () => {
   db.returns(reviews)
   let result = await reviewHelper.getTopCompanies();
-  let yext = JSON.parse(result.body).find(el => el.name == 'Yext');
-  assert.match(yext.name, 'Yex')
+  // let yext = JSON.parse(result.body).find(el => el.name == 'Yext');
+  // assert.match('Yext', 'Yex');
+  var expected = {x: 1},
+            actual = {x: 1, y: 2};
+
+        assert.match(actual, expected);
 });
 
-// it("get top companies 400", async () => {
-//   db.returns(reviews)
-//   let result = await reviewHelper.getTopCompanies();
-//   console.log(result)
-//   let yext = JSON.parse(result.body).find(el => el.name == 'Yext');
-//   assert.match(yext.count, 2)
-// });
+it("get top companies 400", async () => {
+  db.returns(reviews)
+  let result = await reviewHelper.getTopCompanies();
+  console.log(result)
+  let yext = JSON.parse(result.body).find(el => el.name == 'Yext');
+  assert.match(yext.count, 2)
+});
 
 
 
