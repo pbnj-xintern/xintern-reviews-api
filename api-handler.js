@@ -1,5 +1,4 @@
 'use strict';
-const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const ReviewsHelper = require('./helpers/reviews')
 const UPVOTE_TYPE = 'upvotes'
 const DOWNVOTE_TYPE = 'downvotes'
@@ -10,56 +9,31 @@ const DOWNVOTE_TYPE = 'downvotes'
 //createReview 1.0
 module.exports.createReview = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.createReview(payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.createReview(payload)
 }
 //updateReview 2.1
 module.exports.updateReview = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let reviewId = event.pathParameters.review_id
-  try {
-    return await ReviewsHelper.updateReview(reviewId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateReview(reviewId, payload)
 }
 //updateReview 2.2
 module.exports.updateRating = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let ratingId = event.pathParameters.rating_id
-  try {
-    return await ReviewsHelper.updateRating(ratingId, payload)
-  } catch (err) {
-    console.error('rating does not exist:\n', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateRating(ratingId, payload)
 }
 //updateReview 2.3
 module.exports.updateCompany = async (event) => {
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
   let companyId = event.pathParameters.company_id
-  try {
-    return await ReviewsHelper.updateCompany(companyId, payload)
-  } catch (err) {
-    console.error('company does not exist:\n', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateCompany(companyId, payload)
 }
 
 //deleteReview 3.3
 module.exports.deleteReview = async (event) => {
   let reviewId = event.pathParameters.review_id
-  try {
-    return await ReviewsHelper.deleteReview(reviewId)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.deleteReview(reviewId)
 }
 
 //014_FEAT_CRUD_COMMENT
@@ -67,33 +41,18 @@ module.exports.deleteReview = async (event) => {
 module.exports.createComment = async (event) => {
   let reviewId = event.pathParameters.review_id
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.createComment(reviewId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.createComment(reviewId, payload)
 }
 //deleteComment
 module.exports.deleteComment = async (event) => {
   let commentId = event.pathParameters.comment_id
-  try {
-    return await ReviewsHelper.deleteComment(commentId)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.deleteComment(commentId)
 }
 //updateComment
 module.exports.updateComment = async (event) => {
   let commentId = event.pathParameters.comment_id
   let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-  try {
-    return await ReviewsHelper.updateComment(commentId, payload)
-  } catch (err) {
-    console.error('caught error:', err.message)
-    return Status.createErrorResponse(400, err.message)
-  }
+  return await ReviewsHelper.updateComment(commentId, payload)
 }
 
 module.exports.getFlaggedReviews = event => {
@@ -150,4 +109,26 @@ module, exports.downvoteComment = async (event, context, callback) => {
     return Status.createErrorResponse(400, "Unclear which user is attempting to downvote")
 
   return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, DOWNVOTE_TYPE)
+}
+
+module.exports.addCompany = async (event, context) => {
+  let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+  return await ReviewsHelper.addCompany(payload)
+}
+
+module.exports.deleteCompany = async (event) => {
+  return await ReviewsHelper.deleteCompany(event.pathParameters.company_id)
+}
+
+module.exports.getReviewsByCompany = async (event) => {
+  return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_id)
+}
+
+module.exports.getTopCompanies = async event => {
+  return await ReviewsHelper.getTopCompanies();
+}
+
+
+module.exports.getRecentReviews = async (event) => {
+  return await ReviewsHelper.getRecentReviews()
 }
