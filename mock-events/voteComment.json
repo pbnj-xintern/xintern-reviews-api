@@ -1,0 +1,9 @@
+{
+    "pathParameters": {
+        "review_id": "5d812f3571c8b9369bc88212",
+        "comment_id": "5d812f3571c8b9369bc88212"
+    },
+    "body": {
+        "user_id": "5d7fefa074ab1b5636a3ad7b"
+    }
+}
