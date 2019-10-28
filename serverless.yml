@@ -187,6 +187,31 @@ functions:
               paths:
                 review_id: true
           cors: true
+  upvoteComment:
+    handler: api-handler.upvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/upvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
+    
+  downvoteComment:
+    handler: api-handler.downvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/downvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
 
   addCompany:
     handler: api-handler.addCompany
