@@ -646,6 +646,7 @@ module.exports.getAllCompanies = async () => {
                 return c.name === company.name
             }))
         })
+        result.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
         return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
