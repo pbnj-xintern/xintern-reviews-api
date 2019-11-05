@@ -17,7 +17,7 @@ const MONGO_URL = process.env.MONGO_URL
 //Returns user ID
 const findUserId = async (eventBody) => {
     try {
-        let foundUser = await db(MONGO_URL, () => {
+        let foundUser = await db.exec(MONGO_URL, () => {
             return User.find({
                 _id: eventBody.user_id
             })
@@ -33,7 +33,7 @@ const findUserId = async (eventBody) => {
 //Returns Company obj 
 const findCompanyByName = async (eventBody) => {
     try {
-        let foundCompany = await db(MONGO_URL, () => {
+        let foundCompany = await db.exec(MONGO_URL, () => {
             return Company.find({ name: eventBody.company_name.toLowerCase().trim() })
         })
         console.log('Company Found:\n', foundCompany)
@@ -52,7 +52,7 @@ const findCompanyByName = async (eventBody) => {
 //Returns Company obj 
 const findCompanyById = async (companyId) => {
     try { 
-        let foundCompany = await db(MONGO_URL, () => {
+        let foundCompany = await db.exec(MONGO_URL, () => {
             return Company.find({ _id: companyId })
         })
         console.log('Company Found:\n', foundCompany)
@@ -70,7 +70,7 @@ const findCompanyById = async (companyId) => {
 //Returns a Review obj
 const getReviewById = async (reviewId) => {
     try {
-        let foundReview = await db(MONGO_URL, () => {
+        let foundReview = await db.exec(MONGO_URL, () => {
             return Review.find({ _id: reviewId }).populate("rating user company")
         })
         console.log('foundReview:\n', foundReview)
@@ -88,7 +88,7 @@ const addCommentToReview = async (reviewId, commentId) => {
         //add new comment to list
         existingComments.push(commentId)
         //update review obj
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
                 comments: existingComments
             }, { new: true })
@@ -115,7 +115,7 @@ const getAllComments = async (reviewId) => {
 
 const deleteRating = async (ratingId) => {
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Rating.findOneAndDelete({
                 _id: ratingId
             })
@@ -132,7 +132,7 @@ const deleteRating = async (ratingId) => {
 const deleteAllComments = async (payload) => {
     try {
         let commentsList = await getAllComments(payload.review_id)
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Comment.deleteMany({
                 _id: {
                     $in: commentsList //array of comments
@@ -159,7 +159,7 @@ const createRating = async (eventBody) => {
         interview: eventBody.interview
     })
     try {
-        let result = await db(MONGO_URL, () => newRating.save())
+        let result = await db.exec(MONGO_URL, () => newRating.save())
         console.log('New Rating Created:\n', result)
         return (result._id) ? newRating._id : null
     } catch (err) {
@@ -169,7 +169,7 @@ const createRating = async (eventBody) => {
 }
 
 const userListsInReview = async id => {
-    return db(
+    return db.exec(
         MONGO_URL,
         () => Review.find({ _id: id })
             .select('upvotes downvotes flagged')
@@ -254,7 +254,7 @@ module.exports.createReview = async (payload) => {
         comments: []
     })
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return newReview.save()
         })
         console.log('createReview save status:\n', result)
@@ -273,7 +273,7 @@ module.exports.updateReview = async (reviewId, payload) => {
     let payloadIsValid = await RequestChecker(payload, Review)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
                 salary: payload.salary,
                 content: payload.content,
@@ -299,7 +299,7 @@ module.exports.updateRating = async (ratingId, payload) => {
     let payloadIsValid = await RequestChecker(payload, Rating)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Rating.findByIdAndUpdate(ratingId, { //rating _id
                 culture: payload.culture,
                 mentorship: payload.mentorship,
@@ -323,7 +323,7 @@ module.exports.updateCompany = async (companyId, payload) => {
     let payloadIsValid = await RequestChecker(payload, Company)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Company.findByIdAndUpdate(companyId, { //company _id
                 name: payload.name,
                 logo: payload.logo
@@ -344,13 +344,13 @@ module.exports.updateCompany = async (companyId, payload) => {
 //deleteReview
 module.exports.deleteReview = async (reviewId) => {
     try {
-        let reviewRatingId = await db(MONGO_URL, () => Review.find({ _id: reviewId }).select('rating'))
+        let reviewRatingId = await db.exec(MONGO_URL, () => Review.find({ _id: reviewId }).select('rating'))
         let deleteRatingResults = await deleteRating(reviewRatingId)
         if (deleteRatingResults.OKmessage) console.log(deleteRatingResults)
         let deleteCommentResults = await deleteAllComments(reviewId)
         if (deleteCommentResults.OKmessage) console.log(deleteCommentResults)
 
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Review.findOneAndDelete({
                 _id: reviewId
             })
@@ -378,7 +378,7 @@ module.exports.createComment = async (reviewId, payload) => {
         parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null
     })
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return newComment.save()
         })
         if (!result._id || result === null) return Status.createErrorResponse(400, "Comment could not be created.")
@@ -398,7 +398,7 @@ module.exports.createComment = async (reviewId, payload) => {
 //deleteComment - patch request to remove content and user, but keep the object
 module.exports.deleteComment = async (commentId) => {
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Comment.findOneAndUpdate(commentId, {
                 author: null, //handle err msg client side
                 content: "[this comment has been removed.]"
@@ -415,7 +415,7 @@ module.exports.updateComment = async (commentId, payload) => {
     let payloadIsValid = await RequestChecker(payload, Comment)
     if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Comment.findByIdAndUpdate(commentId, {
                 content: payload.content
             }, { new: true })
@@ -432,7 +432,7 @@ module.exports.updateComment = async (commentId, payload) => {
 
 
 module.exports.getFlaggedReviews = () => {
-    return db(
+    return db.exec(
         MONGO_URL,
         () => {
             return Review.find({ flagged: true }).then(reviews => {
@@ -490,7 +490,7 @@ module.exports.getTopCompanies = async () => {
 module.exports.getPopulatedReviews = async (event) => {
     let map = {};
 
-    let result = await db(MONGO_URL, () => {
+    let result = await db.exec(MONGO_URL, () => {
         return Review.findById(event).populate('comments rating company user');
     })
     let resultObject = result.toObject();
@@ -561,7 +561,7 @@ module.exports.addCompany = async (payload) => {
         location: payload.location
     })
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return newCompany.save()
         })
         if (!result._id || result === null) return Status.createErrorResponse(400, "Company could not be created.")
@@ -577,7 +577,7 @@ module.exports.addCompany = async (payload) => {
 
 module.exports.deleteCompany = async (companyId) => {
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Company.findOneAndDelete({
                 _id: companyId
             })
@@ -601,7 +601,7 @@ module.exports.getReviewsByCompany = async (companyId) => {
     try {
         let validCompany = await findCompanyById(companyId)
         if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Review.find({ company: companyId }).populate('company rating user')
         })
         if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")

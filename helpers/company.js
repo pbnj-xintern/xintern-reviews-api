@@ -29,7 +29,7 @@ module.exports.updateCompanyPicture = async (companyObj, base64) => {
     if (!url)
         return Status.createErrorResponse(500, 'Could not upload image')
 
-    return db(
+    return db.exec(
         dbUrl,
         () => Company.findOneAndUpdate({ _id: companyObj._id }, { logo: url }).then(company => {
             return Status.createSuccessResponse(200, company)
@@ -41,7 +41,7 @@ module.exports.updateCompanyPicture = async (companyObj, base64) => {
 }
 
 module.exports.getCompanyById = async id => {
-    return db(
+    return db.exec(
         dbUrl,
         () => Company.findById(id).catch(err => {
             console.log(err)
