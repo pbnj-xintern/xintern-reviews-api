@@ -295,7 +295,8 @@ module.exports.createReview = async (payload) => {
         company: foundCompany._id,
         upvotes: [],
         downvotes: [],
-        comments: []
+        comments: [],
+        currency: payload.currency
     })
     try {
         let result = await db(MONGO_URL, () => {
@@ -320,6 +321,7 @@ module.exports.updateReview = async (reviewId, payload) => {
         let result = await db(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
                 salary: payload.salary,
+                currency: payload.currency,
                 content: payload.content,
                 position: payload.position
             }, { new: true })
@@ -370,7 +372,8 @@ module.exports.updateCompany = async (companyId, payload) => {
         let result = await db(MONGO_URL, () => {
             return Company.findByIdAndUpdate(companyId, { //company _id
                 name: payload.name,
-                logo: payload.logo
+                logo: payload.logo,
+                location: payload.location
             }, { new: true })
         })
         console.log('Updated Company obj:\n', result)
