@@ -136,3 +136,21 @@ module.exports.getRecentReviews = async (event) => {
 module.exports.getAllCompanies = async (event) => {
   return await ReviewsHelper.getAllCompanies()
 }
+
+module.exports.flagReview = async (event) => {
+  if (!event.pathParameters.review_id)
+    return Status.createErrorResponse(400, "Review is not specified")
+  if (!event.body.user_id)
+    return Status.createErrorResponse(400, "User is not specified")
+
+  return await ReviewsHelper.flagReview(event.body.user_id, event.pathParameters.review_id)
+}
+
+module.exports.flagComment = async (event) => {
+  if (!event.pathParameters.comment_id)
+    return Status.createErrorResponse(400, "Comment is not specified")
+  if (!event.body.user_id)
+    return Status.createErrorResponse(400, "User is not specified")
+
+  return await ReviewsHelper.flagComment(event.body.user_id, event.pathParameters.comment_id)
+}
