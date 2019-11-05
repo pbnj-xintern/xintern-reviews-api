@@ -14,7 +14,7 @@ provider:
   stage: dev
   region: us-east-2
   environment:
-    MONGO_URL: "${self:custom.tokens.MONGO_URL}"
+    MONGO_URL: "${self:custom.tokens.MONGO_TEST}"
 
 package:
   exclude:
@@ -187,6 +187,31 @@ functions:
               paths:
                 review_id: true
           cors: true
+  upvoteComment:
+    handler: api-handler.upvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/upvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
+    
+  downvoteComment:
+    handler: api-handler.downvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/downvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
 
   addCompany:
     handler: api-handler.addCompany
@@ -228,12 +253,19 @@ functions:
           method: GET
           cors: true
 
-
   getTopCompanies:
     handler: api-handler.getTopCompanies
     events:
       - http:
           path: topCompanies
+          method: GET
+          cors: true
+
+  getAllCompanies:
+    handler: api-handler.getAllCompanies
+    events:
+      - http:
+          path: company/all
           method: GET
           cors: true
 
