@@ -422,7 +422,9 @@ module.exports.createComment = async (reviewId, payload) => {
         content: payload.content,
         upvotes: [],
         downvotes: [],
-        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null
+        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null,
+        author: payload.author,
+        review: reviewId
     })
     try {
         let result = await db.exec(MONGO_URL, () => {
@@ -563,6 +565,8 @@ module.exports.getPopulatedReviews = async (event) => {
     return Status.createSuccessResponse(200, resultObject);
 }
 
+
+
 function bfs(root, map) {
     let queue = [root];
     while (queue.length > 0) {
@@ -693,7 +697,7 @@ module.exports.getRecentReviews = async () => {
 
 module.exports.getAllCompanies = async () => {
     try {
-        let result = await db(MONGO_URL, () => {
+        let result = await db.exec(MONGO_URL, () => {
             return Company.find()
         })
         if (result.length === 0) return Status.createErrorResponse(404, "No Companies found.")
@@ -709,3 +713,16 @@ module.exports.getAllCompanies = async () => {
         return Status.createErrorResponse(400, err.message)
     }
 }
+
+module.exports.getPopulatedComments = async reviewId =>{
+    try{
+        let result = await db.exec(MONGO_URL, () => {
+            return Comment.find({ review: reviewId }).populate('user')
+        })
+        console.log(result)
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+module.exports.getReviewById = getReviewById

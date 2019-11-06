@@ -268,6 +268,30 @@ functions:
           path: company/all
           method: GET
           cors: true
+  
+  getReviewById:
+    handler: api-handler.getReviewById
+    events:
+      - http:
+          path: review/{review_id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
+
+  getPopulatedComments:
+    handler: api-handler.getPopulatedComments
+    events:
+      - http:
+          path: comments/{review_id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
 
   # addCommentToReview:
   #     handler: api-handler.addCommentToReview
