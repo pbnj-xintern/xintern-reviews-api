@@ -1,9 +1,10 @@
 {
     "pathParameters": {
-        "review_id": "5d812f3571c8b9369bc88212"
+        "review_id": "5dc1e9a80c12030ddb00e09e"
     },
     "body": {
         "parent_comment_id": "",
-        "content": "this is comment to test updating"
+        "content": "this is comment to test updating",
+        "author": "5dc1e8d20c12030ddb00dac3"
     }
 }
