@@ -40,7 +40,6 @@ module.exports.deleteReview = async (event) => {
 //createComment
 module.exports.createComment = async (event) => {
 	let reviewId = event.pathParameters.review_id
-	console.log(JSON.parse(event.body), "LOGGING THIS")
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	return await ReviewsHelper.createComment(reviewId, payload)
 }
@@ -58,10 +57,6 @@ module.exports.updateComment = async (event) => {
 
 module.exports.getFlaggedReviews = event => {
 	return ReviewsHelper.getFlaggedReviews()
-}
-
-module.exports.getPopulatedReviews = async (event, context, callback) => {
-	return await ReviewsHelper.getPopulatedReviews(event.pathParameters.review_id);
 }
 
 module, exports.upvoteReview = async (event, context, callback) => {
