@@ -3,13 +3,23 @@ const ReviewsHelper = require('./helpers/reviews')
 const UPVOTE_TYPE = 'upvotes'
 const DOWNVOTE_TYPE = 'downvotes'
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
+const TOKEN_SECRET = process.env.TOKEN_SECRET
+const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 //--------------- LAMBDA FUNCTIONS ---------------
 
 //013_FEAT_CRUD-REVIEW
 //createReview 1.0
 module.exports.createReview = async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-	return await ReviewsHelper.createReview(payload)
+	try{
+		let result = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""), TOKEN_SECRET);
+		payload.user_id = result.userId;
+		console.log(payload)
+		//return await ReviewsHelper.createReview(payload)
+	}catch(err){
+		Status.createErrorResponse(401, "Could not verify json web token")
+	}
+	
 }
 //updateReview 2.1
 module.exports.updateReview = async (event) => {
@@ -41,7 +51,14 @@ module.exports.deleteReview = async (event) => {
 module.exports.createComment = async (event) => {
 	let reviewId = event.pathParameters.review_id
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-	return await ReviewsHelper.createComment(reviewId, payload)
+	try{
+		let result = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""), TOKEN_SECRET);
+		payload.author = result.userId;
+		return await ReviewsHelper.createComment(reviewId, payload)
+	}catch(err){
+		console.log(err)
+	}
+	
 }
 //deleteComment
 module.exports.deleteComment = async (event) => {
@@ -125,9 +142,7 @@ module.exports.getReviewById = async event => {
 	let result = await ReviewsHelper.getReviewById(event.pathParameters.review_id);
 	if (!result)
 		return Status.createErrorResponse(404, "Could not find review")
-	return Status.createSuccessResponse(200, {
-		review: result
-	})
+	return Status.createSuccessResponse(200, result)
 }
 
 module.exports.getTopCompanies = async event => {
