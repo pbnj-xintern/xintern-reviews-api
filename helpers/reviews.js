@@ -726,5 +726,4 @@ module.exports.getPopulatedComments = async reviewId =>{
         return Status.createErrorResponse(400, "Unable to populate comments")
     }
 }
-// module.exports.getReviewById = getReviewById
-// module.exports.getAllComments = getAllComments
+module.exports.getReviewById = getReviewById
