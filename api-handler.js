@@ -121,9 +121,7 @@ module.exports.getReviewsByCompany = async (event) => {
 }
 
 module.exports.getReviewById = async event => {
-	console.log(event.pathParameters.review_id)
 	let result = await ReviewsHelper.getReviewById(event.pathParameters.review_id);
-  console.log("result:", result)
   if (!result)
 		return Status.createErrorResponse(404, "Could not find review")
 	return Status.createSuccessResponse(200, result)

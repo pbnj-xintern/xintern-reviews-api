@@ -80,18 +80,6 @@ const getReviewById = async (reviewId) => {
     }
 }
 
-module.exports.grabReviewById = async (reviewId) => {
-    try {
-        let foundReview = await db.exec(MONGO_URL, () => {
-            return Review.find({ _id: reviewId }).populate("rating user company")
-        })
-        console.log('foundReview:\n', foundReview)
-        return foundReview[0]
-    } catch (err) {
-        console.error('review does not exist:\n', err.message)
-    }
-}
-
 const addCommentToReview = async (reviewId, commentId) => {
     try {
         //grab existing comments from review obj
