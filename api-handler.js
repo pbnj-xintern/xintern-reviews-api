@@ -126,7 +126,7 @@ module.exports.getReviewById = async event => {
 	if (!result)
 		return Status.createErrorResponse(404, "Could not find review")
 	return Status.createSuccessResponse(200, {
-		review: result
+		review: result.review
 	})
 }
 
@@ -144,5 +144,6 @@ module.exports.getAllCompanies = async (event) => {
 }
 
 module.exports.getPopulatedComments = async event => {
+	
 	return await ReviewsHelper.getPopulatedComments(event.pathParameters.review_id)
 }
