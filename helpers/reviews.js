@@ -519,6 +519,7 @@ module.exports.getTopCompanies = async () => {
         let companyList = []
         Object.keys(counter).forEach(key => {
             companyList.push({
+                _id: companyMap[key]._id,
                 name: companyMap[key].name,
                 count: counter[key],
                 logo: companyMap[key].logo
