@@ -1,6 +1,8 @@
 {
+    "headers":{
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByYWl5IiwidXNlcklkIjoiNWRjMzM4OTE0ZDk0ZWY0ZGVkMmY4MmM4IiwiaWF0IjoxNTczMTUzMDEwLCJleHAiOjE1NzM3NTc4MTB9.HpLGzis0VVLLvICiDQfsDob2s3IB-rmk_GOSLOhzvKQ"
+    },
     "body": {
-        "user_id": "5d7fefa074ab1b5636a3ad7b",
         "culture": 1,
         "mentorship": 1,
         "impact": 1,

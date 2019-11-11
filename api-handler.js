@@ -11,15 +11,15 @@ const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 //createReview 1.0
 module.exports.createReview = async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-	try{
-		let result = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""), TOKEN_SECRET);
-		payload.user_id = result.userId;
-		console.log(payload)
-		//return await ReviewsHelper.createReview(payload)
-	}catch(err){
-		Status.createErrorResponse(401, "Could not verify json web token")
+	let decodedJWT = false
+	if(event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
-	
+	if(decodedJWT){
+		payload.user_id = decodedJWT.userId;
+		return await ReviewsHelper.createReview(payload)
+	}
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
 }
 //updateReview 2.1
 module.exports.updateReview = async (event) => {
@@ -51,14 +51,16 @@ module.exports.deleteReview = async (event) => {
 module.exports.createComment = async (event) => {
 	let reviewId = event.pathParameters.review_id
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
-	try{
-		let result = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""), TOKEN_SECRET);
-		payload.author = result.userId;
-		return await ReviewsHelper.createComment(reviewId, payload)
-	}catch(err){
-		console.log(err)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
-	
+	if(decodedJWT){
+		payload.author = decodedJWT.userId;
+		return await ReviewsHelper.createComment(reviewId, payload)
+	}
+
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
 }
 //deleteComment
 module.exports.deleteComment = async (event) => {
@@ -76,52 +78,60 @@ module.exports.getFlaggedReviews = event => {
 	return ReviewsHelper.getFlaggedReviews()
 }
 
-module, exports.upvoteReview = async (event, context, callback) => {
+module.exports.upvoteReview = async (event, context, callback) => {
 	let reviewId = event.pathParameters.review_id
-	let userId = event.body.user_id
-
-	if (!reviewId)
-		return Status.createErrorResponse(400, "Unclear which review should be upvoted")
-	if (!userId)
-		return Status.createErrorResponse(400, "Unclear which user is upvoting")
-
-	return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, UPVOTE_TYPE)
+	let decodedJWT = false
+	if(event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if(decodedJWT){
+		let userId = decodedJWT.user_id
+		return await ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, UPVOTE_TYPE)
+	}
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
+	
 }
 
-module, exports.downvoteReview = async (event, context, callback) => {
+module.exports.downvoteReview = async (event, context, callback) => {
 	let reviewId = event.pathParameters.review_id
-	let userId = event.body.user_id
-
-	if (!reviewId)
-		return Status.createErrorResponse(400, "Unclear which review should be downvoted")
-	if (!userId)
-		return Status.createErrorResponse(400, "Unclear which user is downvoting")
-
-	return ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, DOWNVOTE_TYPE)
+	let decodedJWT = false
+	if(event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if(decodedJWT){
+		let userId = decodedJWT.user_id
+		return await ReviewsHelper.upvoteOrDownvoteReview(reviewId, userId, DOWNVOTE_TYPE)
+	}
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
 }
 
-module, exports.upvoteComment = async (event, context, callback) => {
+module.exports.upvoteComment = async (event, context, callback) => {
 	let commentId = event.pathParameters.comment_id
-	let userId = event.body.user_id
+	let decodedJWT = false
+	if(event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if(decodedJWT){
+		let userId = decodedJWT.user_id
+		return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, UPVOTE_TYPE)
+	}
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
 
-	if (!commentId)
-		return Status.createErrorResponse(400, "Unclear which comment will be downvoted")
-	if (!userId)
-		return Status.createErrorResponse(400, "Unclear which user is attempting to downvote")
-
-	return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, UPVOTE_TYPE)
+	
 }
 
 module, exports.downvoteComment = async (event, context, callback) => {
 	let commentId = event.pathParameters.comment_id
-	let userId = event.body.user_id
+	let decodedJWT = false
+	if(event.headers && event.headers.Authorization){
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if(decodedJWT){
+		let userId = decodedJWT.user_id
+		return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, DOWNVOTE_TYPE)
+	}
+	return Status.createErrorResponse(401, "Invalid Bearer Token")
 
-	if (!commentId)
-		return Status.createErrorResponse(400, "Unclear which comment will be downvoted")
-	if (!userId)
-		return Status.createErrorResponse(400, "Unclear which user is attempting to downvote")
-
-	return ReviewsHelper.upvoteOrDownvoteComment(commentId, userId, DOWNVOTE_TYPE)
 }
 
 module.exports.addCompany = async (event, context) => {
