@@ -148,9 +148,8 @@ module.exports.getReviewsByCompany = async (event) => {
 }
 
 module.exports.getReviewById = async event => {
-	console.log(event.pathParameters.review_id)
 	let result = await ReviewsHelper.getReviewById(event.pathParameters.review_id);
-	if (!result)
+  if (!result)
 		return Status.createErrorResponse(404, "Could not find review")
 	return Status.createSuccessResponse(200, result)
 }
@@ -169,5 +168,6 @@ module.exports.getAllCompanies = async (event) => {
 }
 
 module.exports.getPopulatedComments = async event => {
+	
 	return await ReviewsHelper.getPopulatedComments(event.pathParameters.review_id)
 }
