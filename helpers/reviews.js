@@ -39,7 +39,7 @@ const findCompanyByName = async (eventBody) => {
         console.log('Company Found:\n', foundCompany)
         if (foundCompany.length > 0) {
             foundCompany = foundCompany[0]
-            
+
         } else {
             return Status.createErrorResponse(404, "Company does not exist.")
         }
@@ -52,7 +52,7 @@ const findCompanyByName = async (eventBody) => {
 
 //Returns Company obj 
 const findCompanyById = async (companyId) => {
-    try { 
+    try {
         let foundCompany = await db.exec(MONGO_URL, () => {
             return Company.find({ _id: companyId })
         })
@@ -66,7 +66,7 @@ const findCompanyById = async (companyId) => {
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
     }
-}   
+}
 
 //Returns a Review obj
 const getReviewById = async (reviewId) => {
@@ -107,7 +107,7 @@ const addCommentToReview = async (reviewId, commentId) => {
 const getAllComments = async (reviewId) => {
     try {
         let comments = await db.exec(MONGO_URL, () => {
-            return Comment.find({review:reviewId}).populate('author')
+            return Comment.find({ review: reviewId }).populate('author')
         })
         return comments
     } catch (err) {
@@ -171,50 +171,6 @@ const createRating = async (eventBody) => {
     }
 }
 
-const userListsInReview = async id => {
-    return db.exec(
-        MONGO_URL,
-        () => Review.find({ _id: id })
-            .select('upvotes downvotes flagged')
-            .then(reviews => {
-                if (!reviews || reviews.length === 0) {
-                    console.error('Could not find reviews with id', id)
-                    return null
-                }
-                return {
-                    upvotes: reviews[0].upvotes || [],
-                    downvotes: reviews[0].downvotes || []
-                }
-            })
-            .catch(err => {
-                err.message ? console.error(err.message) : console.error(err)
-                return null;
-            })
-    )
-}
-
-const userListsInComemnts = async id => {
-    return db(
-        MONGO_URL,
-        () => Review.find({ _id: id })
-            .select('upvotes downvotes flagged')
-            .then(reviews => {
-                if (!reviews || reviews.length === 0) {
-                    console.error('Could not find comments with id', id)
-                    return null
-                }
-                return {
-                    upvotes: reviews[0].upvotes || [],
-                    downvotes: reviews[0].downvotes || []
-                }
-            })
-            .catch(err => {
-                err.message ? console.error(err.message) : console.error(err)
-                return null;
-            })
-    )
-}
-
 const getVotingLists = async (id, schema) => {
     return db.exec(
         MONGO_URL,
@@ -252,7 +208,7 @@ const udpateObjectSimple = async (mongooseObj, where, set) => {
 }
 
 const appendToVoteList = (userId, targetList, oppositeList) => {
- 
+
     let uidTargetIndex = targetList.indexOf(userId)
     let uidOppositeIndex = oppositeList.indexOf(userId)
 
@@ -501,19 +457,19 @@ module.exports.getFlaggedReviews = () => {
 
 module.exports.getTopCompanies = async () => {
     let allReviews = null
-    try{
+    try {
         allReviews = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
             return Review.find({}).populate('company');
         });
-        let companyMap = {}; 
+        let companyMap = {};
         allReviews.forEach(review => {
-            if(review.company){
+            if (review.company) {
                 companyMap[review.company.name] = review.company;
             }
         })
         let counter = {};
         allReviews.forEach(review => {
-            if(review.company){
+            if (review.company) {
                 let company_name = review.company.name;
                 counter[company_name] = counter[company_name] ? ++counter[company_name] : 1;
             }
@@ -528,16 +484,16 @@ module.exports.getTopCompanies = async () => {
             })
         })
 
-        companyList.sort((a,b) => {
+        companyList.sort((a, b) => {
             return b.count - a.count;
         })
-        if (companyList.length >= 12){
-            return Status.createSuccessResponse(200,companyList.slice(0,12));
+        if (companyList.length >= 12) {
+            return Status.createSuccessResponse(200, companyList.slice(0, 12));
         }
         return Status.createSuccessResponse(200, companyList);
-        
 
-    }catch(err){
+
+    } catch (err) {
         console.log(err.msg);
         return Status.createErrorResponse(400, 'Could not fetch top companies');
     }
@@ -622,9 +578,9 @@ module.exports.deleteCompany = async (companyId) => {
         })
         if (result._id) {
             console.log('Deleted Company obj:\n', result)
-            return Status.createSuccessResponse(200, { 
+            return Status.createSuccessResponse(200, {
                 company_id: companyId,
-                message: "Company successfully DELETED." 
+                message: "Company successfully DELETED."
             })
         } else {
             return Status.createErrorResponse(404, "Could not delete company.")
@@ -690,8 +646,66 @@ module.exports.getAllCompanies = async () => {
     }
 }
 
-module.exports.getPopulatedComments = async reviewId =>{
-    try{
+module.exports.flagReview = async (userId, reviewId) => {
+    let foundUser = await db.exec(MONGO_URL, () => User.findById(userId)).catch(() => false)
+    if (foundUser) {
+        let flaggedList = await db.exec(MONGO_URL, () => Review.findById(reviewId).select("flagged")).then(r => r.flagged).catch(() => null)
+
+        if (!flaggedList) {
+            return Status.createErrorResponse(500, 'Error while trying to flag review')
+        }
+
+        let index = flaggedList.indexOf(userId)
+
+        index >= 0 ?
+            flaggedList.splice(index, 1) :
+            flaggedList.push(userId)
+
+        let reviewUpdateResult = await db.exec(MONGO_URL,
+            () => Review.findByIdAndUpdate(reviewId, { flagged: flaggedList }))
+            .catch(e => {
+                console.error(e)
+                return null
+            })
+
+        return reviewUpdateResult ?
+            Status.createSuccessResponse(200, "Successfully flagged review " + reviewUpdateResult._id + JSON.stringify(reviewUpdateResult.flagged)) :
+            Status.createErrorResponse(500, 'Error while trying to flag review')
+    }
+    return Status.createErrorResponse(400, 'Could not flag review')
+}
+
+
+module.exports.flagComment = async (userId, commentId) => {
+    let foundUser = await db.exec(MONGO_URL, () => User.findById(userId)).catch(() => false)
+    if (foundUser) {
+        let flaggedList = await db.exec(MONGO_URL, () => Comment.findById(commentId).select("flagged")).then(r => r.flagged).catch(() => null)
+
+        if (!flaggedList) {
+            return Status.createErrorResponse(500, 'Error while trying to flag comment')
+        }
+
+        let index = flaggedList.indexOf(userId)
+
+        index >= 0 ?
+            flaggedList.splice(index, 1) :
+            flaggedList.push(userId)
+
+        let commentUpdateResult = await db.exec(MONGO_URL,
+            () => Comment.findByIdAndUpdate(commentId, { flagged: flaggedList }))
+            .catch(e => {
+                console.error(e)
+                return null
+            })
+
+        return commentUpdateResult ?
+            Status.createSuccessResponse(200, "Successfully flagged comment " + commentUpdateResult._id + JSON.stringify(commentUpdateResult.flagged)) :
+            Status.createErrorResponse(500, 'Error while trying to flag comment')
+    }
+    return Status.createErrorResponse(400, 'Could not flag comment')
+}
+module.exports.getPopulatedComments = async reviewId => {
+    try {
         let result = await getAllComments(reviewId);
         let map = {};
         let comments = result.map(comment => comment.toObject())
@@ -709,10 +723,10 @@ module.exports.getPopulatedComments = async reviewId =>{
             }
         }
         rootComments.forEach(root => bfs(root, map));
-        
+
         return Status.createSuccessResponse(200, rootComments);
     }
-    catch(err){
+    catch (err) {
         return Status.createErrorResponse(400, "Unable to populate comments")
     }
 }
