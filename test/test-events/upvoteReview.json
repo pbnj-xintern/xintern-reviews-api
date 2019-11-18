@@ -1,0 +1,11 @@
+{
+    "headers":{
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByYWl5IiwidXNlcklkIjoiNWRjMzM4OTE0ZDk0ZWY0ZGVkMmY4MmM4IiwiaWF0IjoxNTczMTYxMjcxLCJleHAiOjE1NzMyNDc2NzF9.b1KXJFLq0JYV0LgyO5vcK0rBJybaWSptOPuMUv-4kmw"
+    },
+    "pathParameters": {
+        "review_id": "5d812f3571c8b9369bc88212"
+    },
+    "body": {
+        "user_id": "5d7fefa074ab1b5636a3ad7b"
+    }
+}

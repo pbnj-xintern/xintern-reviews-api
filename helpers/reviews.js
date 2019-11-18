@@ -39,6 +39,7 @@ const findCompanyByName = async (eventBody) => {
         console.log('Company Found:\n', foundCompany)
         if (foundCompany.length > 0) {
             foundCompany = foundCompany[0]
+
         } else {
             return Status.createErrorResponse(404, "Company does not exist.")
         }
@@ -105,8 +106,10 @@ const addCommentToReview = async (reviewId, commentId) => {
 
 const getAllComments = async (reviewId) => {
     try {
-        let review = await getReviewById(reviewId)
-        return review.comments
+        let comments = await db.exec(MONGO_URL, () => {
+            return Comment.find({ review: reviewId }).populate('author')
+        })
+        return comments
     } catch (err) {
         console.error('get all comments caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
@@ -378,12 +381,15 @@ module.exports.createComment = async (reviewId, payload) => {
         content: payload.content,
         upvotes: [],
         downvotes: [],
-        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null
+        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null,
+        author: payload.author,
+        review: reviewId
     })
     try {
         let result = await db.exec(MONGO_URL, () => {
             return newComment.save()
         })
+
         if (!result._id || result === null) return Status.createErrorResponse(400, "Comment could not be created.")
         console.log('new comment:\n', result)
         let newCommentId = result._id
@@ -471,6 +477,7 @@ module.exports.getTopCompanies = async () => {
         let companyList = []
         Object.keys(counter).forEach(key => {
             companyList.push({
+                _id: companyMap[key]._id,
                 name: companyMap[key].name,
                 count: counter[key],
                 logo: companyMap[key].logo
@@ -492,32 +499,6 @@ module.exports.getTopCompanies = async () => {
     }
 }
 
-
-module.exports.getPopulatedReviews = async (event) => {
-    let map = {};
-
-    let result = await db.exec(MONGO_URL, () => {
-        return Review.findById(event).populate('comments rating company user');
-    })
-    let resultObject = result.toObject();
-    let comments = resultObject.comments;
-    let rootComments = comments.filter(x => {
-        return !x.parentComment;
-    });
-
-    for (var comment of comments) {
-        if (!comment.parentComment) {
-            map[comment._id] = []
-        } else if (!map[comment.parentComment]) {
-            map[comment.parentComment] = [comment]
-        } else if (map[comment.parentComment]) {
-            map[comment.parentComment].push(comment)
-        }
-    }
-    rootComments.forEach(root => bfs(root, map));
-    resultObject.comments = rootComments;
-    return Status.createSuccessResponse(200, resultObject);
-}
 
 function bfs(root, map) {
     let queue = [root];
@@ -546,7 +527,6 @@ module.exports.genericUpvoteOrDownvote = async (schema_id, user_id, type, schema
 
     let targetList = votingLists[type]
     let oppositeList = votingLists[oppositeType]
-
     let updated = appendToVoteList(foundUserId, targetList, oppositeList)
 
     let where = { _id: schema_id }
@@ -724,3 +704,30 @@ module.exports.flagComment = async (userId, commentId) => {
     }
     return Status.createErrorResponse(400, 'Could not flag comment')
 }
+module.exports.getPopulatedComments = async reviewId => {
+    try {
+        let result = await getAllComments(reviewId);
+        let map = {};
+        let comments = result.map(comment => comment.toObject())
+        let rootComments = comments.filter(x => {
+            return !x.parentComment;
+        });
+
+        for (var comment of comments) {
+            if (!comment.parentComment) {
+                map[comment._id] = []
+            } else if (!map[comment.parentComment]) {
+                map[comment.parentComment] = [comment]
+            } else if (map[comment.parentComment]) {
+                map[comment.parentComment].push(comment)
+            }
+        }
+        rootComments.forEach(root => bfs(root, map));
+
+        return Status.createSuccessResponse(200, rootComments);
+    }
+    catch (err) {
+        return Status.createErrorResponse(400, "Unable to populate comments")
+    }
+}
+module.exports.getReviewById = getReviewById
