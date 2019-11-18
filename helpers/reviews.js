@@ -39,6 +39,7 @@ const findCompanyByName = async (eventBody) => {
         console.log('Company Found:\n', foundCompany)
         if (foundCompany.length > 0) {
             foundCompany = foundCompany[0]
+            
         } else {
             return Status.createErrorResponse(404, "Company does not exist.")
         }
@@ -215,7 +216,7 @@ const userListsInComemnts = async id => {
 }
 
 const getVotingLists = async (id, schema) => {
-    return db(
+    return db.exec(
         MONGO_URL,
         () => schema.find({ _id: id })
             .select('upvotes downvotes')
@@ -251,7 +252,7 @@ const udpateObjectSimple = async (mongooseObj, where, set) => {
 }
 
 const appendToVoteList = (userId, targetList, oppositeList) => {
-
+ 
     let uidTargetIndex = targetList.indexOf(userId)
     let uidOppositeIndex = oppositeList.indexOf(userId)
 
@@ -432,6 +433,7 @@ module.exports.createComment = async (reviewId, payload) => {
         let result = await db.exec(MONGO_URL, () => {
             return newComment.save()
         })
+
         if (!result._id || result === null) return Status.createErrorResponse(400, "Comment could not be created.")
         console.log('new comment:\n', result)
         let newCommentId = result._id
@@ -569,7 +571,6 @@ module.exports.genericUpvoteOrDownvote = async (schema_id, user_id, type, schema
 
     let targetList = votingLists[type]
     let oppositeList = votingLists[oppositeType]
-
     let updated = appendToVoteList(foundUserId, targetList, oppositeList)
 
     let where = { _id: schema_id }

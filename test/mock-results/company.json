@@ -1,0 +1,10 @@
+{
+    "companies": [
+        {
+            "_id": "5dc338914d94ef4ded2f82c8",
+            "name": "toronto-company",
+            "logo": "https://xintern.s3.amazonaws.com/company/test-company_logo.png",
+            "location": "Toronto"
+        }
+    ]
+}
