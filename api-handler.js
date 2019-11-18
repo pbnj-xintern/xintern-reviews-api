@@ -5,11 +5,14 @@ const DOWNVOTE_TYPE = 'downvotes'
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const TOKEN_SECRET = process.env.TOKEN_SECRET
 const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
+const middy = require('middy')
+
 //--------------- LAMBDA FUNCTIONS ---------------
 
 //013_FEAT_CRUD-REVIEW
 //createReview 1.0
-module.exports.createReview = async (event) => {
+
+module.exports.createReview = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let decodedJWT = false
 	if(event.headers && event.headers.Authorization){
@@ -20,35 +23,36 @@ module.exports.createReview = async (event) => {
 		return await ReviewsHelper.createReview(payload)
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 //updateReview 2.1
-module.exports.updateReview = async (event) => {
+module.exports.updateReview =middy( async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let reviewId = event.pathParameters.review_id
 	return await ReviewsHelper.updateReview(reviewId, payload)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
 //updateReview 2.2
-module.exports.updateRating = async (event) => {
+module.exports.updateRating = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let ratingId = event.pathParameters.rating_id
 	return await ReviewsHelper.updateRating(ratingId, payload)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 //updateReview 2.3
-module.exports.updateCompany = async (event) => {
+module.exports.updateCompany = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let companyId = event.pathParameters.company_id
 	return await ReviewsHelper.updateCompany(companyId, payload)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 //deleteReview 3.3
-module.exports.deleteReview = async (event) => {
+module.exports.deleteReview = middy(async (event) => {
 	let reviewId = event.pathParameters.review_id
 	return await ReviewsHelper.deleteReview(reviewId)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 //014_FEAT_CRUD_COMMENT
 //createComment
-module.exports.createComment = async (event) => {
+module.exports.createComment = middy(async (event) => {
 	let reviewId = event.pathParameters.review_id
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let decodedJWT = false
@@ -61,18 +65,18 @@ module.exports.createComment = async (event) => {
 	}
 
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 //deleteComment
-module.exports.deleteComment = async (event) => {
+module.exports.deleteComment = middy(async (event) => {
 	let commentId = event.pathParameters.comment_id
 	return await ReviewsHelper.deleteComment(commentId)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 //updateComment
-module.exports.updateComment = async (event) => {
+module.exports.updateComment = middy(async (event) => {
 	let commentId = event.pathParameters.comment_id
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	return await ReviewsHelper.updateComment(commentId, payload)
-}
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 module.exports.getFlaggedReviews = event => {
 	return ReviewsHelper.getFlaggedReviews()
@@ -171,3 +175,8 @@ module.exports.getPopulatedComments = async event => {
 	
 	return await ReviewsHelper.getPopulatedComments(event.pathParameters.review_id)
 }
+
+
+  
+
+
