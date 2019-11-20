@@ -3,9 +3,9 @@ const ReviewsHelper = require('./helpers/reviews')
 const UPVOTE_TYPE = 'upvotes'
 const DOWNVOTE_TYPE = 'downvotes'
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
-const TOKEN_SECRET = process.env.TOKEN_SECRET
 const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const middy = require('middy')
+const TOKEN_SECRET = process.env.TOKEN_SECRET
 
 //--------------- LAMBDA FUNCTIONS ---------------
 
