@@ -87,7 +87,7 @@ module.exports.createComment = async (reviewId, payload) => {
         let response = await addCommentToReview(reviewId, newCommentId)
         if (response.statusCode === 200)
             return Status.createSuccessResponse(201, {
-                comment_id: newComment._id,
+                comment: result,
                 message: "Comment successfully CREATED."
             })
     } catch (err) {
