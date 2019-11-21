@@ -44,7 +44,7 @@ module.exports.getFlaggedReviews = event => {
 }
 
 module.exports.getReviewsByCompany = async (event) => {
-	return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_id)
+	return await ReviewsHelper.getReviewsByCompany(event.pathParameters.company_name)
 }
 
 module.exports.getReviewById = async event => {
