@@ -15,7 +15,7 @@ module.exports.upvoteReview = async (event, context, callback) => {
 		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
 	if (decodedJWT) {
-		let userId = decodedJWT.user_id
+		let userId = decodedJWT.userId
 		return await VoteAndFlagHelper.upvoteOrDownvoteReview(reviewId, userId, UPVOTE_TYPE)
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
@@ -29,7 +29,7 @@ module.exports.downvoteReview = async (event, context, callback) => {
 		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
 	if (decodedJWT) {
-		let userId = decodedJWT.user_id
+		let userId = decodedJWT.userId
 		return await VoteAndFlagHelper.upvoteOrDownvoteReview(reviewId, userId, DOWNVOTE_TYPE)
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
@@ -42,7 +42,7 @@ module.exports.upvoteComment = async (event, context, callback) => {
 		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
 	if (decodedJWT) {
-		let userId = decodedJWT.user_id
+		let userId = decodedJWT.userId
 		return VoteAndFlagHelper.upvoteOrDownvoteComment(commentId, userId, UPVOTE_TYPE)
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
@@ -55,7 +55,7 @@ module, exports.downvoteComment = async (event, context, callback) => {
 		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
 	}
 	if (decodedJWT) {
-		let userId = decodedJWT.user_id
+		let userId = decodedJWT.userId
 		return VoteAndFlagHelper.upvoteOrDownvoteComment(commentId, userId, DOWNVOTE_TYPE)
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")

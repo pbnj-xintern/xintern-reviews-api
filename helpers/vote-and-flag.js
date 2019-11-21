@@ -7,7 +7,7 @@ const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 const mongoose = require('mongoose')
-
+const UserHelper = require('./user')
 const MONGO_URL = process.env.MONGO_URL
 
 // be cautious when using this !
@@ -136,7 +136,7 @@ module.exports.genericUpvoteOrDownvote = async (schema_id, user_id, type, schema
 
     let oppositeType = type === 'upvotes' ? 'downvotes' : 'upvotes'
     let votingLists = await getVotingLists(schema_id, schema)
-    let foundUserId = await findUserId({ user_id: user_id })
+    let foundUserId = await UserHelper.findUserId({ user_id: user_id })
 
     if (!votingLists)
         return Status.createErrorResponse(404, 'Could not find review')
