@@ -200,7 +200,7 @@ module.exports.getReviewsByCompany = async (companyId) => {
         let validCompany = await CompanyHelper.findCompanyById(companyId)
         if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
         let result = await db.exec(MONGO_URL, () => {
-            return Review.find({ company: companyId }).populate('company rating user')
+            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user')
         })
         if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
         result = result.reverse() //sorts by most recent
