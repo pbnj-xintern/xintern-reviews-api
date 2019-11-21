@@ -20,8 +20,22 @@ custom:
   tokens: ${file(tokens.yml):${self:custom.stage}}
 
 functions:
+# ==================================
+# REVIEW FUNCTIONS START
+# ==================================
+  getReviewById:
+    handler: review-handler.getReviewById
+    events:
+      - http:
+          path: review/{review_id}
+          method: GET
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
   createReview:
-    handler: api-handler.createReview
+    handler: review-handler.createReview
     events:
       - http:
           path: review
@@ -29,7 +43,7 @@ functions:
           cors: true
 
   updateReview:
-    handler: api-handler.updateReview
+    handler: review-handler.updateReview
     events:
       - http:
           path: review/{review_id}
@@ -41,28 +55,14 @@ functions:
           cors: true
   
   getFlaggedReviews:
-    handler: api-handler.getFlaggedReviews
+    handler: review-handler.getFlaggedReviews
     events:
       - http:
           path: review/create
           method: GET
           cors: true
-
-  updateCompany:
-    handler: api-handler.updateCompany
-    events:
-      - http:
-          path: review/{review_id}/company/{company_id}
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-                company_id: true
-          cors: true
-
   updateRating:
-    handler: api-handler.updateRating
+    handler: review-handler.updateRating
     events:
       - http:
           path: review/{review_id}/rating/{rating_id}
@@ -73,20 +73,8 @@ functions:
                 review_id: true
                 rating_id: true
           cors: true
-
-  deleteReview:
-    handler: api-handler.deleteReview
-    events:
-      - http:
-          path: review/{review_id}
-          method: DELETE
-          request:
-            parameters:
-              paths:
-                review_id: true
-          cors: true
   getPopulatedReviews:
-    handler: api-handler.getPopulatedReviews
+    handler: review-handler.getPopulatedReviews
     events:
       - http:
           path: populated-review/{review_id}
@@ -96,115 +84,20 @@ functions:
               paths:
                 review_id: true
           cors: true
-
-  deleteComment:
-    handler: api-handler.deleteComment
+  deleteReview:
+    handler: review-handler.deleteReview
     events:
       - http:
-          path: comment/{comment_id}
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                comment_id: true
-          cors: true
-
-  createComment:
-    handler: api-handler.createComment
-    events:
-      - http:
-          path: review/{review_id}/comment
-          method: POST
-          request:
-            parameters:
-              paths:
-                review_id: true
-          cors: true
-    
-  updateComment:
-    handler: api-handler.updateComment
-    events:
-      - http:
-          path: review/{review_id}/comment/{comment_id}
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-                comment_id: true
-          cors: true
-    
-  upvoteReview:
-    handler: api-handler.upvoteReview
-    events:
-      - http:
-          path: review/{review_id}/upvote
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-          cors: true
-    
-  downvoteReview:
-    handler: api-handler.downvoteReview
-    events:
-      - http:
-          path: review/{review_id}/downvote
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-          cors: true
-  upvoteComment:
-    handler: api-handler.upvoteComment
-    events:
-      - http:
-          path: review/{review_id}/comment/{comment_id}/upvote
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-                comment_id: true
-          cors: true
-    
-  downvoteComment:
-    handler: api-handler.downvoteComment
-    events:
-      - http:
-          path: review/{review_id}/comment/{comment_id}/downvote
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-                comment_id: true
-          cors: true
-
-  addCompany:
-    handler: api-handler.addCompany
-    events:
-      - http:
-          path: company
-          method: POST
-          cors: true
-
-  deleteCompany:
-    handler: api-handler.deleteCompany
-    events:
-      - http:
-          path: company/{company_id}
+          path: review/{review_id}
           method: DELETE
           request:
             parameters:
               paths:
-                company_id: true
+                review_id: true
           cors: true
 
   getReviewsByCompany:
-    handler: api-handler.getReviewsByCompany
+    handler: review-handler.getReviewsByCompany
     events:
       - http:
           path: company/{company_id}/reviews
@@ -216,15 +109,53 @@ functions:
           cors: true
 
   getRecentReviews:
-    handler: api-handler.getRecentReviews
+    handler: review-handler.getRecentReviews
     events:
       - http:
           path: review/recent
           method: GET
           cors: true
+# ==================================
+# REVIEW FUNCTIONS END
+# ==================================
+
+# ==================================
+# COMPANY FUNCTIONS START
+# ==================================
+  addCompany:
+    handler: company-handler.addCompany
+    events:
+      - http:
+          path: company
+          method: POST
+          cors: true
+  deleteCompany:
+    handler: company-handler.deleteCompany
+    events:
+      - http:
+          path: company/{company_id}
+          method: DELETE
+          request:
+            parameters:
+              paths:
+                company_id: true
+          cors: true
+  updateCompany:
+    handler: company-handler.updateCompany
+    events:
+      - http:
+          path: review/{review_id}/company/{company_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                company_id: true
+          cors: true
+
 
   getTopCompanies:
-    handler: api-handler.getTopCompanies
+    handler: company-handler.getTopCompanies
     events:
       - http:
           path: topCompanies
@@ -232,27 +163,65 @@ functions:
           cors: true
 
   getAllCompanies:
-    handler: api-handler.getAllCompanies
+    handler: company-handler.getAllCompanies
     events:
       - http:
           path: company/all
           method: GET
           cors: true
-  
-  getReviewById:
-    handler: api-handler.getReviewById
+# ==================================
+# END COMPANY FUNCTIONS
+# ==================================
+
+# ==================================
+# COMMENT FUNCTIONS
+# ==================================
+  addCommentToReview:
+      handler: comment-handler.addCommentToReview
+      events:
+        - http:
+            path: link-comment
+            method: POST
+            cors: true
+  deleteComment:
+    handler: comment-handler.deleteComment
     events:
       - http:
-          path: review/{review_id}
-          method: GET
+          path: comment/{comment_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                comment_id: true
+          cors: true
+
+  createComment:
+    handler: comment-handler.createComment
+    events:
+      - http:
+          path: review/{review_id}/comment
+          method: POST
           request:
             parameters:
               paths:
                 review_id: true
           cors: true
+    
+  updateComment:
+    handler: comment-handler.updateComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
 
   getPopulatedComments:
-    handler: api-handler.getPopulatedComments
+    handler: comment-handler.getPopulatedComments
     events:
       - http:
           path: comments/{review_id}
@@ -263,33 +232,74 @@ functions:
                 review_id: true
           cors: true
 
+# ==================================
+# COMMENT FUNCTIONS END
+# ==================================
+
+# ==================================
+# VOTE AND FLAG FUNCTIONS START
+# ==================================
+  upvoteReview:
+    handler: vote-and-flag-handler.upvoteReview
+    events:
+      - http:
+          path: review/{review_id}/upvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
+  downvoteReview:
+    handler: vote-and-flag-handler.downvoteReview
+    events:
+      - http:
+          path: review/{review_id}/downvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+          cors: true
+  upvoteComment:
+    handler: vote-and-flag-handler.upvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/upvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
+  downvoteComment:
+    handler: vote-and-flag-handler.downvoteComment
+    events:
+      - http:
+          path: review/{review_id}/comment/{comment_id}/downvote
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                review_id: true
+                comment_id: true
+          cors: true
   flagReview:
-    handler: api-handler.flagReview
+    handler: vote-and-flag-handler.flagReview
     events:
       - http:
           path: review/{review_id}/flag
           method: PATCH
           cors: true
-  flagReview:
-    handler: api-handler.flagReview
+  flagComment:
+    handler: vote-and-flag-handler.flagComment
     events:
       - http:
           path: review/{review_id}/comment/{comment_id}/flag
           method: PATCH
           cors: true
 
-  # addCommentToReview:
-  #     handler: api-handler.addCommentToReview
-  #     events:
-  #       - http:
-  #           path: link-comment
-  #           method: POST
-  #           cors: true
-
-  # addCompany:
-  #   handler: api-handler.addCompany
-  #   events:
-  #     - http:
-  #         path: company
-  #         method: POST
-  #         cors: true
+# ==================================
+# VOTE AND FLAG FUNCTIONS END
+# ==================================
