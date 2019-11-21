@@ -153,12 +153,11 @@ functions:
                 company_id: true
           cors: true
 
-
   getTopCompanies:
     handler: company-handler.getTopCompanies
     events:
       - http:
-          path: topCompanies
+          path: companies/top
           method: GET
           cors: true
 

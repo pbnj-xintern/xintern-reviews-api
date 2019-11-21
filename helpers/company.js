@@ -1,3 +1,4 @@
+const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const AwsUtil = require('@pbnj-xintern/xintern-commons/util/aws')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
@@ -127,7 +128,7 @@ module.exports.getTopCompanies = async () => {
 
 
     } catch (err) {
-        console.log(err.msg);
+        console.log(err);
         return Status.createErrorResponse(400, 'Could not fetch top companies');
     }
 }
