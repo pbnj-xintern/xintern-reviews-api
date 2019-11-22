@@ -19,7 +19,7 @@ const getExtension = base64 => {
 const findCompanyByName = async (eventBody) => {
     try {
         let foundCompany = await db.exec(MONGO_URL, () => {
-            return Company.find({ name: eventBody.company_name.toLowerCase().trim() })
+            return Company.find({ name: eventBody.company_name.trim() })
         })
         console.log('Company Found:\n', foundCompany)
         return foundCompany
