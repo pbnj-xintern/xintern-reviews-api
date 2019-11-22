@@ -1,7 +1,6 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 const UserHelper = require('./user')
@@ -69,8 +68,8 @@ module.exports.createReview = async (payload) => {
     if (foundUserId === null) return Status.createErrorResponse(404, "User not found.")
     let ratingId = await createRating(payload)
     if (ratingId === null) return Status.createErrorResponse(400, "Rating could not be created.")
-    let foundCompany = await CompanyHelper.findCompanyByName(payload)
-    if (foundCompany.statusCode || foundCompany === null) return Status.createErrorResponse(404, "Could not find Company.")
+    let foundCompany = await CompanyHelper.findCompanyByName(payload)[0]
+    if (foundCompany.statusCode || foundCompany.length === 0) return Status.createErrorResponse(404, "Could not find Company.")
     //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
@@ -195,12 +194,13 @@ module.exports.getFlaggedReviews = () => {
     )
 }
 
-module.exports.getReviewsByCompany = async (companyId) => {
+module.exports.getReviewsByCompany = async (companyName) => {
     try {
-        let validCompany = await CompanyHelper.findCompanyById(companyId)
-        if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
+        companyName = decodeURIComponent(companyName)
+        let company = { company_name: companyName }
+        let foundCompanies = await CompanyHelper.findCompanyByName(company)
         let result = await db.exec(MONGO_URL, () => {
-            return Review.find({ company: companyId }).populate('company rating user')
+            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user')
         })
         if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
         result = result.reverse() //sorts by most recent
