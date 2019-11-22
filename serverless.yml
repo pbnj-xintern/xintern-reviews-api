@@ -104,7 +104,7 @@ functions:
     handler: review-handler.getReviewsByCompany
     events:
       - http:
-          path: company/{company_name}/reviews
+          path: companies/{company_name}/reviews
           method: GET
           request:
             parameters:

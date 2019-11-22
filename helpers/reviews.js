@@ -196,10 +196,9 @@ module.exports.getFlaggedReviews = () => {
 
 module.exports.getReviewsByCompany = async (companyName) => {
     try {
+        companyName = decodeURIComponent(companyName)
         let company = { company_name: companyName }
         let foundCompanies = await CompanyHelper.findCompanyByName(company)
-        // let validCompany = await CompanyHelper.findCompanyById(companyId)
-        // if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
         let result = await db.exec(MONGO_URL, () => {
             return Review.find({ company: { $in: foundCompanies } }).populate('company rating user')
         })
