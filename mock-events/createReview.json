@@ -8,8 +8,11 @@
         "impact": 1,
         "interview": 1,
         "company_name": "toronto-company",
+        "location": "",
         "salary": 100000,
         "content": "testing getReviewsByCompany",
-        "position": "Data Scientist"
+        "position": "Data Scientist",
+        "currency": "CAD",
+        "payPeriod": "MONTHLY"
     }
 }
