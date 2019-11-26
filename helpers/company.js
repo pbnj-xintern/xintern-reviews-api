@@ -29,6 +29,19 @@ const findCompanyByName = async (eventBody) => {
     }
 }
 
+const findCompanyByNameAndLocation = async (companyName, location) => {
+    try {
+        let foundCompany = await db.exec(MONGO_URL, () => {
+            return Company.find({ name: companyName.trim(), location: location })
+        })
+        console.log('Company Found:\n', foundCompany)
+        return foundCompany
+    } catch (err) {
+        console.error('caught err while trying to find Company:\n', err.message)
+        return Status.createErrorResponse(404, "Company does not exist.")
+    }
+}
+
 //Returns Company obj 
 const findCompanyById = async (companyId) => {
     try {
@@ -73,14 +86,24 @@ module.exports.updateCompanyPicture = async (companyObj, base64) => {
     )
 }
 
-module.exports.getCompanyById = async id => {
-    return db.exec(
-        MONGO_URL,
-        () => Company.findById(id).catch(err => {
-            console.log(err)
-            return Status.createErrorResponse(500, 'Error while finding company')
+module.exports.getCompanyLocations = async companyName => {
+    try {
+        let companyList = await db.exec(MONGO_URL, () => {
+            return Company.find({ name: companyName.trim() })
         })
-    )
+        if (companyList.length === 0) return Status.createErrorResponse(404, "No companies found.")
+        console.log('companyList:', companyList)
+        let companyLocations = companyList.map(company => company.location)
+        console.log('companyLocations:', companyLocations)
+    } catch (err) {
+        console.error(err.message)
+    }
+    // return await db.exec(MONGO_URL, () => 
+    //     Company.findById(id).catch(err => {
+    //         console.log(err)
+    //         return Status.createErrorResponse(500, 'Error while finding company')
+    //     })
+    // )
 }
 
 module.exports.getTopCompanies = async () => {
@@ -214,5 +237,5 @@ module.exports.updateCompany = async (companyId, payload) => {
 }
 
 module.exports.findCompanyByName = findCompanyByName;
-
+module.exports.findCompanyByNameAndLocation = findCompanyByNameAndLocation;
 module.exports.findCompanyById = findCompanyById;
