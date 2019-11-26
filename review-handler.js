@@ -18,6 +18,7 @@ module.exports.createReview = middy(async (event) => {
 	}
 	return Status.createErrorResponse(401, "Invalid Bearer Token")
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
 //updateReview 2.1
 module.exports.updateReview = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)

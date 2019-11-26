@@ -68,7 +68,7 @@ module.exports.createReview = async (payload) => {
     if (foundUserId === null) return Status.createErrorResponse(404, "User not found.")
     let ratingId = await createRating(payload)
     if (ratingId === null) return Status.createErrorResponse(400, "Rating could not be created.")
-    let foundCompany = await CompanyHelper.findCompanyByName(payload)[0]
+    let foundCompany = await CompanyHelper.findCompanyByNameAndLocation(payload.company_name, payload.location)
     if (foundCompany.statusCode || foundCompany.length === 0) return Status.createErrorResponse(404, "Could not find Company.")
     //Create new Review and save
     let newReview = Review({

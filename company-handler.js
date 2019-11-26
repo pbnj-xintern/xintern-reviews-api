@@ -27,3 +27,7 @@ module.exports.getTopCompanies = async () => {
 module.exports.getAllCompanies = async () => {
 	return await CompanyHelper.getAllCompanies()
 }
+
+module.exports.getCompanyLocations = async (event) => {
+	return await CompanyHelper.getCompanyLocations(event.queryStringParameters.company_name)
+}
