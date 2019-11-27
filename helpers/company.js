@@ -159,7 +159,9 @@ module.exports.getAllCompanies = async () => {
                     logo: { $first: '$logo' }
                 }
             }
-        ]).sort({name: 'asc'}).then(res => res.map(r => {
+        ])
+        .collation({'locale':'en_US', numericOrdering: true} )
+        .sort({_id: 'asc'}).then(res => res.map(r => {
             return {
                 name: r._id,
                 logo: r.logo
