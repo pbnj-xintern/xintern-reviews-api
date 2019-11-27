@@ -16,7 +16,7 @@ module.exports.createReview = middy(async (event) => {
 		payload.user_id = decodedJWT.userId;
 		return await ReviewsHelper.createReview(payload)
 	}
-	return Status.createErrorResponse(401, "Invalid Bearer Token")
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 //updateReview 2.1
 module.exports.updateReview = middy(async (event) => {
@@ -50,7 +50,7 @@ module.exports.getReviewsByCompany = async (event) => {
 module.exports.getReviewById = async event => {
 	let result = await ReviewsHelper.getReviewById(event.pathParameters.review_id);
 	if (!result)
-		return Status.createErrorResponse(404, "Could not find review")
+		return Status.createErrorResponse(400, "Could not find review")
 	return Status.createSuccessResponse(200, result)
 }
 
