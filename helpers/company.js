@@ -25,7 +25,7 @@ const findCompanyByName = async (eventBody) => {
         return foundCompany
     } catch (err) {
         console.error('caught err while trying to find Company:\n', err.message)
-        return Status.createErrorResponse(404, "Company does not exist.")
+        return Status.createErrorResponse(500, "Company does not exist.")
     }
 }
 
@@ -141,31 +141,41 @@ module.exports.deleteCompany = async (companyId) => {
                 message: "Company successfully DELETED."
             })
         } else {
-            return Status.createErrorResponse(404, "Could not delete company.")
+            return Status.createErrorResponse(400, "Could not delete company.")
         }
     } catch (err) {
         console.error('delete company caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
 module.exports.getAllCompanies = async () => {
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return Company.find()
-        })
-        if (result.length === 0) return Status.createErrorResponse(404, "No Companies found.")
-        result = result.filter((company, i, arr) => {
-            return i === arr.findIndex((c => {
-                return c.name === company.name
-            }))
-        })
-        result.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))
-        return Status.createSuccessResponse(200, result)
-    } catch (err) {
-        console.error('get recent reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
+    let result = await db.exec(MONGO_URL,
+        () => Company.aggregate([
+            { $match: {} },
+            {
+                $group: {
+                    _id: '$name',
+                    logo: { $first: '$logo' }
+                }
+            }
+        ])
+        .collation({'locale':'en_US', numericOrdering: true} )
+        .sort({_id: 'asc'}).then(res => res.map(r => {
+            return {
+                name: r._id,
+                logo: r.logo
+            }
+        }))
+    ).catch(e => {
+        console.error(e.message || e)
+        return false
+    })
+
+    if (!result)
+        return Status.createErrorResponse(500, 'Could not aggregate companies')
+
+    return Status.createSuccessResponse(200, result, "Successfully fetched companies.")
 }
 
 module.exports.addCompany = async (payload) => {

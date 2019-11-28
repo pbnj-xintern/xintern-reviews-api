@@ -108,7 +108,7 @@ module.exports.deleteComment = async (commentId) => {
         return (result.author === null) ? Status.createSuccessResponse(200, { comment_id: commentId, message: "Comment successfully DELETED." }) : Status.createErrorResponse(400, "Comment did not delete.")
     } catch (err) {
         console.error('delete comment caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 //updateComment
@@ -127,7 +127,7 @@ module.exports.updateComment = async (commentId, payload) => {
             })
     } catch (err) {
         console.error('update comment caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
@@ -165,7 +165,7 @@ module.exports.getPopulatedComments = async reviewId => {
         return Status.createSuccessResponse(200, rootComments);
     }
     catch (err) {
-        return Status.createErrorResponse(400, "Unable to populate comments")
+        return Status.createErrorResponse(500, "Unable to populate comments")
     }
 }
 
