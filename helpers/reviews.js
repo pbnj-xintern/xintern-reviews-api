@@ -200,21 +200,20 @@ module.exports.getReviewsByCompany = async (companyName) => {
         let company = { company_name: companyName }
         let foundCompanies = await CompanyHelper.findCompanyByName(company)
         let result = await db.exec(MONGO_URL, () => {
-            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user')
+            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user').sort({ createdAt: 'desc' })
         })
-        if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
-        result = result.reverse() //sorts by most recent
+        if (result.length == 0) return Status.createErrorResponse(500, "Company does not exist.")
         return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get company reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
 module.exports.getRecentReviews = async () => {
     try {
         let result = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
-            return Review.find().populate("company rating user").sort({createdAt: 'desc'}).limit(10)
+            return Review.find().populate("company rating user").sort({ createdAt: 'desc' }).limit(10)
         })
         if (result.length === 0) return Status.createErrorResponse(500, "No recent Reviews.")
         return Status.createSuccessResponse(200, result)
