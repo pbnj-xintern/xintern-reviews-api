@@ -111,13 +111,30 @@ functions:
               paths:
                 company_name: true
           cors: true
-
   getRecentReviews:
     handler: review-handler.getRecentReviews
     events:
       - http:
           path: review/recent
           method: GET
+          cors: true
+  getAllPositions:
+    handler: review-handler.getAllPositions
+    events:
+      - http:
+          path: review/positions
+          method: GET
+          cors: true
+  getReviewsByPosition:
+    handler: review-handler.getReviewsByPosition
+    events:
+      - http:
+          path: review/positions/{position}
+          method: GET
+          request:
+            parameters:
+              paths:
+                position: true
           cors: true
 # ==================================
 # REVIEW FUNCTIONS END

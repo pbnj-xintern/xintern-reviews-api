@@ -232,3 +232,34 @@ module.exports.getRecentReviews = async () => {
 }
 
 module.exports.getReviewById = getReviewById
+
+module.exports.getAllPositions = async () => db.exec(MONGO_URL,
+    () =>
+        Review.aggregate([
+            { $match: {} },
+            {
+                $group: {
+                    _id: '$position',
+                    numReviews: { $sum: 1 }
+                }
+            }
+        ]).sort({ numReviews: 'desc' })
+            .then(p => {
+                return p.map(pos => {
+                    return { positionName: pos._id, numReviews: pos.numReviews }
+                })
+            })
+            .catch(e => {
+                console.error(e.message || e)
+                return false
+            })
+)
+
+module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
+    () => Review.find({ position: new RegExp("^" + position.toLowerCase(), "i") })
+        .sort({ createdAt: 'desc' })
+        .catch(e => {
+            console.error(e.message || e)
+            return false
+        })
+)
