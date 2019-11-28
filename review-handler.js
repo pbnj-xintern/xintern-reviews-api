@@ -39,7 +39,7 @@ module.exports.deleteReview = middy(async (event) => {
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 module.exports.getFlaggedReviews = event => {
-    return Status.createErrorResponse(501, 'NOT YET SUPPORTED')
+	return Status.createErrorResponse(501, 'NOT YET SUPPORTED')
 	// return ReviewsHelper.getFlaggedReviews()
 }
 
@@ -56,4 +56,19 @@ module.exports.getReviewById = async event => {
 
 module.exports.getRecentReviews = async (event) => {
 	return await ReviewsHelper.getRecentReviews()
+}
+
+module.exports.getReviewsByPosition = async (event) => {
+	let pulledReviews =  await ReviewsHelper.getReviewsByPosition(event.pathParameters.position)
+	if (!pulledReviews)
+		return Status.createErrorResponse(500, "Could not retrieve reviews by position")
+	return Status.createSuccessResponse(200, pulledReviews)
+}
+
+
+module.exports.getAllPositions = async (event) => {
+	let allPositions = await ReviewsHelper.getAllPositions()
+	if (!allPositions)
+		return Status.createErrorResponse(500, "Could not retrieve all positions")
+	return Status.createSuccessResponse(200, allPositions)
 }
