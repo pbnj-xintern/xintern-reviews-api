@@ -156,17 +156,13 @@ module.exports.getAllCompanies = async () => {
             {
                 $group: {
                     _id: '$name',
+                    name: { $first: '$name' },
                     logo: { $first: '$logo' }
                 }
             }
         ])
         .collation({'locale':'en_US', numericOrdering: true} )
-        .sort({_id: 'asc'}).then(res => res.map(r => {
-            return {
-                name: r._id,
-                logo: r.logo
-            }
-        }))
+        .sort({_id: 'asc'})
     ).catch(e => {
         console.error(e.message || e)
         return false
