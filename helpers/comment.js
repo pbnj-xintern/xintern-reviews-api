@@ -169,4 +169,17 @@ module.exports.getPopulatedComments = async reviewId => {
     }
 }
 
+module.exports.getUpvotedCommentsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Comment.find(
+            { upvotes: { $all: [userId] } }
+        )))
+}
+
+module.exports.getDownvotedCommentsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Comment.find(
+            { downvotes: { $all: [userId] } }
+        )))
+}
 module.exports.deleteAllComments = deleteAllComments
