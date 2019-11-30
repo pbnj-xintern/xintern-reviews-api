@@ -27,7 +27,7 @@ functions:
       handler: review-handler.getUpvotedReviewsByUserId
       events:
         - http:
-            path: reviews/upvotes
+            path: user/reviews/upvotes
             method: GET
             cors: true
 
@@ -35,7 +35,7 @@ functions:
       handler: review-handler.getDownvotedReviewsByUserId
       events:
         - http:
-            path: reviews/downvotes
+            path: user/reviews/downvotes
             method: GET
             cors: true
 
@@ -219,7 +219,7 @@ functions:
         handler: comment-handler.getUpvotedCommentsByUserId
         events:
           - http:
-              path: comments/upvotes
+              path: user/comments/upvotes
               method: GET
               cors: true
   
@@ -227,7 +227,7 @@ functions:
         handler: comment-handler.getDownvotedCommentsByUserId
         events:
           - http:
-              path: comments/upvotes
+              path: user/comments/downvotes
               method: GET
               cors: true
 
