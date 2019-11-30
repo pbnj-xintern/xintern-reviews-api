@@ -11,6 +11,17 @@ const mongoose = require('mongoose')
 const ReviewHelper = require('./reviews')
 const MONGO_URL = process.env.MONGO_URL
 
+module.exports.getCommentsByUserId = async userId => {
+    try {
+        return Status.createSuccessResponse(await db.exec(MONGO_URL, 
+            () => Comment.find({
+                author : userId
+            }))).length
+    } catch (err) {
+        console.error('unable to fetch comments', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
 
 const addCommentToReview = async (reviewId, commentId) => {
     try {

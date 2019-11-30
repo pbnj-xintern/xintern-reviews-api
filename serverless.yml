@@ -198,6 +198,15 @@ functions:
 # ==================================
 # COMMENT FUNCTIONS
 # ==================================
+
+  getCommentsByUserId:
+    handler: comment-handler.getCommentsByUserId
+    events:
+      - http:
+          path: user/comments
+          method: GET
+          cors: true
+
   addCommentToReview:
       handler: comment-handler.addCommentToReview
       events:
