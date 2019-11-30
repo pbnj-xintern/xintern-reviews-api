@@ -23,6 +23,22 @@ functions:
 # ==================================
 # REVIEW FUNCTIONS START
 # ==================================
+  getUpvotedReviewsByUserId:
+      handler: review-handler.getUpvotedReviewsByUserId
+      events:
+        - http:
+            path: user/reviews/upvotes
+            method: GET
+            cors: true
+
+  getDownvotedReviewsByUserId:
+      handler: review-handler.getDownvotedReviewsByUserId
+      events:
+        - http:
+            path: user/reviews/downvotes
+            method: GET
+            cors: true
+
   getReviewById:
     handler: review-handler.getReviewById
     events:
@@ -198,6 +214,23 @@ functions:
 # ==================================
 # COMMENT FUNCTIONS
 # ==================================
+
+  getUpvotedCommentsByUserId:
+        handler: comment-handler.getUpvotedCommentsByUserId
+        events:
+          - http:
+              path: user/comments/upvotes
+              method: GET
+              cors: true
+  
+  getDownvotedCommentsByUserId:
+        handler: comment-handler.getDownvotedCommentsByUserId
+        events:
+          - http:
+              path: user/comments/downvotes
+              method: GET
+              cors: true
+
   addCommentToReview:
       handler: comment-handler.addCommentToReview
       events:
@@ -262,6 +295,7 @@ functions:
 # ==================================
 # VOTE AND FLAG FUNCTIONS START
 # ==================================
+  
   upvoteReview:
     handler: vote-and-flag-handler.upvoteReview
     events:
@@ -327,6 +361,7 @@ functions:
           path: review/{review_id}/comment/{comment_id}/flag
           method: PATCH
           cors: true
+  
 
 # ==================================
 # VOTE AND FLAG FUNCTIONS END

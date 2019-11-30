@@ -6,6 +6,33 @@ const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const middy = require('middy')
 
 //--------------- LAMBDA FUNCTIONS ---------------
+module.exports.getUpvotedReviewsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await ReviewsHelper.getUpvotedReviewsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+module.exports.getDownvotedReviewsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await ReviewsHelper.getDownvotedReviewsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+
 module.exports.createReview = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let decodedJWT = false
@@ -72,3 +99,5 @@ module.exports.getAllPositions = async (event) => {
 		return Status.createErrorResponse(500, "Could not retrieve all positions")
 	return Status.createSuccessResponse(200, allPositions)
 }
+
+

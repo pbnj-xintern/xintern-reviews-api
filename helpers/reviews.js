@@ -255,3 +255,17 @@ module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
             return false
         })
 )
+
+module.exports.getUpvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { upvotes: { $all: [userId] } }
+        )))
+}
+
+module.exports.getDownvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { downvotes: { $all: [userId] } }
+        )))
+}
