@@ -19,7 +19,7 @@ const getExtension = base64 => {
 const findCompanyByName = async (eventBody) => {
     try {
         let foundCompany = await db.exec(MONGO_URL, () => {
-            return Company.find({ name: eventBody.company_name. })
+            return Company.find({ name: eventBody.company_name })
         })
         console.log('Company Found:\n', foundCompany)
         return foundCompany
@@ -89,7 +89,7 @@ module.exports.updateCompanyPicture = async (companyObj, base64) => {
 module.exports.getCompanyLocations = async companyName => {
     try {
         let companyList = await db.exec(MONGO_URL, () => {
-            return Company.find({ name: companyName.trim() })
+            return Company.find({ name: companyName })
         })
         if (companyList.length === 0) return Status.createErrorResponse(404, "No companies found.")
         console.log('companyList:', companyList)
