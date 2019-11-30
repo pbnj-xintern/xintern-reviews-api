@@ -37,15 +37,7 @@ module.exports.getPopulatedComments = async event => {
 	return await CommentHelper.getPopulatedComments(event.pathParameters.review_id)
 }
 
-module.exports.getCommentsByUserId = middy(async event => {
-	let decodedJWT = false
-	if (event.headers && event.headers.Authorization) {
-		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
-	}
-	if (decodedJWT) {
-		let userId = decodedJWT.userId;
-		return await CommentHelper.getCommentsByUserId(userId)
-	}
+module.exports.getCommentsByUsername = middy(async event => {
+	return await CommentHelper.getCommentsByUsername(event.pathParameters.username)
 
-	return Status.createErrorResponse(401, "Invalid Bearer Token")
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))

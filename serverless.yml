@@ -199,12 +199,16 @@ functions:
 # COMMENT FUNCTIONS
 # ==================================
 
-  getCommentsByUserId:
-    handler: comment-handler.getCommentsByUserId
+  getCommentsByUsername:
+    handler: comment-handler.getCommentsByUsername
     events:
       - http:
-          path: user/comments
-          method: GET
+          path: user/comment/{username}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                username: true
           cors: true
 
   addCommentToReview:
