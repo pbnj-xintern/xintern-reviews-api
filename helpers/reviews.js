@@ -232,15 +232,11 @@ module.exports.getAllPositions = async () => db.exec(MONGO_URL,
             {
                 $group: {
                     _id: '$position',
+                    positionName: { $first: '$position' },
                     numReviews: { $sum: 1 }
                 }
             }
         ]).sort({ numReviews: 'desc' })
-            .then(p => {
-                return p.map(pos => {
-                    return { positionName: pos._id, numReviews: pos.numReviews }
-                })
-            })
             .catch(e => {
                 console.error(e.message || e)
                 return false

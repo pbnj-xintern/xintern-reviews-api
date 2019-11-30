@@ -161,8 +161,8 @@ module.exports.getAllCompanies = async () => {
                 }
             }
         ])
-        .collation({'locale':'en_US', numericOrdering: true} )
-        .sort({_id: 'asc'})
+            .collation({ 'locale': 'en_US', numericOrdering: true })
+            .sort({ _id: 'asc' })
     ).catch(e => {
         console.error(e.message || e)
         return false
@@ -217,6 +217,28 @@ module.exports.updateCompany = async (companyId, payload) => {
         console.error('company does not exist:\n', err.message)
         return Status.createErrorResponse(400, err.message)
     }
+}
+
+module.exports.getCompanyArrByName = async name => {
+
+
+    return await db.exec(MONGO_URL,
+        () => Company.aggregate([
+            {
+                $group: {
+                    _id: '$name',
+                    name: { $first: '$name' },
+                    logo: { $first: '$logo' }
+                }
+            },
+            { $match: { name: new RegExp("" + name.toLowerCase(), "i") } }
+        ])
+            .collation({ 'locale': 'en_US', numericOrdering: true })
+            .sort({ _id: 'asc' })
+    ).catch(e => {
+        console.error(e.message || e)
+        return false
+    })
 }
 
 module.exports.findCompanyByName = findCompanyByName;

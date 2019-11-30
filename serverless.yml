@@ -199,13 +199,23 @@ functions:
           path: companies/top
           method: GET
           cors: true
-
   getAllCompanies:
     handler: company-handler.getAllCompanies
     events:
       - http:
           path: company/all
           method: GET
+          cors: true
+  getCompaniesByName:
+    handler: company-handler.getCompaniesByName
+    events:
+      - http:
+          path: company/{company_name}
+          method: GET
+          request:
+            parameters:
+              paths:
+                company_name: true
           cors: true
 # ==================================
 # END COMPANY FUNCTIONS
@@ -275,7 +285,6 @@ functions:
                 review_id: true
                 comment_id: true
           cors: true
-
   getPopulatedComments:
     handler: comment-handler.getPopulatedComments
     events:
