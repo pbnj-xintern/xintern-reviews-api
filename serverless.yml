@@ -96,14 +96,13 @@ functions:
     handler: review-handler.getPopulatedReviews
     events:
       - http:
-          path: populated-review/{review_id}
+          path: review/populated-review/{review_id}
           method: GET
           request:
             parameters:
               paths:
                 review_id: true
           cors: true
-
   deleteReview:
     handler: review-handler.deleteReview
     events:
@@ -114,18 +113,6 @@ functions:
             parameters:
               paths:
                 review_id: true
-          cors: true
-
-  getReviewsByCompany:
-    handler: review-handler.getReviewsByCompany
-    events:
-      - http:
-          path: companies/{company_name}/reviews
-          method: GET
-          request:
-            parameters:
-              paths:
-                company_name: true
           cors: true
   getRecentReviews:
     handler: review-handler.getRecentReviews
@@ -157,61 +144,6 @@ functions:
 # ==================================
 
 # ==================================
-# COMPANY FUNCTIONS START
-# ==================================
-  addCompany:
-    handler: company-handler.addCompany
-    events:
-      - http:
-          path: company
-          method: POST
-          cors: true
-
-  deleteCompany:
-    handler: company-handler.deleteCompany
-    events:
-      - http:
-          path: company/{company_id}
-          method: DELETE
-          request:
-            parameters:
-              paths:
-                company_id: true
-          cors: true
-
-  updateCompany:
-    handler: company-handler.updateCompany
-    events:
-      - http:
-          path: review/{review_id}/company/{company_id}
-          method: PATCH
-          request:
-            parameters:
-              paths:
-                review_id: true
-                company_id: true
-          cors: true
-
-  getTopCompanies:
-    handler: company-handler.getTopCompanies
-    events:
-      - http:
-          path: companies/top
-          method: GET
-          cors: true
-
-  getAllCompanies:
-    handler: company-handler.getAllCompanies
-    events:
-      - http:
-          path: company/all
-          method: GET
-          cors: true
-# ==================================
-# END COMPANY FUNCTIONS
-# ==================================
-
-# ==================================
 # COMMENT FUNCTIONS
 # ==================================
 
@@ -219,7 +151,7 @@ functions:
         handler: comment-handler.getUpvotedCommentsByUserId
         events:
           - http:
-              path: user/comments/upvotes
+              path: review/comments/upvotes
               method: GET
               cors: true
   
@@ -227,30 +159,20 @@ functions:
         handler: comment-handler.getDownvotedCommentsByUserId
         events:
           - http:
-              path: user/comments/downvotes
+              path: review/comments/downvotes
               method: GET
               cors: true
-
-  addCommentToReview:
-      handler: comment-handler.addCommentToReview
-      events:
-        - http:
-            path: link-comment
-            method: POST
-            cors: true
-
   deleteComment:
     handler: comment-handler.deleteComment
     events:
       - http:
-          path: comment/{comment_id}
+          path: review/comment/{comment_id}
           method: PATCH
           request:
             parameters:
               paths:
                 comment_id: true
           cors: true
-
   createComment:
     handler: comment-handler.createComment
     events:
@@ -262,7 +184,6 @@ functions:
               paths:
                 review_id: true
           cors: true
-    
   updateComment:
     handler: comment-handler.updateComment
     events:
@@ -275,7 +196,6 @@ functions:
                 review_id: true
                 comment_id: true
           cors: true
-
   getPopulatedComments:
     handler: comment-handler.getPopulatedComments
     events:
@@ -353,7 +273,6 @@ functions:
           path: review/{review_id}/flag
           method: PATCH
           cors: true
-
   flagComment:
     handler: vote-and-flag-handler.flagComment
     events:
