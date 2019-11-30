@@ -6,6 +6,33 @@ const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const middy = require('middy')
 
 //--------------- LAMBDA FUNCTIONS ---------------
+module.exports.getUpvotedReviewsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await ReviewsHelper.getUpvotedReviewsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+module.exports.getDownvotedReviewsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await ReviewsHelper.getDownvotedReviewsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+
 module.exports.createReview = middy(async (event) => {
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
 	let decodedJWT = false
@@ -16,7 +43,7 @@ module.exports.createReview = middy(async (event) => {
 		payload.user_id = decodedJWT.userId;
 		return await ReviewsHelper.createReview(payload)
 	}
-	return Status.createErrorResponse(401, "Invalid Bearer Token")
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 //updateReview 2.1
@@ -40,7 +67,7 @@ module.exports.deleteReview = middy(async (event) => {
 }).use(AuthHelper.verifyJWT(TOKEN_SECRET))
 
 module.exports.getFlaggedReviews = event => {
-    return Status.createErrorResponse(501, 'NOT YET SUPPORTED')
+	return Status.createErrorResponse(501, 'NOT YET SUPPORTED')
 	// return ReviewsHelper.getFlaggedReviews()
 }
 
@@ -51,10 +78,27 @@ module.exports.getReviewsByCompany = async (event) => {
 module.exports.getReviewById = async event => {
 	let result = await ReviewsHelper.getReviewById(event.pathParameters.review_id);
 	if (!result)
-		return Status.createErrorResponse(404, "Could not find review")
+		return Status.createErrorResponse(400, "Could not find review")
 	return Status.createSuccessResponse(200, result)
 }
 
 module.exports.getRecentReviews = async (event) => {
 	return await ReviewsHelper.getRecentReviews()
 }
+
+module.exports.getReviewsByPosition = async (event) => {
+	let pulledReviews =  await ReviewsHelper.getReviewsByPosition(event.pathParameters.position)
+	if (!pulledReviews)
+		return Status.createErrorResponse(500, "Could not retrieve reviews by position")
+	return Status.createSuccessResponse(200, pulledReviews)
+}
+
+
+module.exports.getAllPositions = async (event) => {
+	let allPositions = await ReviewsHelper.getAllPositions()
+	if (!allPositions)
+		return Status.createErrorResponse(500, "Could not retrieve all positions")
+	return Status.createSuccessResponse(200, allPositions)
+}
+
+

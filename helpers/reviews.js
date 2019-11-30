@@ -200,35 +200,72 @@ module.exports.getReviewsByCompany = async (companyName) => {
         let company = { company_name: companyName }
         let foundCompanies = await CompanyHelper.findCompanyByName(company)
         let result = await db.exec(MONGO_URL, () => {
-            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user')
+            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user').sort({ createdAt: 'desc' })
         })
-        if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
-        result = result.reverse() //sorts by most recent
+        if (result.length == 0) return Status.createErrorResponse(500, "Company does not exist.")
         return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get company reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
 module.exports.getRecentReviews = async () => {
     try {
         let result = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
-
-            return Review.find().populate("company rating user")
+            return Review.find().populate("company rating user").sort({ createdAt: 'desc' }).limit(10)
         })
-        if (result.length === 0) return Status.createErrorResponse(404, "No recent Reviews.")
-        result = result.filter((review, i, arr) => {
-            return review.company !== null
-        })
-        let sortedResult = result.sort((a, b) => {
-            return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
-        })
-        return Status.createSuccessResponse(200, sortedResult.splice(0, 10))
+        if (result.length === 0) return Status.createErrorResponse(500, "No recent Reviews.")
+        return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
 module.exports.getReviewById = getReviewById
+
+module.exports.getAllPositions = async () => db.exec(MONGO_URL,
+    () =>
+        Review.aggregate([
+            { $match: {} },
+            {
+                $group: {
+                    _id: '$position',
+                    numReviews: { $sum: 1 }
+                }
+            }
+        ]).sort({ numReviews: 'desc' })
+            .then(p => {
+                return p.map(pos => {
+                    return { positionName: pos._id, numReviews: pos.numReviews }
+                })
+            })
+            .catch(e => {
+                console.error(e.message || e)
+                return false
+            })
+)
+
+module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
+    () => Review.find({ position: new RegExp("^" + position.toLowerCase(), "i") })
+        .sort({ createdAt: 'desc' })
+        .catch(e => {
+            console.error(e.message || e)
+            return false
+        })
+)
+
+module.exports.getUpvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { upvotes: { $all: [userId] } }
+        )))
+}
+
+module.exports.getDownvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { downvotes: { $all: [userId] } }
+        )))
+}

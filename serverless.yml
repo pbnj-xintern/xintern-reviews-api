@@ -23,6 +23,22 @@ functions:
 # ==================================
 # REVIEW FUNCTIONS START
 # ==================================
+  getUpvotedReviewsByUserId:
+      handler: review-handler.getUpvotedReviewsByUserId
+      events:
+        - http:
+            path: user/reviews/upvotes
+            method: GET
+            cors: true
+
+  getDownvotedReviewsByUserId:
+      handler: review-handler.getDownvotedReviewsByUserId
+      events:
+        - http:
+            path: user/reviews/downvotes
+            method: GET
+            cors: true
+
   getReviewById:
     handler: review-handler.getReviewById
     events:
@@ -111,13 +127,30 @@ functions:
               paths:
                 company_name: true
           cors: true
-
   getRecentReviews:
     handler: review-handler.getRecentReviews
     events:
       - http:
           path: review/recent
           method: GET
+          cors: true
+  getAllPositions:
+    handler: review-handler.getAllPositions
+    events:
+      - http:
+          path: review/positions
+          method: GET
+          cors: true
+  getReviewsByPosition:
+    handler: review-handler.getReviewsByPosition
+    events:
+      - http:
+          path: review/positions/{position}
+          method: GET
+          request:
+            parameters:
+              paths:
+                position: true
           cors: true
 # ==================================
 # REVIEW FUNCTIONS END
@@ -190,6 +223,23 @@ functions:
 # ==================================
 # COMMENT FUNCTIONS
 # ==================================
+
+  getUpvotedCommentsByUserId:
+        handler: comment-handler.getUpvotedCommentsByUserId
+        events:
+          - http:
+              path: user/comments/upvotes
+              method: GET
+              cors: true
+  
+  getDownvotedCommentsByUserId:
+        handler: comment-handler.getDownvotedCommentsByUserId
+        events:
+          - http:
+              path: user/comments/downvotes
+              method: GET
+              cors: true
+
   addCommentToReview:
       handler: comment-handler.addCommentToReview
       events:
@@ -254,6 +304,7 @@ functions:
 # ==================================
 # VOTE AND FLAG FUNCTIONS START
 # ==================================
+  
   upvoteReview:
     handler: vote-and-flag-handler.upvoteReview
     events:
@@ -319,6 +370,7 @@ functions:
           path: review/{review_id}/comment/{comment_id}/flag
           method: PATCH
           cors: true
+  
 
 # ==================================
 # VOTE AND FLAG FUNCTIONS END
