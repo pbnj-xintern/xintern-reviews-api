@@ -140,6 +140,17 @@ functions:
     handler: review-handler.getReviewsByPosition
     events:
       - http:
+          path: /position-name/{position}
+          method: GET
+          request:
+            parameters:
+              paths:
+                position: true
+          cors: true
+  getPositionsByName:
+    handler: review-handler.getPositionsByName
+    events:
+      - http:
           path: /positions/{position}
           method: GET
           request:
