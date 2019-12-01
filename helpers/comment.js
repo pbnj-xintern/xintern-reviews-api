@@ -1,11 +1,7 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
-const User = require('@pbnj-xintern/xintern-commons/models/User')
-const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
 const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
-const AuthChecker = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 const mongoose = require('mongoose')
 const ReviewHelper = require('./reviews')
@@ -188,4 +184,17 @@ module.exports.getPopulatedComments = async reviewId => {
     }
 }
 
+module.exports.getUpvotedCommentsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Comment.find(
+            { upvotes: { $all: [userId] } }
+        )))
+}
+
+module.exports.getDownvotedCommentsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Comment.find(
+            { downvotes: { $all: [userId] } }
+        )))
+}
 module.exports.deleteAllComments = deleteAllComments

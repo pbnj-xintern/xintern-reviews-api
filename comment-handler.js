@@ -4,8 +4,36 @@ const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const TOKEN_SECRET = process.env.TOKEN_SECRET
 const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const middy = require('middy')
+const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
 
 //--------------- LAMBDA FUNCTIONS ---------------
+module.exports.getUpvotedCommentsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await CommentHelper.getUpvotedCommentsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+module.exports.getDownvotedCommentsByUserId = middy(async (event) => {
+	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
+	let decodedJWT = false
+	if (event.headers && event.headers.Authorization) {
+		decodedJWT = AuthHelper.decodeJWT(event.headers.Authorization.replace("Bearer ", ""));
+	}
+	if (decodedJWT) {
+		let user_id = decodedJWT.userId;
+		return await CommentHelper.getDownvotedCommentsByUserId(user_id)
+	}
+	return Status.createErrorResponse(403, "Invalid Bearer Token")
+}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+
+
 module.exports.createComment = middy(async (event) => {
 	let reviewId = event.pathParameters.review_id
 	let payload = (event.body instanceof Object) ? event.body : JSON.parse(event.body)
