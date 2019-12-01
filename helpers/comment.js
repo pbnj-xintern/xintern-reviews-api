@@ -6,9 +6,9 @@ const db = require('@pbnj-xintern/xintern-commons/util/db')
 const mongoose = require('mongoose')
 const ReviewHelper = require('./reviews')
 const MONGO_URL = process.env.MONGO_URL
+const User = require('@pbnj-xintern/xintern-commons/models/User')
 
 module.exports.getCommentsByUsername = async username => {
-    console.log(username, "USERNAME")
     try {
        let user = await db.exec(MONGO_URL, 
         () => (
@@ -16,7 +16,6 @@ module.exports.getCommentsByUsername = async username => {
                 username : username
             })
         ))
-        console.log(user._id, "AUTHOR ID")
         return Status.createSuccessResponse(200, 
             await db.exec(MONGO_URL, 
                 () => Comment.find({author : user._id})))

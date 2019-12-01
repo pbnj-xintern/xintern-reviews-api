@@ -65,7 +65,7 @@ module.exports.getPopulatedComments = async event => {
 	return await CommentHelper.getPopulatedComments(event.pathParameters.review_id)
 }
 
-module.exports.getCommentsByUsername = middy(async event => {
+module.exports.getCommentsByUsername = async event => {
 	return await CommentHelper.getCommentsByUsername(event.pathParameters.username)
 
-}).use(AuthHelper.verifyJWT(TOKEN_SECRET))
+}

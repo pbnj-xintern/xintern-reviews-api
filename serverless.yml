@@ -171,7 +171,7 @@ functions:
     handler: comment-handler.getCommentsByUsername
     events:
       - http:
-          path: user/comment/{username}
+          path: comment/{username}
           method: PATCH
           request:
             parameters:
