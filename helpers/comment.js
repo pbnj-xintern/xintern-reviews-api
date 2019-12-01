@@ -18,7 +18,7 @@ module.exports.getCommentsByUsername = async username => {
         ))
         return Status.createSuccessResponse(200, 
             await db.exec(MONGO_URL, 
-                () => Comment.find({author : user._id})))
+                () => Comment.find({author : user._id}).populate('user')))
 
     } catch (err) {
         console.error('unable to fetch comments', err.message)
