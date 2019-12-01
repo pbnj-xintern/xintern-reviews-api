@@ -1,12 +1,8 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const User = require('@pbnj-xintern/xintern-commons/models/User')
-const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
 const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
-const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
-const mongoose = require('mongoose')
 const UserHelper = require('./user')
 const MONGO_URL = process.env.MONGO_URL
 
