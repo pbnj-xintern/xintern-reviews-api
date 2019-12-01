@@ -92,7 +92,6 @@ module.exports.getReviewsByPosition = async (event) => {
 	return Status.createSuccessResponse(200, pulledReviews)
 }
 
-
 module.exports.getAllPositions = async (event) => {
 	let allPositions = await ReviewsHelper.getAllPositions()
 	if (!allPositions)

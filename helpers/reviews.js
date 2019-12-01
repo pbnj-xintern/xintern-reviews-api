@@ -246,6 +246,7 @@ module.exports.getAllPositions = async () => db.exec(MONGO_URL,
 module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
     () => Review.find({ position: new RegExp("^" + position.toLowerCase(), "i") })
         .sort({ createdAt: 'desc' })
+        .limit(10)
         .catch(e => {
             console.error(e.message || e)
             return false
