@@ -32,20 +32,20 @@ functions:
 # ==================================
 # REVIEW FUNCTIONS START
 # ==================================
-  getUpvotedReviewsByUserId:
-      handler: review-handler.getUpvotedReviewsByUserId
-      events:
-        - http:
-            path: /upvoted
-            method: GET
-            cors: true
-  getDownvotedReviewsByUserId:
-      handler: review-handler.getDownvotedReviewsByUserId
-      events:
-        - http:
-            path: /downvoted
-            method: GET
-            cors: true
+  # getUpvotedReviewsByUserId:
+  #     handler: review-handler.getUpvotedReviewsByUserId
+  #     events:
+  #       - http:
+  #           path: /upvoted
+  #           method: GET
+  #           cors: true
+  # getDownvotedReviewsByUserId:
+  #     handler: review-handler.getDownvotedReviewsByUserId
+  #     events:
+  #       - http:
+  #           path: /downvoted
+  #           method: GET
+  #           cors: true
 
   getReviewById:
     handler: review-handler.getReviewById
@@ -100,17 +100,17 @@ functions:
                 rating_id: true
           cors: true
 
-  getPopulatedReviews:
-    handler: review-handler.getPopulatedReviews
-    events:
-      - http:
-          path: /populated-review/{review_id}
-          method: GET
-          request:
-            parameters:
-              paths:
-                review_id: true
-          cors: true
+  # getPopulatedReviews:
+  #   handler: review-handler.getPopulatedReviews
+  #   events:
+  #     - http:
+  #         path: /populated-review/{review_id}
+  #         method: GET
+  #         request:
+  #           parameters:
+  #             paths:
+  #               review_id: true
+  #         cors: true
   deleteReview:
     handler: review-handler.deleteReview
     events:

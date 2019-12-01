@@ -1,0 +1,13 @@
+{
+    "pathParameters": {
+        "username": "InternCompass"
+    },
+    "body": {
+        "parent_comment_id": "5ddb635f939ca70007a2c3d4",
+        "content": "this is comment to test updating",
+        "author": "5dd621b3b86ce0000707cad1"
+    },
+    "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBrdW1hIiwidXNlcklkIjoiNWRkNjIxYjNiODZjZTAwMDA3MDdjYWQxIiwiaWF0IjoxNTc1MTQzNTk4LCJleHAiOjE1NzUyMjk5OTh9.gT8qyfiM6AUasZeRipsv6VHpv-Iinff29mfIxrLdn8c"
+    }
+}

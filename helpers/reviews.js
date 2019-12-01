@@ -7,7 +7,7 @@ const UserHelper = require('./user')
 const CompanyHelper = require('./company')
 const CommentHelper = require('./comment')
 const mongoose = require('mongoose')
-
+const User = require('@pbnj-xintern/xintern-commons/models/User')
 const MONGO_URL = process.env.MONGO_URL
 
 //--------------- FUNCTIONS ---------------
@@ -273,9 +273,13 @@ module.exports.getReviewsByUsername = async username => {
         let user = await db.exec(MONGO_URL, 
          () => (
              User.findOne({
-                 username : username
+                username: username
              })
          ))
+         let res = await db.exec(MONGO_URL, 
+            () => Review.find({user : user._id}).populate('user'))
+
+
          return Status.createSuccessResponse(200, 
              await db.exec(MONGO_URL, 
                  () => Review.find({user : user._id}).populate('user')))
