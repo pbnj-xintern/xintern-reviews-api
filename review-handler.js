@@ -86,27 +86,20 @@ module.exports.getRecentReviews = async (event) => {
 	return await ReviewsHelper.getRecentReviews()
 }
 
-// module.exports.getReviewsByPosition = async (event) => {
-// 	let pulledReviews =  await ReviewsHelper.getReviewsByPosition(event.pathParameters.position)
-// 	if (!pulledReviews)
-// 		return Status.createErrorResponse(500, "Could not retrieve reviews by position")
-
-// 	console.log('Successfully pulled reviews. Found ' + pulledReviews.length + ' reviews for ' + event.pathParameters.position)
-// 	return Status.createSuccessResponse(200, pulledReviews)
-// }
-
 module.exports.getPositionsByName = async event => {
 	let positionName = event.pathParameters.position
 
 	if (!positionName)
 		return Status.createErrorResponse(400, 'Did not specifiy position name')
 
+	positionName = positionName.split('%20').join(' ')
+
 	let result = await ReviewsHelper.getPositionByName(positionName)
 
 	if (!result)
 		return Status.createErrorResponse(500, 'Could not fetch positions')
 
-	return Status.createErrorResponse(200, result)
+	return Status.createSuccessResponse(200, result)
 
 }
 
@@ -119,16 +112,17 @@ module.exports.getAllPositions = async (event) => {
 
 module.exports.getReviewsByPosition = async event => {
 	let positionName = event.pathParameters.position
-
 	if (!positionName)
 		return Status.createErrorResponse(400, 'Did not specifiy position name')
+
+	positionName = positionName.split('%20').join(' ')
 
 	let result = await ReviewsHelper.getReviewsByPosition(positionName)
 
 	if (!result)
 		return Status.createErrorResponse(500, 'Could not fetch positions')
 
-	return Status.createErrorResponse(200, result)
+	return Status.createSuccessResponse(200, result)
 
 }
 
