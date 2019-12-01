@@ -18,6 +18,12 @@ package:
 custom:
   stage: ${opt:stage, self:provider.stage}
   tokens: ${file(tokens.yml):${self:custom.stage}}
+  customDomain:
+    domainName: 'api.xintern.co'
+    basePath: 'products' # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
 
 functions:
 # ==================================
@@ -27,15 +33,14 @@ functions:
       handler: review-handler.getUpvotedReviewsByUserId
       events:
         - http:
-            path: user/reviews/upvotes
+            path: /upvoted
             method: GET
             cors: true
-
   getDownvotedReviewsByUserId:
       handler: review-handler.getDownvotedReviewsByUserId
       events:
         - http:
-            path: user/reviews/downvotes
+            path: /downvoted
             method: GET
             cors: true
 
@@ -43,7 +48,7 @@ functions:
     handler: review-handler.getReviewById
     events:
       - http:
-          path: review/{review_id}
+          path: /{review_id}
           method: GET
           request:
             parameters:
@@ -55,7 +60,7 @@ functions:
     handler: review-handler.createReview
     events:
       - http:
-          path: review
+          path: /
           method: POST
           cors: true
 
@@ -63,7 +68,7 @@ functions:
     handler: review-handler.updateReview
     events:
       - http:
-          path: review/{review_id}
+          path: /{review_id}
           method: PATCH
           request:
             parameters:
@@ -75,7 +80,7 @@ functions:
     handler: review-handler.getFlaggedReviews
     events:
       - http:
-          path: review/create
+          path: /create
           method: GET
           cors: true
 
@@ -83,7 +88,7 @@ functions:
     handler: review-handler.updateRating
     events:
       - http:
-          path: review/{review_id}/rating/{rating_id}
+          path: /{review_id}/rating/{rating_id}
           method: PATCH
           request:
             parameters:
@@ -96,7 +101,7 @@ functions:
     handler: review-handler.getPopulatedReviews
     events:
       - http:
-          path: review/populated-review/{review_id}
+          path: /populated-review/{review_id}
           method: GET
           request:
             parameters:
@@ -107,7 +112,7 @@ functions:
     handler: review-handler.deleteReview
     events:
       - http:
-          path: review/{review_id}
+          path: /{review_id}
           method: DELETE
           request:
             parameters:
@@ -118,21 +123,21 @@ functions:
     handler: review-handler.getRecentReviews
     events:
       - http:
-          path: review/recent
+          path: /recent
           method: GET
           cors: true
   getAllPositions:
     handler: review-handler.getAllPositions
     events:
       - http:
-          path: review/positions
+          path: /positions
           method: GET
           cors: true
   getReviewsByPosition:
     handler: review-handler.getReviewsByPosition
     events:
       - http:
-          path: review/positions/{position}
+          path: /positions/{position}
           method: GET
           request:
             parameters:
@@ -151,7 +156,7 @@ functions:
         handler: comment-handler.getUpvotedCommentsByUserId
         events:
           - http:
-              path: review/comments/upvotes
+              path: /comments/upvotes
               method: GET
               cors: true
   
@@ -159,14 +164,14 @@ functions:
         handler: comment-handler.getDownvotedCommentsByUserId
         events:
           - http:
-              path: review/comments/downvotes
+              path: /comments/downvotes
               method: GET
               cors: true
   deleteComment:
     handler: comment-handler.deleteComment
     events:
       - http:
-          path: review/comment/{comment_id}
+          path: /comment/{comment_id}
           method: PATCH
           request:
             parameters:
@@ -177,7 +182,7 @@ functions:
     handler: comment-handler.createComment
     events:
       - http:
-          path: review/{review_id}/comment
+          path: /{review_id}/comment
           method: POST
           request:
             parameters:
@@ -188,7 +193,7 @@ functions:
     handler: comment-handler.updateComment
     events:
       - http:
-          path: review/{review_id}/comment/{comment_id}
+          path: /{review_id}/comment/{comment_id}
           method: PATCH
           request:
             parameters:
@@ -200,7 +205,7 @@ functions:
     handler: comment-handler.getPopulatedComments
     events:
       - http:
-          path: comments/{review_id}
+          path: /{review_id}/comments
           method: GET
           request:
             parameters:
@@ -220,7 +225,7 @@ functions:
     handler: vote-and-flag-handler.upvoteReview
     events:
       - http:
-          path: review/{review_id}/upvote
+          path: /{review_id}/upvote
           method: PATCH
           request:
             parameters:
@@ -232,7 +237,7 @@ functions:
     handler: vote-and-flag-handler.downvoteReview
     events:
       - http:
-          path: review/{review_id}/downvote
+          path: /{review_id}/downvote
           method: PATCH
           request:
             parameters:
@@ -244,7 +249,7 @@ functions:
     handler: vote-and-flag-handler.upvoteComment
     events:
       - http:
-          path: review/{review_id}/comment/{comment_id}/upvote
+          path: /{review_id}/comment/{comment_id}/upvote
           method: PATCH
           request:
             parameters:
@@ -257,7 +262,7 @@ functions:
     handler: vote-and-flag-handler.downvoteComment
     events:
       - http:
-          path: review/{review_id}/comment/{comment_id}/downvote
+          path: /{review_id}/comment/{comment_id}/downvote
           method: PATCH
           request:
             parameters:
@@ -270,14 +275,14 @@ functions:
     handler: vote-and-flag-handler.flagReview
     events:
       - http:
-          path: review/{review_id}/flag
+          path: /{review_id}/flag
           method: PATCH
           cors: true
   flagComment:
     handler: vote-and-flag-handler.flagComment
     events:
       - http:
-          path: review/{review_id}/comment/{comment_id}/flag
+          path: /{review_id}/comment/{comment_id}/flag
           method: PATCH
           cors: true
   
