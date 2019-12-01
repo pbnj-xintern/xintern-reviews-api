@@ -1,72 +1,16 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
-const User = require('@pbnj-xintern/xintern-commons/models/User')
 const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
-const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
+const UserHelper = require('./user')
+const CompanyHelper = require('./company')
+const CommentHelper = require('./comment')
 const mongoose = require('mongoose')
 
 const MONGO_URL = process.env.MONGO_URL
 
-
-
 //--------------- FUNCTIONS ---------------
-
-//Returns user ID
-const findUserId = async (eventBody) => {
-    try {
-        let foundUser = await db.exec(MONGO_URL, () => {
-            return User.find({
-                _id: eventBody.user_id
-            })
-        })
-        console.log('foundUser:\n', foundUser)
-        return (foundUser[0]._id) ? foundUser[0]._id : null
-    } catch (err) {
-        console.error('user does not exist:\n', err.message)
-        return null
-    }
-}
-
-//Returns Company obj 
-const findCompanyByName = async (eventBody) => {
-    try {
-        let foundCompany = await db.exec(MONGO_URL, () => {
-            return Company.find({ name: eventBody.company_name.toLowerCase().trim() })
-        })
-        console.log('Company Found:\n', foundCompany)
-        if (foundCompany.length > 0) {
-            foundCompany = foundCompany[0]
-        } else {
-            return Status.createErrorResponse(404, "Company does not exist.")
-        }
-        return foundCompany
-    } catch (err) {
-        console.error('caught err while trying to find Company:\n', err.message)
-        return null
-    }
-}
-
-//Returns Company obj 
-const findCompanyById = async (companyId) => {
-    try { 
-        let foundCompany = await db.exec(MONGO_URL, () => {
-            return Company.find({ _id: companyId })
-        })
-        console.log('Company Found:\n', foundCompany)
-        if (foundCompany.length > 0) {
-            foundCompany = foundCompany[0]
-        } else {
-            return null
-        }
-        return foundCompany
-    } catch (err) {
-        console.error('caught err while trying to find Company:\n', err.message)
-    }
-}   
-
 //Returns a Review obj
 const getReviewById = async (reviewId) => {
     try {
@@ -77,39 +21,6 @@ const getReviewById = async (reviewId) => {
         return foundReview[0]
     } catch (err) {
         console.error('review does not exist:\n', err.message)
-    }
-}
-
-const addCommentToReview = async (reviewId, commentId) => {
-    try {
-        //grab existing comments from review obj
-        let review = await getReviewById(reviewId)
-        let existingComments = review.comments
-        //add new comment to list
-        existingComments.push(commentId)
-        //update review obj
-        let result = await db.exec(MONGO_URL, () => {
-            return Review.findByIdAndUpdate(reviewId, {
-                comments: existingComments
-            }, { new: true })
-        })
-        if (result)
-            return Status.createSuccessResponse(200, {
-                message: "Comment successfully added to Review."
-            })
-    } catch (err) {
-        console.error('add comment to review caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-
-const getAllComments = async (reviewId) => {
-    try {
-        let review = await getReviewById(reviewId)
-        return review.comments
-    } catch (err) {
-        console.error('get all comments caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
     }
 }
 
@@ -128,25 +39,6 @@ const deleteRating = async (ratingId) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
-
-const deleteAllComments = async (payload) => {
-    try {
-        let commentsList = await getAllComments(payload.review_id)
-        let result = await db.exec(MONGO_URL, () => {
-            return Comment.deleteMany({
-                _id: {
-                    $in: commentsList //array of comments
-                }
-            })
-        })
-        if (result)
-            return { OKmessage: "All comments successfully DELETED." }
-    } catch (err) {
-        console.error('delete all comments caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-
 //Creates a new Rating obj and saves to db. Returns rating ID
 const createRating = async (eventBody) => {
     let payloadIsValid = await RequestChecker(eventBody, Rating)
@@ -168,78 +60,16 @@ const createRating = async (eventBody) => {
     }
 }
 
-const userListsInReview = async id => {
-    return db.exec(
-        MONGO_URL,
-        () => Review.find({ _id: id })
-            .select('upvotes downvotes flagged')
-            .then(reviews => {
-                if (!reviews || reviews.length === 0) {
-                    console.error('Could not find reviews with id', id)
-                    return null
-                }
-                return {
-                    upvotes: reviews[0].upvotes || [],
-                    downvotes: reviews[0].downvotes || []
-                    // flagged: reviews[0].flagged || []
-                }
-            })
-            .catch(err => {
-                err.message ? console.error(err.message) : console.error(err)
-                return null;
-            })
-    )
-}
-
-const udpateObjectSimple = async (mongooseObj, where, set) => {
-    return mongooseObj.findOneAndUpdate(where, set, { new: true })
-        .then(updatedObj => {
-            if (!updatedObj)
-                return Status.createErrorResponse(500, 'Could not update ' + mongooseObj.modelName)
-            return Status.createSuccessResponse(200, updatedObj)
-        })
-        .catch(err => {
-            console.error(err)
-            return Status.createErrorResponse(500, 'Could not update ' + mongooseObj.modelName)
-        })
-}
-
-const appendToVoteList = (userId, targetList, oppositeList) => {
-
-    let uidTargetIndex = targetList.indexOf(userId)
-    let uidOppositeIndex = oppositeList.indexOf(userId)
-
-    //if not in target list then add
-    if (uidTargetIndex === -1) {
-        targetList.push(userId)
-
-        // if user exists in opposite list
-        // users should not be able to downvote and upvote at the same time
-        if (uidOppositeIndex !== -1)
-            oppositeList.splice(uidOppositeIndex, 1)
-    }
-    else //already voted, so it will un-vote
-        targetList.splice(uidTargetIndex, 1)
-
-    return {
-        targetList: targetList,
-        oppositeList: oppositeList
-    }
-
-}
-
 //--------------- EXPORTED FUNCTIONS ---------------
-
-//013_FEAT_CRUD-REVIEW
 //createReview 1.0
 module.exports.createReview = async (payload) => {
     console.log('payload:\n', payload)
-    let foundUserId = await findUserId(payload)
+    let foundUserId = await UserHelper.findUserId(payload)
     if (foundUserId === null) return Status.createErrorResponse(404, "User not found.")
     let ratingId = await createRating(payload)
     if (ratingId === null) return Status.createErrorResponse(400, "Rating could not be created.")
-    let foundCompany = await findCompanyByName(payload)
-    if (foundCompany.statusCode || foundCompany === null) return Status.createErrorResponse(404, "Could not find Company.")
+    let foundCompany = await CompanyHelper.findCompanyByName(payload)[0]
+    if (foundCompany.statusCode || foundCompany.length === 0) return Status.createErrorResponse(404, "Could not find Company.")
     //Create new Review and save
     let newReview = Review({
         _id: new mongoose.Types.ObjectId(),
@@ -251,7 +81,9 @@ module.exports.createReview = async (payload) => {
         company: foundCompany._id,
         upvotes: [],
         downvotes: [],
-        comments: []
+        comments: [],
+        currency: payload.currency,
+        payPeriod: payload.payPeriod
     })
     try {
         let result = await db.exec(MONGO_URL, () => {
@@ -276,8 +108,10 @@ module.exports.updateReview = async (reviewId, payload) => {
         let result = await db.exec(MONGO_URL, () => {
             return Review.findByIdAndUpdate(reviewId, {
                 salary: payload.salary,
+                currency: payload.currency,
                 content: payload.content,
-                position: payload.position
+                position: payload.position,
+                payPeriod: payload.payPeriod
             }, { new: true })
         })
         console.log('Updated review obj:\n', result)
@@ -318,28 +152,6 @@ module.exports.updateRating = async (ratingId, payload) => {
         return Status.createErrorResponse(400, err.message)
     }
 }
-//updateReview 2.3
-module.exports.updateCompany = async (companyId, payload) => {
-    let payloadIsValid = await RequestChecker(payload, Company)
-    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return Company.findByIdAndUpdate(companyId, { //company _id
-                name: payload.name,
-                logo: payload.logo
-            }, { new: true })
-        })
-        console.log('Updated Company obj:\n', result)
-        if (result)
-            return Status.createSuccessResponse(204, {
-                company_id: companyId,
-                message: "Company successfully UPDATED."
-            })
-    } catch (err) {
-        console.error('company does not exist:\n', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
 
 //deleteReview
 module.exports.deleteReview = async (reviewId) => {
@@ -347,7 +159,7 @@ module.exports.deleteReview = async (reviewId) => {
         let reviewRatingId = await db.exec(MONGO_URL, () => Review.find({ _id: reviewId }).select('rating'))
         let deleteRatingResults = await deleteRating(reviewRatingId)
         if (deleteRatingResults.OKmessage) console.log(deleteRatingResults)
-        let deleteCommentResults = await deleteAllComments(reviewId)
+        let deleteCommentResults = await CommentHelper.deleteAllComments(reviewId)
         if (deleteCommentResults.OKmessage) console.log(deleteCommentResults)
 
         let result = await db.exec(MONGO_URL, () => {
@@ -355,81 +167,18 @@ module.exports.deleteReview = async (reviewId) => {
                 _id: reviewId
             })
         })
-        if (result)
+        if (result) {
             console.log('Deleted Review obj:\n', result)
-        return Status.createSuccessResponse(200, {
-            review_id: reviewId,
-            message: "Review successfully DELETED."
-        })
+            return Status.createSuccessResponse(200, {
+                review_id: reviewId,
+                message: "Review successfully DELETED."
+            })
+        }
     } catch (err) {
         console.error('delete review caught error:', err.message)
         return Status.createErrorResponse(400, err.message)
     }
 }
-
-//014_FEAT_CRUD_COMMENT
-//createComment + link to Review
-module.exports.createComment = async (reviewId, payload) => {
-    let newComment = Comment({
-        _id: new mongoose.Types.ObjectId(),
-        content: payload.content,
-        upvotes: [],
-        downvotes: [],
-        parentComment: (payload.parent_comment_id) ? payload.parent_comment_id : null
-    })
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return newComment.save()
-        })
-        if (!result._id || result === null) return Status.createErrorResponse(400, "Comment could not be created.")
-        console.log('new comment:\n', result)
-        let newCommentId = result._id
-        let response = await addCommentToReview(reviewId, newCommentId)
-        if (response.statusCode === 200)
-            return Status.createSuccessResponse(201, {
-                comment_id: newComment._id,
-                message: "Comment successfully CREATED."
-            })
-    } catch (err) {
-        console.error('create comment caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-//deleteComment - patch request to remove content and user, but keep the object
-module.exports.deleteComment = async (commentId) => {
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return Comment.findOneAndUpdate(commentId, {
-                author: null, //handle err msg client side
-                content: "[this comment has been removed.]"
-            })
-        })
-        return (result.author === null) ? Status.createSuccessResponse(200, { comment_id: commentId, message: "Comment successfully DELETED." }) : Status.createErrorResponse(400, "Comment did not delete.")
-    } catch (err) {
-        console.error('delete comment caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-//updateComment
-module.exports.updateComment = async (commentId, payload) => {
-    let payloadIsValid = await RequestChecker(payload, Comment)
-    if (!payloadIsValid) return Status.createErrorResponse(400, "payload does not match model.")
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return Comment.findByIdAndUpdate(commentId, {
-                content: payload.content
-            }, { new: true })
-        })
-        if (result)
-            return Status.createSuccessResponse(204, {
-                message: "Comment successfully UPDATED."
-            })
-    } catch (err) {
-        console.error('update comment caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-
 
 module.exports.getFlaggedReviews = () => {
     return db.exec(
@@ -445,190 +194,75 @@ module.exports.getFlaggedReviews = () => {
     )
 }
 
-
-module.exports.getTopCompanies = async () => {
-    let allReviews = null
-    try{
-        allReviews = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
-            return Review.find({}).populate('company');
-        });
-        let companyMap = {}; 
-        allReviews.forEach(review => {
-            if(review.company){
-                companyMap[review.company.name] = review.company;
-            }
-        })
-        let counter = {};
-        allReviews.forEach(review => {
-            if(review.company){
-                let company_name = review.company.name;
-                counter[company_name] = counter[company_name] ? ++counter[company_name] : 1;
-            }
-        })
-        let companyList = []
-        Object.keys(counter).forEach(key => {
-            companyList.push({
-                name: companyMap[key].name,
-                count: counter[key],
-                logo: companyMap[key].logo
-            })
-        })
-
-        companyList.sort((a,b) => {
-            return b.count - a.count;
-        })
-
-        return Status.createSuccessResponse(200,companyList);
-
-    }catch(err){
-        console.log(err.msg);
-        return Status.createErrorResponse(400, 'Could not fetch top companies');
-    }
-}
-
-
-module.exports.getPopulatedReviews = async (event) => {
-    let map = {};
-
-    let result = await db.exec(MONGO_URL, () => {
-        return Review.findById(event).populate('comments rating company user');
-    })
-    let resultObject = result.toObject();
-    let comments = resultObject.comments;
-    let rootComments = comments.filter(x => {
-        return !x.parentComment;
-    });
-
-    for (var comment of comments) {
-        if (!comment.parentComment) {
-            map[comment._id] = []
-        } else if (!map[comment.parentComment]) {
-            map[comment.parentComment] = [comment]
-        } else if (map[comment.parentComment]) {
-            map[comment.parentComment].push(comment)
-        }
-    }
-    resultObject.comments = rootComments;
-    return Status.createSuccessResponse(200, resultObject);
-}
-
-function bfs(root, map) {
-    let queue = [root];
-    while (queue.length > 0) {
-        let node = queue.shift();
-        node.replies = map[node._id];
-        if (node.replies != null) {
-            queue = queue.concat(node.replies)
-        }
-    }
-}
-
-module.exports.upvoteOrDownvoteReview = async (review_id, user_id, type) => {
-
-    if (type !== 'upvotes' && type !== 'downvotes')
-        return Status.createErrorResponse(400, 'Missing a field')
-
-    let oppositeType = type === 'upvotes' ? 'downvotes' : 'upvotes'
-    let listsFromReview = await userListsInReview(review_id)
-    let foundUserId = await findUserId({ user_id: user_id })
-
-    if (!listsFromReview)
-        return Status.createErrorResponse(404, 'Could not find review')
-    if (!foundUserId)
-        return Status.createErrorResponse(404, 'Could not find user')
-
-    let targetList = listsFromReview[type]
-    let oppositeList = listsFromReview[oppositeType]
-
-    let updated = appendToVoteList(foundUserId, targetList, oppositeList)
-
-    let where = { _id: review_id }
-    let set = {}
-    set[type] = updated.targetList
-    set[oppositeType] = updated.oppositeList
-
-    return db.exec(
-        MONGO_URL,
-        () => udpateObjectSimple(Review, where, set)
-    )
-}
-
-module.exports.addCompany = async (payload) => {
-    let newCompany = new Company({
-        _id: new mongoose.Types.ObjectId(),
-        name: payload.name,
-        logo: payload.logo,
-        location: payload.location
-    })
+module.exports.getReviewsByCompany = async (companyName) => {
     try {
+        companyName = decodeURIComponent(companyName)
+        let company = { company_name: companyName }
+        let foundCompanies = await CompanyHelper.findCompanyByName(company)
         let result = await db.exec(MONGO_URL, () => {
-            return newCompany.save()
+            return Review.find({ company: { $in: foundCompanies } }).populate('company rating user').sort({ createdAt: 'desc' })
         })
-        if (!result._id || result === null) return Status.createErrorResponse(400, "Company could not be created.")
-        return Status.createSuccessResponse(201, {
-            company_id: newCompany._id,
-            message: "Company successfully CREATED."
-        })
-    } catch (err) {
-        console.error('create company caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-
-module.exports.deleteCompany = async (companyId) => {
-    try {
-        let result = await db.exec(MONGO_URL, () => {
-            return Company.findOneAndDelete({
-                _id: companyId
-            })
-        })
-        if (result._id) {
-            console.log('Deleted Company obj:\n', result)
-            return Status.createSuccessResponse(200, { 
-                company_id: companyId,
-                message: "Company successfully DELETED." 
-            })
-        } else {
-            return Status.createErrorResponse(404, "Could not delete company.")
-        }
-    } catch (err) {
-        console.error('delete company caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
-    }
-}
-
-module.exports.getReviewsByCompany = async (companyId) => {
-    try {
-        let validCompany = await findCompanyById(companyId)
-        if (validCompany == null) return Status.createErrorResponse(404, "Company does not exist.")
-        let result = await db.exec(MONGO_URL, () => {
-            return Review.find({ company: companyId }).populate('company rating user')
-        })
-        if (result.length == 0) return Status.createErrorResponse(404, "Company does not exist.")
-        result = result.reverse() //sorts by most recent
+        if (result.length == 0) return Status.createErrorResponse(500, "Company does not exist.")
         return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get company reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
 }
 
 module.exports.getRecentReviews = async () => {
     try {
         let result = await db.exec('mongodb+srv://bond:bondyan@cluster0-am7uh.mongodb.net/test?retryWrites=true&w=majority', () => {
-
-            return Review.find().populate("company rating user")
+            return Review.find().populate("company rating user").sort({ createdAt: 'desc' }).limit(10)
         })
-        if (result.length == 0) return Status.createErrorResponse(404, "No recent Reviews.")
-        result = result.filter((review, i, arr) => {
-            return review.company !== null
-        })
-        let sortedResult = result.sort((a, b) => {
-            return (a.createdAt < b.createdAt) ? 1 : -1 //most recent to least recent
-        })
-        return Status.createSuccessResponse(200, sortedResult.splice(0, 10))
+        if (result.length === 0) return Status.createErrorResponse(500, "No recent Reviews.")
+        return Status.createSuccessResponse(200, result)
     } catch (err) {
         console.error('get recent reviews caught error:', err.message)
-        return Status.createErrorResponse(400, err.message)
+        return Status.createErrorResponse(500, err.message)
     }
+}
+
+module.exports.getReviewById = getReviewById
+
+module.exports.getAllPositions = async () => db.exec(MONGO_URL,
+    () =>
+        Review.aggregate([
+            { $match: {} },
+            {
+                $group: {
+                    _id: '$position',
+                    positionName: { $first: '$position' },
+                    numReviews: { $sum: 1 }
+                }
+            }
+        ]).sort({ numReviews: 'desc' })
+            .catch(e => {
+                console.error(e.message || e)
+                return false
+            })
+)
+
+module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
+    () => Review.find({ position: new RegExp("^" + position.toLowerCase(), "i") })
+        .sort({ createdAt: 'desc' })
+        .limit(10)
+        .catch(e => {
+            console.error(e.message || e)
+            return false
+        })
+)
+
+module.exports.getUpvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { upvotes: { $all: [userId] } }
+        )))
+}
+
+module.exports.getDownvotedReviewsByUserId = async userId => {
+    return Status.createSuccessResponse(200, await db.exec(MONGO_URL,
+        () => Review.find(
+            { downvotes: { $all: [userId] } }
+        )))
 }

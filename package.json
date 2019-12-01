@@ -6,12 +6,14 @@
   "author": "John Cen <john.cen397@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@pbnj-xintern/xintern-commons": "^1.0.19",
+    "@pbnj-xintern/xintern-commons": "^1.0.32",
     "axios": "^0.19.0",
     "chai": "^4.2.0",
+    "middy": "^0.30.4",
     "mocha": "^6.2.2",
     "mongoose": "^5.7.0",
     "serverless": "^1.52.2",
+    "serverless-domain-manager": "^3.3.0",
     "sinon": "^7.5.0"
   },
   "scripts": {

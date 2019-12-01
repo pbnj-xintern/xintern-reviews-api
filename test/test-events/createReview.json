@@ -1,0 +1,16 @@
+{
+    "headers":{
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByYWl5IiwidXNlcklkIjoiNWRjMzM4OTE0ZDk0ZWY0ZGVkMmY4MmM4IiwiaWF0IjoxNTczMTYxMjcxLCJleHAiOjE1NzMyNDc2NzF9.b1KXJFLq0JYV0LgyO5vcK0rBJybaWSptOPuMUv-4kmw"
+    },
+    "body": {
+        "culture": 1,
+        "mentorship": 1,
+        "impact": 1,
+        "interview": 1,
+        "company_name": "toronto-company",
+        "salary": 100000,
+        "content": "testing getReviewsByCompany",
+        "position": "Data Scientist",
+        "currency": "CAD"
+    }
+}
