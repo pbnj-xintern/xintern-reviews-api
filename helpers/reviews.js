@@ -248,8 +248,10 @@ module.exports.getAllPositions = async () => db.exec(MONGO_URL,
 )
 
 module.exports.getReviewsByPosition = async position => db.exec(MONGO_URL,
-    () => Review.find({ position: new RegExp("^" + position.toLowerCase(), "i") })
+    () => Review.find({ position: new RegExp(position.toLowerCase(), "i") })
         .sort({ createdAt: 'desc' })
+        .populate('rating user company')
+        .limit(20)
         .catch(e => {
             console.error(e.message || e)
             return false
@@ -269,3 +271,32 @@ module.exports.getDownvotedReviewsByUserId = async userId => {
             { downvotes: { $all: [userId] } }
         )))
 }
+
+module.exports.getPositionByName = async position => db.exec(MONGO_URL,
+    () =>
+        Review.aggregate([
+            {
+                $match: {
+                    position: new RegExp(position.toLowerCase(), "i")
+                }
+            },
+            {
+                $group: {
+                    _id: '$position',
+                    position: { $first: '$position' },
+                    numReviews: { $sum: 1 }
+                }
+            }
+        ])
+            .sort({ numReviews: 'desc' })
+            .limit(10)
+            .then(p => {
+                return p.map(pos => {
+                    return { positionName: pos._id, numReviews: pos.numReviews }
+                })
+            })
+            .catch(e => {
+                console.error(e.message || e)
+                return false
+            })
+)
