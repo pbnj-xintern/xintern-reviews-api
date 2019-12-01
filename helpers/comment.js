@@ -1,16 +1,30 @@
 const Review = require('@pbnj-xintern/xintern-commons/models/Review')
 const Status = require('@pbnj-xintern/xintern-commons/util/status')
-const User = require('@pbnj-xintern/xintern-commons/models/User')
-const Rating = require('@pbnj-xintern/xintern-commons/models/Rating')
 const Comment = require('@pbnj-xintern/xintern-commons/models/Comment')
-const Company = require('@pbnj-xintern/xintern-commons/models/Company')
 const RequestChecker = require('@pbnj-xintern/xintern-commons/util/request_checker')
-const AuthChecker = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const db = require('@pbnj-xintern/xintern-commons/util/db')
 const mongoose = require('mongoose')
 const ReviewHelper = require('./reviews')
 const MONGO_URL = process.env.MONGO_URL
+const User = require('@pbnj-xintern/xintern-commons/models/User')
 
+module.exports.getCommentsByUsername = async username => {
+    try {
+       let user = await db.exec(MONGO_URL, 
+        () => (
+            User.findOne({
+                username : username
+            })
+        ))
+        return Status.createSuccessResponse(200, 
+            await db.exec(MONGO_URL, 
+                () => Comment.find({author : user._id})))
+
+    } catch (err) {
+        console.error('unable to fetch comments', err.message)
+        return Status.createErrorResponse(400, err.message)
+    }
+}
 
 const addCommentToReview = async (reviewId, commentId) => {
     try {
