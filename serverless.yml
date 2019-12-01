@@ -179,14 +179,6 @@ functions:
                 username: true
           cors: true
 
-  addCommentToReview:
-      handler: comment-handler.addCommentToReview
-      events:
-        - http:
-            path: link-comment
-            method: POST
-            cors: true
-
   getUpvotedCommentsByUserId:
         handler: comment-handler.getUpvotedCommentsByUserId
         events:
