@@ -64,3 +64,8 @@ module.exports.updateComment = middy(async (event) => {
 module.exports.getPopulatedComments = async event => {
 	return await CommentHelper.getPopulatedComments(event.pathParameters.review_id)
 }
+
+module.exports.getCommentsByUsername = async event => {
+	return await CommentHelper.getCommentsByUsername(event.pathParameters.username)
+
+}

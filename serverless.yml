@@ -166,6 +166,19 @@ functions:
 # COMMENT FUNCTIONS
 # ==================================
 
+
+  getCommentsByUsername:
+    handler: comment-handler.getCommentsByUsername
+    events:
+      - http:
+          path: comment/{username}
+          method: PATCH
+          request:
+            parameters:
+              paths:
+                username: true
+          cors: true
+
   getUpvotedCommentsByUserId:
         handler: comment-handler.getUpvotedCommentsByUserId
         events:
