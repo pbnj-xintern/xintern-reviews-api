@@ -147,6 +147,17 @@ functions:
               paths:
                 position: true
           cors: true
+  getReviewsByCompany:
+    handler: review-handler.getReviewsByCompany
+    events:
+      - http:
+          path: /company/{company_name}
+          method: GET
+          request:
+            parameters:
+              paths:
+                company_name: true
+          cors: true
 # ==================================
 # REVIEW FUNCTIONS END
 # ==================================
