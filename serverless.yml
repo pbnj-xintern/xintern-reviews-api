@@ -300,7 +300,7 @@ functions:
     handler: vote-and-flag-handler.upvoteComment
     events:
       - http:
-          path: /{review_id}/comment/{comment_id}/upvote
+          path: /comment/{comment_id}/upvote
           method: PATCH
           request:
             parameters:
@@ -313,7 +313,7 @@ functions:
     handler: vote-and-flag-handler.downvoteComment
     events:
       - http:
-          path: /{review_id}/comment/{comment_id}/downvote
+          path: /comment/{comment_id}/downvote
           method: PATCH
           request:
             parameters:

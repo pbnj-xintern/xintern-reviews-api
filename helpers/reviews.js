@@ -279,7 +279,7 @@ module.exports.getReviewsByUsername = async username => {
 
          return Status.createSuccessResponse(200, 
              await db.exec(MONGO_URL, 
-                 () => Review.find({user : user._id}).populate('user')))
+                 () => Review.find({user : user._id}).populate('user company rating')))
  
      } catch (err) {
          console.error('unable to fetch reviews', err.message)
