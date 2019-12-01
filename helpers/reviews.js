@@ -276,9 +276,6 @@ module.exports.getReviewsByUsername = async username => {
                 username: username
              })
          ))
-         let res = await db.exec(MONGO_URL, 
-            () => Review.find({user : user._id}).populate('user'))
-
 
          return Status.createSuccessResponse(200, 
              await db.exec(MONGO_URL, 
