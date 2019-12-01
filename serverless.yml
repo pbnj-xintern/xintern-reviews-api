@@ -15,12 +15,15 @@ package:
   exclude:
     - tokens.yml
 
+plugins:
+  - serverless-domain-manager
+
 custom:
   stage: ${opt:stage, self:provider.stage}
   tokens: ${file(tokens.yml):${self:custom.stage}}
   customDomain:
     domainName: 'api.xintern.co'
-    basePath: 'products' # This will be prefixed to all routes
+    basePath: 'review' # This will be prefixed to all routes
     stage: ${self:provider.stage}
     createRoute53Record: true
 
