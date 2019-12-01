@@ -269,3 +269,21 @@ module.exports.getDownvotedReviewsByUserId = async userId => {
             { downvotes: { $all: [userId] } }
         )))
 }
+
+module.exports.getReviewsByUsername = async username => {
+    try {
+        let user = await db.exec(MONGO_URL, 
+         () => (
+             User.findOne({
+                 username : username
+             })
+         ))
+         return Status.createSuccessResponse(200, 
+             await db.exec(MONGO_URL, 
+                 () => Review.find({user : user._id}).populate('user')))
+ 
+     } catch (err) {
+         console.error('unable to fetch reviews', err.message)
+         return Status.createErrorResponse(400, err.message)
+     }
+}

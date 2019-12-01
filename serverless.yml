@@ -158,6 +158,19 @@ functions:
               paths:
                 company_name: true
           cors: true
+
+  getReviewsByUsername:
+    handler: review-handler.getReviewsByUsername
+    events:
+      - http:
+          path: /user/review/{username}
+          method: GET
+          request:
+            parameters:
+              paths:
+                username: true
+          cors: true
+
 # ==================================
 # REVIEW FUNCTIONS END
 # ==================================

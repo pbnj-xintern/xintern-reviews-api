@@ -4,6 +4,7 @@ const Status = require('@pbnj-xintern/xintern-commons/util/status')
 const TOKEN_SECRET = process.env.TOKEN_SECRET
 const AuthHelper = require('@pbnj-xintern/xintern-commons/util/auth_checker')
 const middy = require('middy')
+const User = require('@pbnj-xintern/xintern-commons/models/User')
 
 //--------------- LAMBDA FUNCTIONS ---------------
 module.exports.getUpvotedReviewsByUserId = middy(async (event) => {
@@ -101,4 +102,7 @@ module.exports.getAllPositions = async (event) => {
 	return Status.createSuccessResponse(200, allPositions)
 }
 
+module.exports.getReviewsByUsername = async (event) => {
+	return await ReviewsHelper.getReviewsByUsername(event.pathParameters.username);
+}
 
