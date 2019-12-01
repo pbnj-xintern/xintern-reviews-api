@@ -7,7 +7,7 @@ const MONGO_URL = process.env.MONGO_URL
 const findCompanyByName = async (eventBody) => {
     try {
         let foundCompany = await db.exec(MONGO_URL, () => {
-            return Company.find({ name: eventBody.company_name.trim() })
+            return Company.find({ name: eventBody.company_name })
         })
         console.log('Company Found:\n', foundCompany)
         return foundCompany
