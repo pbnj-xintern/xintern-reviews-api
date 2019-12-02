@@ -197,7 +197,7 @@ module.exports.getFlaggedReviews = () => {
 module.exports.getReviewsByCompany = async (companyName) => {
     try {
         companyName = decodeURIComponent(companyName)
-        let company = { company_name: companyName }
+        let company = { company_name: new RegExp(companyName + '$', 'i') }
         let foundCompanies = await CompanyHelper.findCompanyByName(company)
         let result = await db.exec(MONGO_URL, () => {
             return Review.find({ company: { $in: foundCompanies } }).populate('company rating user').sort({ createdAt: 'desc' })
